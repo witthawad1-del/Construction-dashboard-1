@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construction Progress Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d14;--bg2:#0d1520;--bgc:#111b28;--bgch:#162233;
+  --bdr:rgba(56,139,253,.15);--bdrb:rgba(56,139,253,.4);
+  --blue:#388bfd;--cyan:#00d4ff;--green:#00e676;--orange:#ff9500;--red:#ff4444;--gold:#ffd600;--purple:#ce93d8;--teal:#00bcd4;
+  --tx:#e8f0fe;--tx2:#8899aa;--tx3:#445566;
+  --dg:rgba(0,230,118,.12);--do:rgba(255,149,0,.12);--dr:rgba(255,68,68,.12);--db:rgba(56,139,253,.12);
+  --r:12px;--rs:8px;--f:'Sarabun',sans-serif;--m:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,139,253,.04)1px,transparent 1px),linear-gradient(90deg,rgba(56,139,253,.04)1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.o1{width:500px;height:500px;background:rgba(56,139,253,.06);top:-100px;right:-100px}
+.o2{width:400px;height:400px;background:rgba(0,212,255,.04);bottom:100px;left:-100px}
+.W{max-width:1600px;margin:0 auto;padding:24px;position:relative;z-index:1}
+header{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;background:rgba(13,21,32,.8);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:24px;backdrop-filter:blur(12px);position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),transparent)}
+.hi{width:48px;height:48px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 20px rgba(56,139,253,.4)}
+.ht{font-size:22px;font-weight:800;letter-spacing:-.3px}.hs{font-size:13px;color:var(--tx2);margin-top:2px;font-family:var(--m)}
+.live{display:flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.3);border-radius:20px;font-size:12px;font-weight:600;color:var(--green);font-family:var(--m)}
+.ld{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pu 2s infinite}
+@keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.btn{padding:8px 18px;border:none;border-radius:var(--rs);font-family:var(--f);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:var(--cyan);transform:translateY(-1px);box-shadow:0 6px 20px rgba(56,139,253,.3)}
+.btn-green{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.4)}.btn-green:hover{background:rgba(0,230,118,.25);transform:translateY(-1px)}
+.btn-orange{background:rgba(255,149,0,.15);color:var(--orange);border:1px solid rgba(255,149,0,.4)}.btn-orange:hover{background:rgba(255,149,0,.25);transform:translateY(-1px)}
+.btn-red{background:rgba(255,68,68,.15);color:var(--red);border:1px solid rgba(255,68,68,.4)}.btn-red:hover{background:rgba(255,68,68,.25);transform:translateY(-1px)}
+/* SAVE TOAST */
+#toast{position:fixed;bottom:28px;right:28px;background:#111b28;border:1px solid;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;z-index:9999;display:none;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+#toast.ok{border-color:rgba(0,230,118,.5);color:var(--green)}
+#toast.err{border-color:rgba(255,68,68,.5);color:var(--red)}
+#toast.info{border-color:rgba(56,139,253,.5);color:var(--blue)}
+/* SAVE INDICATOR */
+.save-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs);margin-bottom:20px}
+.save-dot{width:8px;height:8px;border-radius:50%;background:var(--tx3);transition:background .3s}
+.save-dot.saved{background:var(--green);box-shadow:0 0 8px rgba(0,230,118,.5)}
+.save-dot.saving{background:var(--orange);animation:pu 1s infinite}
+.save-dot.unsaved{background:var(--orange)}
+#save-status{font-size:12px;color:var(--tx2);font-family:var(--m)}
+#save-time{font-size:11px;color:var(--tx3);font-family:var(--m);margin-left:auto}
+/* KPI */
+.kg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kc{background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--r);padding:20px 22px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;animation:fu .4s ease both}
+.kc:nth-child(1){animation-delay:.05s}.kc:nth-child(2){animation-delay:.1s}.kc:nth-child(3){animation-delay:.15s}.kc:nth-child(4){animation-delay:.2s}
+.kc:hover{border-color:var(--bdrb);transform:translateY(-2px)}
+.kc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--r) var(--r)}
+.kc.G::after{background:var(--green)}.kc.O::after{background:var(--orange)}.kc.B::after{background:var(--blue)}.kc.R::after{background:var(--red)}
+.kl{font-size:12px;color:var(--tx2);font-weight:500;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px}
+.kv{font-size:36px;font-weight:800;font-family:var(--m);line-height:1}
+.kc.G .kv{color:var(--green)}.kc.O .kv{color:var(--orange)}.kc.B .kv{color:var(--blue)}.kc.R .kv{color:var(--red)}
+.ks{font-size:12px;color:var(--tx3);margin-top:6px}.ki{position:absolute;right:18px;top:18px;font-size:28px;opacity:.15}
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+/* ── 3D PIE CHART SECTION ── */
+.pie-section{background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--r);padding:26px 24px;margin-bottom:24px;position:relative;overflow:hidden}
+.pie-section::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(56,139,253,.05),transparent 50%);pointer-events:none}
+.pie-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.pie-title{font-size:16px;font-weight:800;letter-spacing:-.2px}
+.pie-sub{font-size:12px;color:var(--tx2);margin-top:3px;font-family:var(--m)}
+.pie-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+.pie-wrap{position:relative;max-width:360px;margin:0 auto}
+.pie-center-info{position:absolute;top:50%;left:50%;transform:translate(-50%,-54%);text-align:center;pointer-events:none}
+.pie-center-pct{font-size:28px;font-weight:800;font-family:var(--m);color:var(--blue);line-height:1}
+.pie-center-lbl{font-size:11px;color:var(--tx2);margin-top:3px}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.legend-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs);transition:all .2s;cursor:pointer}
+.legend-item:hover{border-color:var(--bdrb);transform:translateX(2px)}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.legend-name{font-size:12px;font-weight:600;flex:1}
+.legend-val{font-size:13px;font-weight:800;font-family:var(--m)}
+/* CARD */
+.card{background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--r);padding:22px;margin-bottom:20px;transition:border-color .2s}
+.card:hover{border-color:var(--bdrb)}
+.SH{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.SN{width:30px;height:30px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--m);flex-shrink:0}
+.ST{font-size:16px;font-weight:700}
+.Stg{font-size:12px;font-family:var(--m);color:var(--tx2);background:var(--bg2);padding:4px 10px;border-radius:20px;border:1px solid var(--bdr)}
+/* PROG */
+.PW{margin-bottom:10px}
+.PM{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.PL{font-size:13px;font-weight:600}.PP{font-size:14px;font-weight:700;font-family:var(--m)}
+.PBG{height:10px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}
+.PF{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.PF::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);animation:sh 2s infinite}
+@keyframes sh{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.PF.g{background:linear-gradient(90deg,#00b248,#00e676)}.PF.o{background:linear-gradient(90deg,#e65c00,#ff9500)}.PF.r{background:linear-gradient(90deg,#c62828,#ff4444)}.PF.b{background:linear-gradient(90deg,#1565c0,#388bfd)}
+/* INPUT */
+.IG{display:flex;align-items:center;gap:8px}
+.PI{width:70px;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs);color:var(--tx);font-family:var(--m);font-size:14px;font-weight:600;padding:5px 10px;text-align:center;transition:border-color .2s,box-shadow .2s;outline:none}
+.PI:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(56,139,253,.15)}
+.PI::-webkit-inner-spin-button{-webkit-appearance:none}
+.Ps{font-size:13px;color:var(--tx2)}
+.DIV{height:1px;background:var(--bdr);margin:14px 0}
+/* TABLE */
+.FT{width:100%;border-collapse:separate;border-spacing:0 6px}
+.FT th{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);font-weight:600;padding:0 12px 8px;text-align:left}
+.FT th:last-child{text-align:right}
+.FR td{background:var(--bg2);padding:12px;vertical-align:middle;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr)}
+.FR td:first-child{border-left:1px solid var(--bdr);border-radius:var(--rs) 0 0 var(--rs)}
+.FR td:last-child{border-right:1px solid var(--bdr);border-radius:0 var(--rs) var(--rs) 0;text-align:right}
+.FR:hover td{background:var(--bgch);border-color:var(--bdrb)}
+.FB{display:inline-flex;align-items:center;justify-content:center;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;font-family:var(--m);background:var(--db);border:1px solid rgba(56,139,253,.3);color:var(--blue)}
+.TP{display:flex;align-items:center;gap:10px}
+.TPB{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
+.TPF{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.34,1.56,.64,1)}
+.MS{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border-radius:var(--rs);border:1px solid var(--bdr)}
+.MSi{font-size:18px}.MSl{font-size:11px;color:var(--tx2)}.MSv{font-size:16px;font-weight:700;font-family:var(--m)}
+/* PLASTER */
+.PR{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.PB{width:76px;padding:10px 6px;border-radius:var(--rs);text-align:center;border:1px solid;transition:all .2s}
+.PB.dn{background:var(--dg);border-color:rgba(0,230,118,.4)}.PB.pd{background:rgba(255,255,255,.03);border-color:var(--bdr)}
+.PB .pn{font-size:16px;font-weight:700;font-family:var(--m)}
+.PB.dn .pn{color:var(--green)}.PB.pd .pn{color:var(--tx3)}
+.PB .pl{font-size:10px;margin-top:3px}.PB.dn .pl{color:var(--green)}.PB.pd .pl{color:var(--tx3)}
+.PB .pp{font-size:10px;font-family:var(--m);color:var(--tx3)}
+/* ROOM CARD */
+.RG{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.RC{flex:1;min-width:148px;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs);padding:14px;position:relative;overflow:hidden;transition:all .2s}
+.RC:hover{border-color:var(--bdrb);transform:translateY(-2px)}
+.RCT{height:4px;border-radius:4px 4px 0 0;position:absolute;top:0;left:0;right:0}
+.RN{font-size:13px;font-weight:700;margin-bottom:4px}.RW{font-size:11px;color:var(--tx3);margin-bottom:10px}
+/* DONUT */
+.DS{background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--r);padding:28px 24px;margin-bottom:20px;position:relative;overflow:hidden}
+.DS::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(56,139,253,.04),transparent 50%);pointer-events:none}
+.DSH{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:16px;flex-wrap:wrap}
+.TABS{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.TAB{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:transparent;color:var(--tx2);transition:all .2s;font-family:var(--f)}
+.TAB:hover{border-color:var(--bdrb);color:var(--tx)}
+.TAB.ACT{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 16px rgba(56,139,253,.35)}
+.DP{display:none}.DP.SHW{display:block}
+.DGrid{display:grid;gap:18px}
+.DC{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs);padding:18px 12px;display:flex;flex-direction:column;align-items:center;transition:all .2s;position:relative;overflow:hidden}
+.DC:hover{border-color:var(--bdrb);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.DC-lbl{font-size:12px;font-weight:700;margin-bottom:10px;text-align:center;color:var(--tx2);line-height:1.3}
+.DC-sub{font-size:10px;color:var(--tx3);margin-top:5px;text-align:center}
+.DC-info{margin-top:9px;width:100%}
+.DC-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.DC-row:last-child{border-bottom:none}
+.DC-k{color:var(--tx3)}.DC-v{font-family:var(--m);font-weight:600}
+.DC-inp{margin-top:10px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px}
+.DCI{width:62px;background:rgba(8,13,20,.8);border:1px solid var(--bdr);border-radius:6px;color:var(--tx);font-family:var(--m);font-size:13px;font-weight:600;padding:4px 8px;text-align:center;outline:none;transition:border-color .2s}
+.DCI:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(56,139,253,.15)}
+.DCI::-webkit-inner-spin-button{-webkit-appearance:none}
+.DW{position:relative;width:110px;height:110px;flex-shrink:0}
+.DW svg{width:110px;height:110px;transform:rotate(-90deg)}
+.DBG{fill:none;stroke:rgba(255,255,255,.07);stroke-width:11}
+.DFG{fill:none;stroke-width:11;stroke-linecap:round;transition:stroke-dasharray 1s cubic-bezier(.34,1.56,.64,1),stroke .4s}
+.DC-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.DC-pct{font-size:19px;font-weight:800;font-family:var(--m);line-height:1}
+.DC-tgt{font-size:9px;color:var(--tx3);font-family:var(--m);margin-top:2px}
+/* LAYOUT */
+.G2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.C2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* SUMMARY */
+.SB{background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--r);padding:20px 24px;margin-top:24px;position:relative;overflow:hidden}
+.SB::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(56,139,253,.05),transparent 60%);pointer-events:none}
+.SBt{font-size:14px;font-weight:700;margin-bottom:16px;color:var(--tx2);text-transform:uppercase;letter-spacing:1px}
+.SBg{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+.SBi{text-align:center}.SBl{font-size:11px;color:var(--tx2);margin-bottom:8px;font-weight:600}
+.SBbw{height:60px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:6px}
+.SBb{width:32px;border-radius:4px 4px 0 0;transition:height .8s cubic-bezier(.34,1.56,.64,1)}
+.SBv{font-size:14px;font-weight:800;font-family:var(--m)}
+.LU{font-size:11px;color:var(--tx3);font-family:var(--m);margin-top:16px;text-align:right}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdrb);border-radius:99px}
+@media(max-width:900px){.pie-layout{grid-template-columns:1fr}.legend-grid{grid-template-columns:1fr}.G2{grid-template-columns:1fr}.C2{grid-template-columns:1fr}.kg{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<div class="W">
+
+<!-- HEADER -->
+<header>
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="hi" style="background:linear-gradient(135deg,#1a2d45,#1e3a5f);box-shadow:0 0 20px rgba(56,139,253,.2)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M8 21V11h3v10M13 21V11h3v10" stroke="#388bfd" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 7h6" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div><div class="ht">Construction Progress Dashboard</div><div class="hs">รายงานความคืบหน้างานก่อสร้าง · บันทึกออนไลน์อัตโนมัติ</div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <div class="live"><div class="ld"></div>LIVE</div>
+    <button class="btn btn-green" onclick="saveData()">💾 บันทึก</button>
+    <button class="btn btn-orange" onclick="loadData()">📂 โหลด</button>
+    <button class="btn btn-red" onclick="clearData()">🗑️ ล้างข้อมูล</button>
+    <button class="btn" onclick="window.print()" style="background:transparent;color:var(--tx2);border:1px solid var(--bdr);padding:8px 16px;font-size:12px;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--bdrb)';this.style.color='var(--tx)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--tx2)'">พิมพ์</button>
+  </div>
+</header>
+
+<!-- SAVE STATUS BAR -->
+<div class="save-bar">
+  <div class="save-dot" id="sv-dot"></div>
+  <span id="save-status" style="color:var(--tx2)">กำลังโหลดข้อมูลล่าสุด...</span>
+  <span id="save-time" style="margin-left:auto"></span>
+  <span style="font-size:11px;color:var(--tx3);font-family:var(--m);margin-left:16px">🔑 รหัสข้อมูล: <b style="color:var(--blue)">construction-progress-v1</b></span>
+</div>
+
+<!-- KPI -->
+<div class="kg">
+  <div class="kc G"><div class="ki">✅</div><div class="kl">งานเสร็จสมบูรณ์</div><div class="kv" id="kp-d">—</div><div class="ks">จาก 7 รายการ</div></div>
+  <div class="kc O"><div class="ki">⚡</div><div class="kl">กำลังดำเนินการ</div><div class="kv" id="kp-p">—</div><div class="ks">รายการที่ต้องติดตาม</div></div>
+  <div class="kc B"><div class="ki">📊</div><div class="kl">ความคืบหน้าโดยรวม</div><div class="kv" id="kp-o">—</div><div class="ks">เฉลี่ยทุกหัวข้อ</div></div>
+  <div class="kc R"><div class="ki">⏳</div><div class="kl">ยังไม่เริ่ม</div><div class="kv" id="kp-n">—</div><div class="ks">รายการ</div></div>
+</div>
+
+<!-- ══════════ 3D PIE CHART ══════════ -->
+<div class="pie-section">
+  <div class="pie-top">
+    <div>
+      <div class="pie-title">🥧 3D Pie Chart — ภาพรวมความคืบหน้าทุกงาน</div>
+      <div class="pie-sub">แสดงสัดส่วนของงานแต่ละหัวข้อ เทียบกับเป้าหมาย · คลิกที่ Legend เพื่อ highlight</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-blue" style="font-size:11px;padding:6px 12px" onclick="togglePieMode()">
+        <span id="pie-mode-lbl">เปลี่ยน: % ที่ทำได้</span>
+      </button>
+    </div>
+  </div>
+  <div class="pie-layout">
+    <div class="pie-wrap">
+      <canvas id="pieChart" height="340"></canvas>
+      <div class="pie-center-info">
+        <div class="pie-center-pct" id="pie-center-pct">—</div>
+        <div class="pie-center-lbl" id="pie-center-lbl">ภาพรวม</div>
+      </div>
+    </div>
+    <div>
+      <div class="legend-grid" id="pie-legend"></div>
+      <div style="margin-top:16px;padding:14px;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs)">
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px">สถิติโดยรวม</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="text-align:center;padding:8px;background:var(--bgc);border-radius:6px">
+            <div style="font-size:20px;font-weight:800;font-family:var(--m);color:var(--green)" id="stat-done">—</div>
+            <div style="font-size:10px;color:var(--tx2);margin-top:2px">งานเสร็จแล้ว</div>
+          </div>
+          <div style="text-align:center;padding:8px;background:var(--bgc);border-radius:6px">
+            <div style="font-size:20px;font-weight:800;font-family:var(--m);color:var(--orange)" id="stat-rem">—</div>
+            <div style="font-size:10px;color:var(--tx2);margin-top:2px">งานที่เหลือ</div>
+          </div>
+          <div style="text-align:center;padding:8px;background:var(--bgc);border-radius:6px">
+            <div style="font-size:20px;font-weight:800;font-family:var(--m);color:var(--blue)" id="stat-ovr">—</div>
+            <div style="font-size:10px;color:var(--tx2);margin-top:2px">ความคืบหน้ารวม</div>
+          </div>
+          <div style="text-align:center;padding:8px;background:var(--bgc);border-radius:6px">
+            <div style="font-size:20px;font-weight:800;font-family:var(--m);color:var(--cyan)" id="stat-sec">7</div>
+            <div style="font-size:10px;color:var(--tx2);margin-top:2px">หัวข้องาน</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DONUT CIRCULAR DASHBOARD -->
+<div class="DS">
+  <div class="DSH">
+    <div><div style="font-size:15px;font-weight:800">🎯 Circular Progress Dashboard — แดชบอร์ดวงกลมแยกงาน 1–7</div>
+    <div style="font-size:12px;color:var(--tx2);margin-top:3px;font-family:var(--m)">เลือกแท็บเพื่อดูรายละเอียดแต่ละงาน · กรอกตัวเลขได้ในทุกหน้าต่าง</div></div>
+    <div id="hdr-donut" style="flex-shrink:0"></div>
+  </div>
+  <div class="TABS">
+    <button class="TAB ACT" onclick="showTab('all',this)">ภาพรวมทั้งหมด</button>
+    <button class="TAB" onclick="showTab('s1',this)">① หลังคา</button>
+    <button class="TAB" onclick="showTab('s2',this)">② ก่ออิฐใน 2-5</button>
+    <button class="TAB" onclick="showTab('s3',this)">③ ก่ออิฐนอก</button>
+    <button class="TAB" onclick="showTab('s4',this)">④ ก่ออิฐ ชั้น 1</button>
+    <button class="TAB" onclick="showTab('s5',this)">⑤ งานไฟฟ้า</button>
+    <button class="TAB" onclick="showTab('s6',this)">⑥ งานท่อน้ำดี</button>
+    <button class="TAB" onclick="showTab('s7',this)">⑦ งานฉาบผนัง</button>
+  </div>
+  <div class="DP SHW" id="tab-all"><div class="DGrid" style="grid-template-columns:repeat(7,1fr)" id="g-all"></div></div>
+  <div class="DP" id="tab-s1"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">งานติดตั้งหลังคาเมทัลชีท · ขวา→ซ้าย · เป้า 100%</div><div style="display:grid;grid-template-columns:180px 1fr;gap:24px;align-items:start" id="g-s1"></div></div>
+  <div class="DP" id="tab-s2"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">ก่ออิฐภายใน ชั้น 2–5 · เป้า 100% ต่อชั้น</div><div class="DGrid" style="grid-template-columns:repeat(5,1fr)" id="g-s2"></div></div>
+  <div class="DP" id="tab-s3"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">ก่ออิฐภายนอก · 5 ชั้น 4 ด้าน · เป้า 50%</div><div class="DGrid" style="grid-template-columns:repeat(6,1fr)" id="g-s3"></div></div>
+  <div class="DP" id="tab-s4"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">ก่ออิฐภายใน ชั้น 1 · 5 ห้อง · เป้า 100%</div><div class="DGrid" style="grid-template-columns:repeat(6,1fr)" id="g-s4"></div></div>
+  <div class="DP" id="tab-s5"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">งานไฟฟ้า กรีดผนัง+ฝังท่อ · 44 ห้อง · เป้า 80%</div><div class="DGrid" style="grid-template-columns:repeat(5,1fr)" id="g-s5"></div></div>
+  <div class="DP" id="tab-s6"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">งานเดินท่อน้ำดี · 26 ห้อง · เป้า 50%</div><div class="DGrid" style="grid-template-columns:repeat(4,1fr)" id="g-s6"></div></div>
+  <div class="DP" id="tab-s7"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">งานฉาบผนังภายใน · ชั้น 4 และชั้น 2 · เป้า 40%</div><div class="DGrid" style="grid-template-columns:repeat(5,1fr)" id="g-s7"></div></div>
+</div>
+
+<!-- S1 + S4 -->
+<div class="G2">
+<div class="card">
+  <div class="SH"><div class="SN">1</div><div class="ST">งานติดตั้งหลังคาเมทัลชีท</div><div class="Stg" style="margin-left:auto">เป้า 100%</div></div>
+  <div class="PW"><div class="PM"><span class="PL">ความคืบหน้ารวม</span><div class="IG"><input class="PI" type="number" min="0" max="100" id="s1" value="100" oninput="onS1()"><span class="Ps">%</span><span class="PP" id="s1p">100%</span></div></div><div class="PBG"><div class="PF g" id="s1b" style="width:100%"></div></div></div>
+  <div class="DIV"></div>
+  <div style="font-size:12px;color:var(--tx2);margin-bottom:10px">ทิศทางการติดตั้ง (ขวา → ซ้าย)</div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div style="flex:1;padding:10px;background:var(--dg);border:1px solid rgba(0,230,118,.3);border-radius:8px;text-align:center"><div style="font-size:11px;color:var(--green);font-weight:600">ด้านขวา</div><div style="font-size:20px;margin:4px 0">🟢</div><div style="font-size:11px;color:var(--tx2)">เสร็จแล้ว</div></div>
+    <div style="font-size:22px;color:var(--blue)">→</div>
+    <div style="flex:1;padding:10px;background:var(--dg);border:1px solid rgba(0,230,118,.3);border-radius:8px;text-align:center"><div style="font-size:11px;color:var(--green);font-weight:600">กลางอาคาร</div><div style="font-size:20px;margin:4px 0">🟢</div><div style="font-size:11px;color:var(--tx2)">เสร็จแล้ว</div></div>
+    <div style="font-size:22px;color:var(--blue)">→</div>
+    <div style="flex:1;padding:10px;background:var(--dg);border:1px solid rgba(0,230,118,.3);border-radius:8px;text-align:center"><div style="font-size:11px;color:var(--green);font-weight:600">ด้านซ้าย</div><div style="font-size:20px;margin:4px 0">🟢</div><div style="font-size:11px;color:var(--tx2)">เสร็จแล้ว</div></div>
+  </div>
+</div>
+<div class="card">
+  <div class="SH"><div class="SN" style="background:var(--orange)">4</div><div class="ST">งานก่ออิฐภายใน ชั้น 1</div><div class="Stg" style="margin-left:auto">เป้า 100%</div></div>
+  <div class="PW" style="margin-bottom:16px"><div class="PM"><span class="PL">รวมทั้งชั้น 1</span><div class="IG"><input class="PI" type="number" min="0" max="100" id="s4t" value="2" oninput="setBar('s4t','s4tb','s4tp');ra()"><span class="Ps">%</span><span class="PP" id="s4tp">2%</span></div></div><div class="PBG"><div class="PF r" id="s4tb" style="width:2%"></div></div></div>
+  <div class="RG">
+    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องซักรีด</div><div class="RW">น้ำหนัก 30%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r41b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r41" value="5" oninput="setBar('r41','r41b','r41p');ra()"><span class="Ps">%</span><span class="PP" id="r41p" style="color:var(--orange)">5%</span></div></div>
+    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องพัก 101</div><div class="RW">น้ำหนัก 25%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r42b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r42" value="5" oninput="setBar('r42','r42b','r42p');ra()"><span class="Ps">%</span><span class="PP" id="r42p" style="color:var(--orange)">5%</span></div></div>
+    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องพัก 102</div><div class="RW">น้ำหนัก 25%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r43b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r43" value="5" oninput="setBar('r43','r43b','r43p');ra()"><span class="Ps">%</span><span class="PP" id="r43p" style="color:var(--orange)">5%</span></div></div>
+    <div class="RC"><div class="RCT" style="background:var(--red)"></div><div class="RN">ร้านค้า</div><div class="RW">น้ำหนัก 10%</div><div class="PBG" style="margin-bottom:8px"><div class="PF r" id="r44b" style="width:0%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r44" value="0" oninput="setBar('r44','r44b','r44p');ra()"><span class="Ps">%</span><span class="PP" id="r44p" style="color:var(--red)">0%</span></div></div>
+    <div class="RC"><div class="RCT" style="background:var(--red)"></div><div class="RN">ห้องซักอบ</div><div class="RW">น้ำหนัก 10%</div><div class="PBG" style="margin-bottom:8px"><div class="PF r" id="r45b" style="width:0%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r45" value="0" oninput="setBar('r45','r45b','r45p');ra()"><span class="Ps">%</span><span class="PP" id="r45p" style="color:var(--red)">0%</span></div></div>
+  </div>
+</div>
+</div>
+
+<!-- S2 -->
+<div class="card">
+  <div class="SH"><div class="SN">2</div><div class="ST">งานก่ออิฐภายใน (ชั้น 2–5)</div><div class="Stg" style="margin-left:auto">เป้า 100% ต่อชั้น</div></div>
+  <table class="FT"><thead><tr><th>ชั้น</th><th>ทิศทาง</th><th>ห้องทั้งหมด</th><th>ทำแล้ว</th><th style="min-width:180px">ความคืบหน้า</th><th>กรอกข้อมูล</th></tr></thead><tbody id="s2body"></tbody></table>
+</div>
+
+<!-- S3 -->
+<div class="card">
+  <div class="SH"><div class="SN" style="background:var(--cyan);color:#000">3</div><div class="ST">งานก่ออิฐภายนอก</div><div class="Stg" style="margin-left:8px">เป้า 50%</div><span style="font-size:11px;color:var(--tx3);background:var(--bg2);border:1px solid var(--bdr);padding:2px 8px;border-radius:4px">พื้นที่รวม 980 ตร.ม.</span><div style="margin-left:auto;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--tx2)">รวม:</span><span style="font-size:20px;font-weight:800;font-family:var(--m);color:var(--orange)" id="s3tp">—</span></div></div>
+  <div class="PBG" style="height:8px;margin-bottom:20px"><div class="PF o" id="s3bar" style="width:0%"></div></div>
+  <div style="overflow-x:auto"><table style="width:100%;border-collapse:separate;border-spacing:0 6px"><thead><tr>
+    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:left;text-transform:uppercase">ชั้น</th>
+    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">น้ำหนัก</th>
+    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านหน้า (ตร.ม.)</th>
+    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านหลัง (ตร.ม.)</th>
+    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านข้าง (ตร.ม.)</th>
+    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">%ชั้นนี้</th>
+    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">แถบ</th>
+  </tr></thead><tbody id="s3body"></tbody></table></div>
+</div>
+
+<!-- S5 S6 -->
+<div class="C2">
+<div class="card">
+  <div class="SH"><div class="SN" style="background:#9c27b0">5</div><div class="ST">งานไฟฟ้า กรีดผนัง+ฝังท่อ</div><div class="Stg" style="margin-left:auto">เป้า 80%</div></div>
+  <div class="C2" style="margin-bottom:14px"><div class="MS"><span class="MSi">🔌</span><div><div class="MSl">ห้องทั้งหมด</div><div class="MSv">44 ห้อง</div></div></div><div class="MS"><span class="MSi">⚖️</span><div><div class="MSl">น้ำหนักต่อห้อง</div><div class="MSv">2.27%</div></div></div></div>
+  <div class="PW"><div class="PM"><span class="PL">ชั้น 2–5</span><div class="IG"><input class="PI" type="number" min="0" max="100" step=".1" id="s5" value="4.5" oninput="setBar('s5','s5b','s5p');ra()"><span class="Ps">%</span><span class="PP" id="s5p" style="color:var(--red)">4.5%</span></div></div><div class="PBG"><div class="PF r" id="s5b" style="width:4.5%"></div></div></div>
+  <div style="margin-top:12px;padding:10px 14px;background:var(--bg2);border-radius:8px;border:1px solid var(--bdr)"><div style="font-size:12px;color:var(--tx2)">ยังต้องทำอีก: <span style="color:var(--orange);font-weight:700;font-family:var(--m)" id="s5r">—</span></div><div style="font-size:12px;color:var(--tx2);margin-top:4px">ห้องที่ทำแล้ว: <span style="color:var(--tx);font-weight:700;font-family:var(--m)" id="s5rm">—</span></div></div>
+</div>
+<div class="card">
+  <div class="SH"><div class="SN" style="background:#00838f">6</div><div class="ST">งานเดินท่อน้ำดี</div><div class="Stg" style="margin-left:auto">เป้า 50%</div></div>
+  <div class="C2" style="margin-bottom:14px"><div class="MS"><span class="MSi">💧</span><div><div class="MSl">ห้องทั้งหมด</div><div class="MSv">26 ห้อง</div></div></div><div class="MS"><span class="MSi">⚖️</span><div><div class="MSl">น้ำหนักต่อห้อง</div><div class="MSv">3.85%</div></div></div></div>
+  <div class="PW"><div class="PM"><span class="PL">ชั้น 1–3</span><div class="IG"><input class="PI" type="number" min="0" max="100" step=".1" id="s6" value="0" oninput="setBar('s6','s6b','s6p');ra()"><span class="Ps">%</span><span class="PP" id="s6p" style="color:var(--red)">0%</span></div></div><div class="PBG"><div class="PF r" id="s6b" style="width:0%"></div></div></div>
+  <div style="margin-top:12px;padding:10px 14px;background:var(--bg2);border-radius:8px;border:1px solid var(--bdr)"><div style="font-size:12px;color:var(--tx2)">ยังต้องทำอีก: <span style="color:var(--orange);font-weight:700;font-family:var(--m)" id="s6r">—</span></div><div style="font-size:12px;color:var(--tx2);margin-top:4px">ห้องที่ทำแล้ว: <span style="color:var(--tx);font-weight:700;font-family:var(--m)" id="s6rm">—</span></div></div>
+</div>
+</div>
+
+<!-- S7 -->
+<div class="card">
+  <div class="SH"><div class="SN" style="background:#f57c00">7</div><div class="ST">งานฉาบผนังภายใน (ชั้น 4 และ ชั้น 2)</div><div class="Stg" style="margin-left:auto">เป้า 40%</div><span style="font-size:11px;color:var(--tx3);background:var(--bg2);border:1px solid var(--bdr);padding:2px 8px;border-radius:4px">น้ำหนักห้องละ 4.55%</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div>
+      <div class="PW"><div class="PM"><span class="PL">ความคืบหน้าฉาบผนัง</span><div class="IG"><input class="PI" type="number" min="0" max="100" step=".01" id="s7" value="18.2" oninput="setBar('s7','s7b','s7p');updPlaster();ra()"><span class="Ps">%</span><span class="PP" id="s7p" style="color:var(--orange)">18.2%</span></div></div><div class="PBG"><div class="PF o" id="s7b" style="width:18.2%"></div></div></div>
+      <div style="margin-top:10px;padding:10px 14px;background:var(--bg2);border-radius:8px;border:1px solid var(--bdr)"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--tx2)">ทำแล้ว: <span style="color:var(--green);font-weight:700;font-family:var(--m)" id="s7dr">4 ห้อง</span></span><span style="font-size:12px;color:var(--tx2)">ยังต้องทำ: <span style="color:var(--orange);font-weight:700;font-family:var(--m)" id="s7r">21.8%</span></span></div></div>
+    </div>
+    <div><div style="font-size:12px;color:var(--tx2);margin-bottom:10px">สถานะห้อง (แต่ละช่อง = 4.55%)</div><div class="PR" id="prooms"></div></div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="SB">
+  <div class="SBt">สรุปภาพรวมโครงการ</div>
+  <div class="SBg" id="sbg"></div>
+  <div class="LU" id="lu"></div>
+</div>
+
+</div><!-- /W -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const FD=[
+  {id:'f2',label:'ชั้น 2',rooms:11,pct:94},
+  {id:'f3',label:'ชั้น 3',rooms:11,pct:97},
+  {id:'f4',label:'ชั้น 4',rooms:8, pct:76},
+  {id:'f5',label:'ชั้น 5',rooms:11,pct:97},
+];
+const OD=[
+  {id:'o1',label:'ชั้น 1',wt:13,fa:33.6, ba:33.6, sa:30,fd:0, bd:0, sd:0},
+  {id:'o2',label:'ชั้น 2',wt:21,fa:72.94,ba:72.94,sa:30,fd:30,bd:30,sd:0},
+  {id:'o3',label:'ชั้น 3',wt:21,fa:72.94,ba:72.94,sa:30,fd:25,bd:30,sd:0},
+  {id:'o4',label:'ชั้น 4',wt:21,fa:72.94,ba:72.94,sa:30,fd:35,bd:20,sd:0},
+  {id:'o5',label:'ชั้น 5',wt:24,fa:87.45,ba:87.45,sa:30,fd:80,bd:80,sd:0},
+];
+const S4R=[
+  {id:'r41',lbl:'ห้องซักรีด', wt:30},
+  {id:'r42',lbl:'ห้องพัก 101',wt:25},
+  {id:'r43',lbl:'ห้องพัก 102',wt:25},
+  {id:'r44',lbl:'ร้านค้า',    wt:10},
+  {id:'r45',lbl:'ห้องซักอบ', wt:10},
+];
+const SUMDEF=[
+  {lbl:'หลังคาเมทัลชีท',  key:'s1',  tgt:100,col:'#00e676'},
+  {lbl:'ก่ออิฐใน (2-5)', key:'f25',  tgt:100,col:'#00d4ff'},
+  {lbl:'ก่ออิฐภายนอก',   key:'out',  tgt:50, col:'#00bcd4'},
+  {lbl:'ก่ออิฐ ชั้น 1',  key:'s4',   tgt:100,col:'#ff9500'},
+  {lbl:'งานไฟฟ้า',        key:'s5',   tgt:80, col:'#ce93d8'},
+  {lbl:'งานท่อน้ำดี',     key:'s6',   tgt:50, col:'#388bfd'},
+  {lbl:'งานฉาบผนัง',      key:'s7',   tgt:40, col:'#ffd600'},
+];
+
+// ═══════════════════════════════════════════════════════════
+// SAVE / LOAD  (Persistent Storage API)
+// ═══════════════════════════════════════════════════════════
+const SAVE_KEY = 'construction-progress-v1';
+let _saveTimer = null;
+let _unsaved = false;
+
+function showToast(msg, type='ok', dur=3000){
+  const t=document.getElementById('toast');
+  t.innerHTML=`<span>${type==='ok'?'✅':type==='err'?'❌':'ℹ️'}</span> ${msg}`;
+  t.className=type;
+  t.style.display='flex';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.style.display='none',dur);
+}
+
+function setSaveStatus(status, msg, time=''){
+  const dot=document.getElementById('sv-dot');
+  const st=document.getElementById('save-status');
+  const tm=document.getElementById('save-time');
+  dot.className='save-dot '+status;
+  st.textContent=msg;
+  if(time) tm.textContent='บันทึกล่าสุด: '+time;
+}
+
+function collectState(){
+  return {
+    s1: gv('s1'), s4t: gv('s4t'), s5: gv('s5'), s6: gv('s6'), s7: gv('s7'),
+    r41:gv('r41'),r42:gv('r42'),r43:gv('r43'),r44:gv('r44'),r45:gv('r45'),
+    fd: FD.map(f=>f.pct),
+    od: OD.map(o=>({fd:o.fd,bd:o.bd,sd:o.sd})),
+    savedAt: new Date().toISOString()
+  };
+}
+
+function applyState(s){
+  if(!s) return;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el){el.value=v;}};
+  set('s1',s.s1);set('s4t',s.s4t);set('s5',s.s5);set('s6',s.s6);set('s7',s.s7);
+  set('r41',s.r41);set('r42',s.r42);set('r43',s.r43);set('r44',s.r44);set('r45',s.r45);
+  if(s.fd) FD.forEach((f,i)=>{if(s.fd[i]!==undefined) f.pct=s.fd[i];});
+  if(s.od) OD.forEach((o,i)=>{if(s.od[i]){o.fd=s.od[i].fd;o.bd=s.od[i].bd;o.sd=s.od[i].sd;}});
+  // rebuild tables & sync
+  buildS2(); buildS3();
+  setBar('s1','s1b','s1p');
+  setBar('s4t','s4tb','s4tp');
+  setBar('s5','s5b','s5p');
+  setBar('s6','s6b','s6p');
+  setBar('s7','s7b','s7p');
+  ['r41','r42','r43','r44','r45'].forEach(id=>setBar(id,id+'b',id+'p'));
+  updPlaster(); buildDonuts(); ra();
+}
+
+async function saveData(){
+  setSaveStatus('saving','กำลังบันทึก...');
+  try{
+    const state = collectState();
+    const result = await window.storage.set(SAVE_KEY, JSON.stringify(state));
+    if(result){
+      const t=new Date().toLocaleString('th-TH');
+      setSaveStatus('saved','บันทึกสำเร็จ ✓',t);
+      showToast('บันทึกข้อมูลสำเร็จ 💾','ok');
+      _unsaved=false;
+    } else {
+      setSaveStatus('unsaved','บันทึกล้มเหลว');
+      showToast('ไม่สามารถบันทึกได้','err');
+    }
+  }catch(e){
+    setSaveStatus('unsaved','บันทึกล้มเหลว: '+e.message);
+    showToast('เกิดข้อผิดพลาด: '+e.message,'err');
+  }
+}
+
+async function loadData(){
+  setSaveStatus('saving','กำลังโหลดข้อมูล...');
+  try{
+    const result = await window.storage.get(SAVE_KEY);
+    if(result && result.value){
+      const s = JSON.parse(result.value);
+      applyState(s);
+      const t = s.savedAt ? new Date(s.savedAt).toLocaleString('th-TH') : '—';
+      setSaveStatus('saved','โหลดข้อมูลสำเร็จ ✓',t);
+      showToast('โหลดข้อมูลสำเร็จ 📂','ok');
+    } else {
+      setSaveStatus('unsaved','ไม่พบข้อมูลที่บันทึกไว้');
+      showToast('ยังไม่มีข้อมูลที่บันทึกไว้','info',4000);
+    }
+  }catch(e){
+    setSaveStatus('unsaved','โหลดล้มเหลว');
+    showToast('ไม่พบข้อมูลบันทึก (ยังไม่เคยบันทึก)','info',4000);
+  }
+}
+
+async function clearData(){
+  if(!confirm('ต้องการล้างข้อมูลที่บันทึกไว้ทั้งหมดและคืนค่าเริ่มต้นใช่ไหม?')) return;
+  try{
+    await window.storage.delete(SAVE_KEY);
+    showToast('ล้างข้อมูลสำเร็จ 🗑️','ok');
+    setSaveStatus('unsaved','ล้างข้อมูลแล้ว');
+  }catch(e){ showToast('ล้างข้อมูลสำเร็จ (local)','ok'); }
+}
+
+// auto-save after 2s of inactivity
+function scheduleAutoSave(){
+  _unsaved=true;
+  clearTimeout(_saveTimer);
+  setSaveStatus('unsaved','มีการเปลี่ยนแปลง...');
+  _saveTimer=setTimeout(()=>{if(_unsaved) saveData();},2500);
+}
+
+// ═══════════════════════════════════════════════════════════
+// 3D PIE CHART
+// ═══════════════════════════════════════════════════════════
+let pieChart=null;
+let pieMode=0; // 0=actual%, 1=vs target ratio
+
+const PIE_COLORS=[
+  '#00e676','#00d4ff','#00bcd4','#ff9500','#ce93d8','#388bfd','#ffd600'
+];
+const PIE_COLORS_ALPHA = PIE_COLORS.map(c=>c+'cc');
+
+function getPieData(V){
+  if(pieMode===0){
+    // Show actual % values
+    return [V.s1, V.f25, V.out, V.s4, V.s5, V.s6, V.s7];
+  } else {
+    // Show ratio vs target (normalized to %)
+    return [
+      (V.s1/100)*100, (V.f25/100)*100, (V.out/50)*100,
+      (V.s4/100)*100, (V.s5/80)*100, (V.s6/50)*100, (V.s7/40)*100
+    ];
+  }
+}
+
+function buildPieChart(){
+  const V=getVals();
+  const labels=SUMDEF.map(s=>s.lbl);
+  const data=getPieData(V);
+  const canvas=document.getElementById('pieChart');
+
+  // 3D effect: offset each slice slightly
+  const offsets=data.map((_,i)=> i===0?12:0); // highlight first slice
+
+  if(pieChart){pieChart.destroy();}
+
+  Chart.defaults.font.family="'Sarabun', sans-serif";
+
+  pieChart=new Chart(canvas,{
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{
+        data,
+        backgroundColor:PIE_COLORS_ALPHA,
+        borderColor:PIE_COLORS,
+        borderWidth:2,
+        hoverOffset:18,
+        hoverBorderWidth:3,
+        offset:offsets,
+        // 3D-like shadow via multiple datasets trick
+      },{
+        // Shadow dataset for 3D depth effect
+        data:data.map(v=>v*0.08),
+        backgroundColor:PIE_COLORS.map(c=>c+'22'),
+        borderColor:'transparent',
+        borderWidth:0,
+        hoverOffset:0,
+        weight:0.12,
+        offset:data.map(()=>4),
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      cutout:'62%',
+      rotation:-90,
+      animation:{
+        animateRotate:true,
+        animateScale:true,
+        duration:900,
+        easing:'easeInOutQuart'
+      },
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'rgba(13,21,32,0.95)',
+          borderColor:'rgba(56,139,253,0.4)',
+          borderWidth:1,
+          padding:12,
+          titleFont:{size:13,weight:'bold'},
+          bodyFont:{size:12},
+          callbacks:{
+            title:ctx=>ctx[0].label,
+            label:ctx=>{
+              const V2=getVals();
+              const keys=['s1','f25','out','s4','s5','s6','s7'];
+              const tgts=[100,100,50,100,80,50,40];
+              const i=ctx.dataIndex;
+              const v=Object.values(V2)[i<4?i:(i===4?4:i===5?5:6)];
+              return [
+                ` ทำได้: ${parseFloat(ctx.raw).toFixed(1)}%`,
+                ` เป้าหมาย: ${tgts[i]}%`,
+                ` สัดส่วนต่อเป้า: ${((parseFloat(ctx.raw)/tgts[i])*100).toFixed(0)}%`
+              ];
+            }
+          }
+        }
+      },
+      onClick:(e,els)=>{
+        if(els.length>0){
+          const i=els[0].index;
+          const s=SUMDEF[i];
+          document.getElementById('pie-center-pct').textContent=
+            parseFloat(getPieData(getVals())[i]).toFixed(1)+'%';
+          document.getElementById('pie-center-lbl').textContent=s.lbl;
+        }
+      }
+    }
+  });
+
+  // Draw 3D shadow bottom arc via plugin
+  buildPieLegend(data, V);
+  updatePieStats(V);
+}
+
+function buildPieLegend(data, V){
+  const lg=document.getElementById('pie-legend');
+  const tgts=[100,100,50,100,80,50,40];
+  lg.innerHTML=SUMDEF.map((s,i)=>{
+    const v=parseFloat(data[i]).toFixed(1);
+    const ratio=(parseFloat(data[i])/tgts[i]);
+    const statCol=ratio>=.9?'#00e676':ratio>=.3?'#ff9500':'#ff4444';
+    return `<div class="legend-item" onclick="highlightPie(${i})" style="border-left:3px solid ${s.col}">
+      <div class="legend-dot" style="background:${s.col}"></div>
+      <div>
+        <div class="legend-name" style="color:var(--tx)">${s.lbl}</div>
+        <div style="font-size:10px;color:var(--tx3)">เป้า ${tgts[i]}%</div>
+      </div>
+      <div class="legend-val" style="color:${statCol}">${v}%</div>
+    </div>`;
+  }).join('');
+}
+
+function updatePieStats(V){
+  const all=[{v:V.s1,t:100},{v:V.f25,t:100},{v:V.out,t:50},{v:V.s4,t:100},{v:V.s5,t:80},{v:V.s6,t:50},{v:V.s7,t:40}];
+  const done=all.filter(x=>x.v>=x.t).length;
+  const ovr=all.reduce((a,x)=>a+(x.v/x.t),0)/all.length*100;
+  document.getElementById('stat-done').textContent=done+'/7';
+  document.getElementById('stat-rem').textContent=(7-done)+'งาน';
+  document.getElementById('stat-ovr').textContent=ovr.toFixed(0)+'%';
+  document.getElementById('pie-center-pct').textContent=ovr.toFixed(0)+'%';
+  document.getElementById('pie-center-lbl').textContent='ภาพรวม';
+}
+
+function highlightPie(idx){
+  if(!pieChart) return;
+  const meta=pieChart.getDatasetMeta(0);
+  meta.data.forEach((arc,i)=>{arc.options.offset=i===idx?20:0;});
+  pieChart.update();
+  const s=SUMDEF[idx];
+  const data=getPieData(getVals());
+  document.getElementById('pie-center-pct').textContent=parseFloat(data[idx]).toFixed(1)+'%';
+  document.getElementById('pie-center-lbl').textContent=s.lbl;
+}
+
+function updatePieChart(){
+  if(!pieChart) return;
+  const V=getVals();
+  const data=getPieData(V);
+  pieChart.data.datasets[0].data=data;
+  pieChart.data.datasets[1].data=data.map(v=>v*0.08);
+  pieChart.update('active');
+  buildPieLegend(data,V);
+  updatePieStats(V);
+}
+
+let pieModeNames=['โหมด: แสดง % ที่ทำได้','โหมด: แสดง % ต่อเป้าหมาย'];
+function togglePieMode(){
+  pieMode=(pieMode+1)%2;
+  document.getElementById('pie-mode-lbl').textContent=pieModeNames[(pieMode+1)%2];
+  buildPieChart();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+const R=50,CX=60,CY=60,CIRC=2*Math.PI*R;
+function gcol(r){return r>=.9?'#00e676':r>=.3?'#ff9500':'#ff4444'}
+function gclass(v,t=100){const r=v/t;return r>=.9?'g':r>=.3?'o':'r'}
+function gv(id){return Math.min(100,Math.max(0,parseFloat(document.getElementById(id)?.value)||0))}
+
+function getVals(){
+  const s1=gv('s1'),s4=gv('s4t'),s5=gv('s5'),s6=gv('s6'),s7=gv('s7');
+  const f25=FD.reduce((a,f)=>a+f.pct,0)/FD.length;
+  let out=0;OD.forEach(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2;out+=(da/fa)*o.wt;});
+  return{s1,f25,out,s4,s5,s6,s7};
+}
+
+function setBar(iid,bid,pid,tgt=100){
+  const v=gv(iid);
+  const bar=document.getElementById(bid),pct=document.getElementById(pid);
+  if(!bar||!pct) return v;
+  bar.style.width=v+'%';
+  pct.textContent=v.toFixed(v%1===0?0:1)+'%';
+  const c=gclass(v,tgt);
+  bar.className='PF '+c;
+  const cm={g:'var(--green)',o:'var(--orange)',r:'var(--red)',b:'var(--blue)'};
+  pct.style.color=cm[c]||'';
+  return v;
+}
+function onS1(){setBar('s1','s1b','s1p');ra();}
+
+// ═══════════════════════════════════════════════════════════
+// DONUT CHART
+// ═══════════════════════════════════════════════════════════
+function donutHTML(id,pct,tgt,col,lbl,sub,info=[],editable=false,eStep='1'){
+  const v=Math.min(100,Math.max(0,pct));
+  const dash=CIRC*(v/100);
+  const c=col||gcol(v/tgt);
+  const rows=info.map(({k,v:vv})=>`<div class="DC-row"><span class="DC-k">${k}</span><span class="DC-v" style="color:${c}">${vv}</span></div>`).join('');
+  const inp=editable?`<div class="DC-inp"><input class="DCI" type="number" min="0" max="100" step="${eStep}" id="${id}-I" value="${pct}" oninput="onDI('${id}')"><span style="font-size:11px;color:var(--tx2)">%</span></div>`:'';
+  return `<div class="DC" id="${id}">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${c};border-radius:3px 3px 0 0"></div>
+    <div class="DC-lbl">${lbl}</div>
+    <div class="DW"><svg viewBox="0 0 120 120"><circle class="DBG" cx="${CX}" cy="${CY}" r="${R}"/>
+      <circle class="DFG" id="${id}-FG" cx="${CX}" cy="${CY}" r="${R}" stroke="${c}" stroke-dasharray="${dash.toFixed(2)} ${CIRC.toFixed(2)}"/></svg>
+      <div class="DC-center"><div class="DC-pct" id="${id}-PC" style="color:${c}">${Math.round(v)}%</div><div class="DC-tgt">/ ${tgt}%</div></div>
+    </div>
+    ${sub?`<div class="DC-sub">${sub}</div>`:''}
+    ${rows?`<div class="DC-info">${rows}</div>`:''}
+    ${inp}</div>`;
+}
+function setDonut(id,pct,tgt,col){
+  const v=Math.min(100,Math.max(0,pct)),dash=CIRC*(v/100);
+  const c=col||gcol(v/tgt);
+  const fg=document.getElementById(id+'-FG'),pc=document.getElementById(id+'-PC');
+  if(fg){fg.setAttribute('stroke-dasharray',`${dash.toFixed(2)} ${CIRC.toFixed(2)}`);fg.setAttribute('stroke',c);}
+  if(pc){pc.textContent=Math.round(v)+'%';pc.style.color=c;}
+}
+function onDI(id){
+  const v=gv(id+'-I');
+  const map={'d-s1':'s1','d-s4t':'s4t','d-s5':'s5','d-s6':'s6','d-s7':'s7'};
+  if(map[id]){document.getElementById(map[id]).value=v;if(id==='d-s1')onS1();else{setBar(map[id],map[id]+'b',map[id]+'p');ra();}}
+  FD.forEach(f=>{if(id==='d-'+f.id){f.pct=v;const i=document.getElementById('inp-'+f.id);if(i)i.value=v;updateFloor(f.id);}});
+  S4R.forEach(r=>{if(id==='d-'+r.id){document.getElementById(r.id).value=v;setBar(r.id,r.id+'b',r.id+'p');ra();}});
+}
+
+function buildDonuts(){
+  const V=getVals();
+  // ALL
+  document.getElementById('g-all').innerHTML=[
+    [V.s1,100,'#00e676','① หลังคาเมทัลชีท','d-s1','เป้า 100%'],
+    [V.f25,100,'#00d4ff','② ก่ออิฐใน 2-5','d-f25','เฉลี่ยทุกชั้น'],
+    [V.out,50,'#00bcd4','③ ก่ออิฐภายนอก','d-out','เป้า 50%'],
+    [V.s4,100,'#ff9500','④ ก่ออิฐ ชั้น 1','d-s4','เป้า 100%'],
+    [V.s5,80,'#ce93d8','⑤ งานไฟฟ้า','d-s5','เป้า 80%'],
+    [V.s6,50,'#388bfd','⑥ งานท่อน้ำดี','d-s6','เป้า 50%'],
+    [V.s7,40,'#ffd600','⑦ งานฉาบผนัง','d-s7','เป้า 40%'],
+  ].map(([pct,tgt,col,lbl,id,sub])=>donutHTML(id,pct,tgt,col,lbl,sub,[{k:'ทำได้',v:parseFloat(pct).toFixed(1)+'%'},{k:'เหลือ',v:Math.max(0,tgt-pct).toFixed(1)+'%'}])).join('');
+  // header
+  const ovr=(V.s1/100+V.f25/100+V.out/50+V.s4/100+V.s5/80+V.s6/50+V.s7/40)/7*100;
+  document.getElementById('hdr-donut').innerHTML=donutHTML('d-ov',ovr,100,gcol(ovr/100),'ภาพรวม','ทุกงาน 1–7',[]);
+  // S1
+  document.getElementById('g-s1').innerHTML=donutHTML('d-s1-r',V.s1,100,'#00e676','หลังคาเมทัลชีท','ภาพรวม',[{k:'เป้าหมาย',v:'100%'},{k:'ทำได้',v:V.s1+'%'},{k:'คงเหลือ',v:Math.max(0,100-V.s1)+'%'}],true)+
+    `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">${['ด้านขวา','กลางอาคาร','ด้านซ้าย'].map((lbl,i)=>`<div style="padding:16px;background:var(--dg);border:1px solid rgba(0,230,118,.3);border-radius:8px;text-align:center"><div style="font-size:22px">🟢</div><div style="font-size:12px;color:var(--green);font-weight:700;margin-top:6px">${lbl}</div><div style="font-size:10px;color:var(--tx2);margin-top:3px">${i===0?'เริ่มต้น':i===2?'สิ้นสุด':'ผ่านแล้ว'}</div></div>`).join('<div style="display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--blue)">→</div>')}</div>`;
+  // S2
+  const gs2=document.getElementById('g-s2');
+  gs2.innerHTML=donutHTML('d-f-avg',V.f25,100,'#00d4ff','เฉลี่ยทุกชั้น','ก่ออิฐใน 2-5',[{k:'4 ชั้น',v:'รวม'},{k:'เฉลี่ย',v:V.f25.toFixed(1)+'%'}])+
+    FD.map(f=>donutHTML('d-'+f.id,f.pct,100,gcol(f.pct/100),f.label,'ก่ออิฐภายใน',[{k:'ห้อง',v:f.rooms+''},{k:'ทำแล้ว',v:Math.ceil(f.pct/(100/f.rooms))+' ห้อง'},{k:'ทิศทาง',v:'ซ้าย→ขวา'}],true,f.id+'-DI')).join('');
+  // S3
+  let outT=0;OD.forEach(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2;outT+=(da/fa)*o.wt;});
+  document.getElementById('g-s3').innerHTML=donutHTML('d-out-ov',outT,50,'#00bcd4','ภาพรวมภายนอก','5 ชั้น 4 ด้าน',[{k:'เป้าหมาย',v:'50%'},{k:'คงเหลือ',v:Math.max(0,50-outT).toFixed(1)+'%'}])+
+    OD.map(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,pct=(da/fa)*100,wp=(da/fa)*o.wt;return donutHTML('d-out-'+o.id,pct,100,gcol(pct/100),o.label,'ก่ออิฐนอก',[{k:'น้ำหนัก',v:o.wt+'%'},{k:'%สมทบ',v:wp.toFixed(1)+'%'}]);}).join('');
+  // S4
+  const s4t=gv('s4t');
+  document.getElementById('g-s4').innerHTML=donutHTML('d-s4-ov',s4t,100,'#ff9500','รวม ชั้น 1','5 ห้อง',[{k:'เป้าหมาย',v:'100%'},{k:'ทำได้',v:s4t+'%'}])+
+    S4R.map(r=>{const v=gv(r.id);return donutHTML('d-'+r.id,v,100,gcol(v/100),r.lbl,'ก่ออิฐ ชั้น 1',[{k:'น้ำหนัก',v:r.wt+'%'}],true);}).join('');
+  // S5
+  const t5=gv('s5');
+  document.getElementById('g-s5').innerHTML=donutHTML('d-s5-ov',t5,80,'#ce93d8','ภาพรวม ไฟฟ้า','44 ห้อง',[{k:'เป้าหมาย',v:'80%'},{k:'ทำแล้ว',v:Math.round(t5/2.27)+' ห้อง'}],true,'0.1')+
+    ['ชั้น 2','ชั้น 3','ชั้น 4','ชั้น 5'].map((lbl,i)=>donutHTML('d-s5-f'+i,t5/4,20,'#ce93d8',lbl,'งานไฟฟ้า',[{k:'ห้อง',v:'11 ห้อง'},{k:'เป้า/ชั้น',v:'20%'}])).join('');
+  // S6
+  const t6=gv('s6');
+  document.getElementById('g-s6').innerHTML=donutHTML('d-s6-ov',t6,50,'#388bfd','ภาพรวม ท่อน้ำดี','26 ห้อง',[{k:'เป้าหมาย',v:'50%'},{k:'ทำแล้ว',v:Math.round(t6/3.85)+' ห้อง'}],true,'0.1')+
+    [['ชั้น 1',9],['ชั้น 2',9],['ชั้น 3',8]].map(([lbl,rm],i)=>donutHTML('d-s6-f'+i,t6/3,50/3,'#388bfd',lbl,'งานท่อน้ำดี',[{k:'ห้อง',v:rm+' ห้อง'}])).join('');
+  // S7
+  const t7=gv('s7'),rd=Math.round(t7/4.55);
+  document.getElementById('g-s7').innerHTML=donutHTML('d-s7-ov',t7,40,'#ffd600','ภาพรวม ฉาบผนัง','ชั้น 4+2',[{k:'ทำแล้ว',v:rd+' ห้อง'},{k:'คงเหลือ',v:Math.max(0,40-t7).toFixed(1)+'%'}],true,'0.01')+
+    Array.from({length:9},(_,i)=>donutHTML('d-s7-r'+i,i<rd?100:0,100,i<rd?'#00e676':'#334155','ห้อง '+(i+1),i<rd?'ฉาบแล้ว':'รอดำเนินการ',[{k:'น้ำหนัก',v:'4.55%'}])).join('');
+}
+
+function updateDonuts(){
+  const V=getVals();
+  const ovr=(V.s1/100+V.f25/100+V.out/50+V.s4/100+V.s5/80+V.s6/50+V.s7/40)/7*100;
+  [['d-s1',V.s1,100],['d-f25',V.f25,100],['d-out',V.out,50],['d-s4',V.s4,100],['d-s5',V.s5,80],['d-s6',V.s6,50],['d-s7',V.s7,40]].forEach(([id,p,t])=>setDonut(id,p,t));
+  setDonut('d-ov',ovr,100);setDonut('d-s1-r',V.s1,100);
+  setDonut('d-f-avg',V.f25,100,'#00d4ff');
+  FD.forEach(f=>setDonut('d-'+f.id,f.pct,100));
+  let outT=0;OD.forEach(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,p=(da/fa)*100;setDonut('d-out-'+o.id,p,100);outT+=(da/fa)*o.wt;});
+  setDonut('d-out-ov',outT,50,'#00bcd4');
+  setDonut('d-s4-ov',V.s4,100,'#ff9500');
+  S4R.forEach(r=>setDonut('d-'+r.id,gv(r.id),100));
+  const t5=V.s5;setDonut('d-s5-ov',t5,80,'#ce93d8');for(let i=0;i<4;i++)setDonut('d-s5-f'+i,t5/4,20,'#ce93d8');
+  const t6=V.s6;setDonut('d-s6-ov',t6,50,'#388bfd');for(let i=0;i<3;i++)setDonut('d-s6-f'+i,t6/3,50/3,'#388bfd');
+  const t7=V.s7,rd2=Math.round(t7/4.55);setDonut('d-s7-ov',t7,40,'#ffd600');for(let i=0;i<9;i++)setDonut('d-s7-r'+i,i<rd2?100:0,100,i<rd2?'#00e676':'#334155');
+  const syncMap=[['d-s1-r','s1'],['d-s5-ov','s5'],['d-s6-ov','s6'],['d-s7-ov','s7']];
+  syncMap.forEach(([did,mid])=>{const el=document.getElementById(did+'-I');if(el&&document.activeElement!==el)el.value=gv(mid);});
+  FD.forEach(f=>{const el=document.getElementById('d-'+f.id+'-I');if(el&&document.activeElement!==el)el.value=f.pct;});
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════
+function showTab(name,btn){
+  document.querySelectorAll('.DP').forEach(p=>p.classList.remove('SHW'));
+  document.querySelectorAll('.TAB').forEach(t=>t.classList.remove('ACT'));
+  document.getElementById('tab-'+name).classList.add('SHW');
+  btn.classList.add('ACT');
+}
+
+// ═══════════════════════════════════════════════════════════
+// S2 TABLE
+// ═══════════════════════════════════════════════════════════
+function buildS2(){
+  const tb=document.getElementById('s2body');tb.innerHTML='';
+  FD.forEach(f=>{
+    const rd=Math.ceil(f.pct/(100/f.rooms)),cv=gcol(f.pct/100);
+    const tr=document.createElement('tr');tr.className='FR';
+    tr.innerHTML=`<td><span class="FB">${f.label}</span></td><td style="font-size:12px;color:var(--tx2)">ซ้าย→ขวา</td><td style="font-size:13px;font-weight:600">${f.rooms} ห้อง</td><td><span style="font-size:13px;font-weight:700;color:${cv}">${rd} ห้อง</span></td><td><div class="TP"><div class="TPB"><div class="TPF" id="bar-${f.id}" style="width:${f.pct}%;background:${cv}"></div></div><span style="font-family:var(--m);font-size:13px;font-weight:700;min-width:40px;text-align:right;color:${cv}" id="pct-${f.id}">${f.pct}%</span></div></td><td style="text-align:right"><div class="IG" style="justify-content:flex-end"><input class="PI" type="number" min="0" max="100" id="inp-${f.id}" value="${f.pct}" oninput="updateFloor('${f.id}')"><span class="Ps">%</span></div></td>`;
+    tb.appendChild(tr);
+  });
+}
+function updateFloor(id){
+  const v=gv('inp-'+id);
+  const fd=FD.find(f=>f.id===id);fd.pct=v;
+  const rd=Math.ceil(v/(100/fd.rooms)),cv=gcol(v/100);
+  document.getElementById('bar-'+id).style.cssText=`width:${v}%;background:${cv}`;
+  document.getElementById('pct-'+id).style.color=cv;document.getElementById('pct-'+id).textContent=v+'%';
+  document.getElementById('inp-'+id).closest('tr').cells[3].innerHTML=`<span style="font-size:13px;font-weight:700;color:${cv}">${rd} ห้อง</span>`;
+  ra();
+}
+
+// ═══════════════════════════════════════════════════════════
+// S3 TABLE
+// ═══════════════════════════════════════════════════════════
+function buildS3(){
+  const tb=document.getElementById('s3body');tb.innerHTML='';
+  OD.forEach(o=>{
+    const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,fp=(da/fa)*100,wp=(da/fa)*o.wt;
+    const cv=gcol(fp/100);
+    const tr=document.createElement('tr');tr.className='FR';
+    tr.innerHTML=`<td><span class="FB" style="background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:var(--cyan)">${o.label}</span></td><td style="text-align:center;font-family:var(--m);font-size:12px;color:var(--tx2)">${o.wt}%</td><td style="text-align:center"><div style="font-size:10px;color:var(--tx3)">พท. ${o.fa}</div><div class="IG" style="justify-content:center;margin-top:4px"><input class="PI" style="width:60px" type="number" min="0" max="${o.fa}" step=".1" id="of-${o.id}" value="${o.fd}" oninput="updOut('${o.id}')"><span class="Ps">ตร.ม.</span></div></td><td style="text-align:center"><div style="font-size:10px;color:var(--tx3)">พท. ${o.ba}</div><div class="IG" style="justify-content:center;margin-top:4px"><input class="PI" style="width:60px" type="number" min="0" max="${o.ba}" step=".1" id="ob-${o.id}" value="${o.bd}" oninput="updOut('${o.id}')"><span class="Ps">ตร.ม.</span></div></td><td style="text-align:center"><div style="font-size:10px;color:var(--tx3)">พท. ${o.sa}×2</div><div class="IG" style="justify-content:center;margin-top:4px"><input class="PI" style="width:60px" type="number" min="0" max="${o.sa}" step=".1" id="os-${o.id}" value="${o.sd}" oninput="updOut('${o.id}')"><span class="Ps">ตร.ม.</span></div></td><td style="text-align:center"><span id="ow-${o.id}" style="font-size:16px;font-weight:800;font-family:var(--m);color:${cv}">${wp.toFixed(1)}%</span></td><td style="min-width:120px;padding-right:14px"><div class="TP"><div class="TPB"><div class="TPF" id="obar-${o.id}" style="width:${fp.toFixed(0)}%;background:${cv}"></div></div><span style="font-size:11px;font-family:var(--m);font-weight:700;min-width:36px;text-align:right;color:${cv}" id="opct-${o.id}">${fp.toFixed(0)}%</span></div></td>`;
+    tb.appendChild(tr);
+  });
+  updOutTotal();
+}
+function updOut(id){
+  const o=OD.find(x=>x.id===id);
+  o.fd=parseFloat(document.getElementById('of-'+id).value)||0;
+  o.bd=parseFloat(document.getElementById('ob-'+id).value)||0;
+  o.sd=parseFloat(document.getElementById('os-'+id).value)||0;
+  const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,fp=(da/fa)*100,wp=(da/fa)*o.wt;
+  const cv=gcol(fp/100);
+  document.getElementById('obar-'+id).style.cssText=`width:${fp}%;background:${cv}`;
+  document.getElementById('opct-'+id).style.color=cv;document.getElementById('opct-'+id).textContent=fp.toFixed(0)+'%';
+  document.getElementById('ow-'+id).style.color=cv;document.getElementById('ow-'+id).textContent=wp.toFixed(1)+'%';
+  updOutTotal();ra();
+}
+function updOutTotal(){
+  let t=0;OD.forEach(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2;t+=(da/fa)*o.wt;});
+  const cv=gcol(t/50);
+  document.getElementById('s3tp').textContent=t.toFixed(1)+'%';document.getElementById('s3tp').style.color=cv;
+  document.getElementById('s3bar').style.width=Math.min(t*2,100)+'%';
+}
+
+// ═══════════════════════════════════════════════════════════
+// S7 PLASTER
+// ═══════════════════════════════════════════════════════════
+function updPlaster(){
+  const v=gv('s7'),rd=Math.round(v/4.55);
+  document.getElementById('s7r').textContent=Math.max(0,40-v).toFixed(1)+'%';
+  document.getElementById('s7dr').textContent=rd+' ห้อง';
+  const g=document.getElementById('prooms');g.innerHTML='';
+  for(let i=0;i<9;i++){
+    const dn=i<rd,d=document.createElement('div');d.className='PB '+(dn?'dn':'pd');
+    d.innerHTML=`<div class="pn">${dn?'✓':i+1}</div><div class="pl">${dn?'ฉาบแล้ว':'รอทำ'}</div><div class="pp">4.55%</div>`;
+    g.appendChild(d);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// KPI + SUMMARY
+// ═══════════════════════════════════════════════════════════
+function updKPI(){
+  const V=getVals();
+  const all=[{v:V.s1,t:100},{v:V.f25,t:100},{v:V.out,t:50},{v:V.s4,t:100},{v:V.s5,t:80},{v:V.s6,t:50},{v:V.s7,t:40}];
+  const done=all.filter(x=>x.v>=x.t).length,ns=all.filter(x=>x.v<1).length,prog=all.length-done-ns;
+  const ovr=all.reduce((a,x)=>a+(x.v/x.t),0)/all.length*100;
+  document.getElementById('kp-d').textContent=done;
+  document.getElementById('kp-p').textContent=prog;
+  document.getElementById('kp-n').textContent=ns;
+  document.getElementById('kp-o').textContent=ovr.toFixed(0)+'%';
+  const g=document.getElementById('sbg');g.innerHTML='';
+  SUMDEF.forEach(s=>{
+    const v=V[s.key],ratio=v/s.tgt,bh=Math.max(2,Math.min(60,ratio*60)),c=gcol(ratio);
+    g.innerHTML+=`<div class="SBi"><div class="SBl">${s.lbl}</div><div class="SBbw"><div class="SBb" style="height:${bh}px;background:${c};box-shadow:0 0 10px ${c}40"></div></div><div class="SBv" style="color:${c}">${v.toFixed(1)}%</div><div style="font-size:10px;color:var(--tx3);margin-top:2px;font-family:var(--m)">/ ${s.tgt}%</div></div>`;
+  });
+  const s5v=gv('s5'),s6v=gv('s6');
+  document.getElementById('s5r').textContent=Math.max(0,80-s5v).toFixed(1)+'%';
+  document.getElementById('s5rm').textContent=Math.round(s5v/2.27)+' ห้อง';
+  document.getElementById('s6r').textContent=Math.max(0,50-s6v).toFixed(1)+'%';
+  document.getElementById('s6rm').textContent=Math.round(s6v/3.85)+' ห้อง';
+  document.getElementById('lu').textContent='อัปเดตล่าสุด: '+new Date().toLocaleString('th-TH');
+}
+
+function ra(){
+  updKPI();
+  updateDonuts();
+  updatePieChart();
+  scheduleAutoSave();
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+async function init(){
+  buildS2(); buildS3(); buildDonuts(); updPlaster(); updKPI();
+  buildPieChart();
+  // Try to load saved data
+  await loadData();
+}
+
+init();
+</script>
+</body>
+</html>
