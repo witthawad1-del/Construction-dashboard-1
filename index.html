@@ -2,9 +2,10 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>Construction Progress Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -171,7 +172,148 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 .SBv{font-size:14px;font-weight:800;font-family:var(--m)}
 .LU{font-size:11px;color:var(--tx3);font-family:var(--m);margin-top:16px;text-align:right}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdrb);border-radius:99px}
-@media(max-width:900px){.pie-layout{grid-template-columns:1fr}.legend-grid{grid-template-columns:1fr}.G2{grid-template-columns:1fr}.C2{grid-template-columns:1fr}.kg{grid-template-columns:repeat(2,1fr)}}
+
+/* ── S2 mobile/desktop toggle ── */
+.s2-desktop{display:block}
+.s2-mobile{display:none}
+/* S2 mobile card style */
+.s2card{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs);padding:14px 16px;margin-bottom:10px;position:relative;overflow:hidden}
+.s2card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.s2card-lbl{font-size:13px;font-weight:700}
+.s2card-stat{font-size:11px;color:var(--tx2)}
+.s2card-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.s2card-input-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.s2card-accent{position:absolute;top:0;left:0;width:4px;bottom:0;border-radius:var(--rs) 0 0 var(--rs)}
+
+/* ══════════════════════════════
+   RESPONSIVE — TABLET ≤900px
+══════════════════════════════ */
+@media(max-width:900px){
+  .pie-layout{grid-template-columns:1fr}
+  .legend-grid{grid-template-columns:1fr 1fr}
+  .G2{grid-template-columns:1fr}
+  .C2{grid-template-columns:1fr 1fr}
+  .kg{grid-template-columns:repeat(2,1fr)}
+  .SBg{grid-template-columns:repeat(4,1fr)}
+  #tab-all .DGrid{grid-template-columns:repeat(4,1fr)!important}
+  #tab-s2 .DGrid{grid-template-columns:repeat(3,1fr)!important}
+  #tab-s3 .DGrid{grid-template-columns:repeat(3,1fr)!important}
+}
+
+/* ══════════════════════════════
+   RESPONSIVE — MOBILE ≤600px
+══════════════════════════════ */
+@media(max-width:600px){
+  .W{padding:10px}
+  header{padding:12px 14px;flex-direction:column;align-items:flex-start;gap:10px}
+  .ht{font-size:17px}
+  .hs{font-size:11px}
+  .hi{width:40px;height:40px;font-size:18px}
+  .btn{padding:7px 12px;font-size:12px}
+  header>div:last-child{flex-wrap:wrap;gap:6px;width:100%}
+  .live{font-size:11px;padding:5px 10px}
+  .kg{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+  .kv{font-size:28px}
+  .kl{font-size:10px;letter-spacing:.5px}
+  .kc{padding:14px 16px}
+  .pie-layout{grid-template-columns:1fr}
+  .legend-grid{grid-template-columns:1fr}
+  .pie-wrap{max-width:260px}
+  .pie-center-pct{font-size:22px}
+  .G2{grid-template-columns:1fr}
+  .C2{grid-template-columns:1fr}
+  .SBg{grid-template-columns:repeat(3,1fr);gap:8px}
+  .SBbw{height:44px}
+  .SBv{font-size:12px}
+  #tab-all .DGrid{grid-template-columns:repeat(2,1fr)!important}
+  #tab-s2 .DGrid{grid-template-columns:repeat(2,1fr)!important}
+  #tab-s3 .DGrid{grid-template-columns:repeat(2,1fr)!important}
+  #tab-s4 .DGrid{grid-template-columns:repeat(2,1fr)!important}
+  #tab-s5 .DGrid{grid-template-columns:repeat(2,1fr)!important}
+  #tab-s6 .DGrid{grid-template-columns:repeat(2,1fr)!important}
+  #tab-s7 .DGrid{grid-template-columns:repeat(2,1fr)!important}
+  .ST{font-size:14px}
+  .card{padding:16px;margin-bottom:14px}
+  .DS{padding:16px 14px}
+  .TABS{gap:5px}
+  .TAB{padding:6px 12px;font-size:11px}
+  .RG{gap:8px}
+  .RC{min-width:120px;padding:12px 10px}
+  .PR{gap:6px}
+  .PB{width:64px}
+  .save-bar{flex-wrap:wrap;gap:8px}
+  #save-time{margin-left:0;width:100%;margin-top:2px}
+  /* S2: ซ่อนตาราง แสดง card แนวตั้ง */
+  .s2-desktop{display:none!important}
+  .s2-mobile{display:block!important}
+  /* S3 table scroll */
+  .s3-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* S7 grid แนวตั้ง */
+  .s7-grid{grid-template-columns:1fr!important}
+}
+
+/* ══════════════════════════════
+   LANDSCAPE MOBILE
+══════════════════════════════ */
+@media(max-height:500px) and (max-width:900px){
+  .orb{display:none}
+  body::before{display:none}
+  .W{padding:8px}
+  header{padding:10px 14px;flex-direction:row;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .ht{font-size:15px}
+  .hs{display:none}
+  .kg{gap:8px;margin-bottom:12px}
+  .kv{font-size:24px}
+  .kc{padding:12px 14px}
+  .card{padding:14px;margin-bottom:12px}
+  .pie-section{padding:14px}
+  .DS{padding:14px}
+  .pie-layout{grid-template-columns:240px 1fr}
+  .pie-wrap{max-width:240px}
+}
+
+/* ══════════════════════════════
+   PRINT — สีสันเหมือนหน้าจอ
+══════════════════════════════ */
+@media print{
+  *{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    color-adjust:exact!important;
+  }
+  html,body{background:#080d14!important;color:#e8f0fe!important}
+  body::before,.orb,#toast,.save-bar{display:none!important}
+  header .btn,.live{display:none!important}
+  .W{max-width:100%!important;padding:8px!important}
+  header{background:rgba(13,21,32,1)!important;border:1px solid rgba(56,139,253,.4)!important;page-break-inside:avoid;margin-bottom:10px!important;padding:14px 18px!important}
+  header::before{background:linear-gradient(90deg,transparent,#388bfd,#00d4ff,transparent)!important}
+  .kg{page-break-inside:avoid;gap:10px!important}
+  .kc{background:#111b28!important;border:1px solid rgba(56,139,253,.3)!important;page-break-inside:avoid}
+  .kc.G::after{background:#00e676!important}.kc.O::after{background:#ff9500!important}
+  .kc.B::after{background:#388bfd!important}.kc.R::after{background:#ff4444!important}
+  .kc.G .kv{color:#00e676!important}.kc.O .kv{color:#ff9500!important}
+  .kc.B .kv{color:#388bfd!important}.kc.R .kv{color:#ff4444!important}
+  .pie-section,.card,.DS,.SB{background:#111b28!important;border:1px solid rgba(56,139,253,.25)!important;page-break-inside:avoid;margin-bottom:10px!important}
+  .PBG{background:rgba(255,255,255,.1)!important}
+  .PF.g{background:linear-gradient(90deg,#00b248,#00e676)!important}
+  .PF.o{background:linear-gradient(90deg,#e65c00,#ff9500)!important}
+  .PF.r{background:linear-gradient(90deg,#c62828,#ff4444)!important}
+  .FR td{background:#0d1520!important;border-color:rgba(56,139,253,.2)!important}
+  .TPB{background:rgba(255,255,255,.1)!important}
+  .legend-item,.MS,.RC,.DC{background:#0d1520!important;border-color:rgba(56,139,253,.25)!important}
+  .PB.dn{background:rgba(0,230,118,.12)!important;border-color:rgba(0,230,118,.4)!important}
+  .s2-desktop{display:block!important}.s2-mobile{display:none!important}
+  canvas{max-width:280px!important;max-height:280px!important}
+  .pie-layout{grid-template-columns:280px 1fr!important}
+  .G2{grid-template-columns:1fr 1fr!important}
+  .C2{grid-template-columns:1fr 1fr!important}
+  .kg{grid-template-columns:repeat(4,1fr)!important}
+  .SBg{grid-template-columns:repeat(7,1fr)!important}
+  .TABS{display:none!important}
+  .DP{display:none!important}
+  .DP.SHW{display:block!important}
+  @page{size:A4 landscape;margin:8mm}
+}
 </style>
 </head>
 <body>
@@ -198,6 +340,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     <button class="btn btn-green" onclick="saveData()">💾 บันทึก</button>
     <button class="btn btn-orange" onclick="loadData()">📂 โหลด</button>
     <button class="btn btn-red" onclick="clearData()">🗑️ ล้างข้อมูล</button>
+    <button class="btn" onclick="exportExcel()" style="background:rgba(0,200,83,.15);color:#00c853;border:1px solid rgba(0,200,83,.4)" onmouseover="this.style.background='rgba(0,200,83,.28)'" onmouseout="this.style.background='rgba(0,200,83,.15)'">📊 Export Excel</button>
     <button class="btn" onclick="window.print()" style="background:transparent;color:var(--tx2);border:1px solid var(--bdr);padding:8px 16px;font-size:12px;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--bdrb)';this.style.color='var(--tx)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--tx2)'">พิมพ์</button>
   </div>
 </header>
@@ -324,7 +467,12 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 <!-- S2 -->
 <div class="card">
   <div class="SH"><div class="SN">2</div><div class="ST">งานก่ออิฐภายใน (ชั้น 2–5)</div><div class="Stg" style="margin-left:auto">เป้า 100% ต่อชั้น</div></div>
-  <table class="FT"><thead><tr><th>ชั้น</th><th>ทิศทาง</th><th>ห้องทั้งหมด</th><th>ทำแล้ว</th><th style="min-width:180px">ความคืบหน้า</th><th>กรอกข้อมูล</th></tr></thead><tbody id="s2body"></tbody></table>
+  <!-- Desktop: table -->
+  <div class="s2-desktop">
+    <table class="FT"><thead><tr><th>ชั้น</th><th>ทิศทาง</th><th>ห้องทั้งหมด</th><th>ทำแล้ว</th><th style="min-width:180px">ความคืบหน้า</th><th>กรอกข้อมูล</th></tr></thead><tbody id="s2body"></tbody></table>
+  </div>
+  <!-- Mobile: cards แนวตั้ง -->
+  <div class="s2-mobile" id="s2cards"></div>
 </div>
 
 <!-- S3 -->
@@ -414,7 +562,7 @@ const SUMDEF=[
 ];
 
 // ═══════════════════════════════════════════════════════════
-// SAVE / LOAD  (Persistent Storage API)
+// SAVE / LOAD  (localStorage — ทำงานได้ทุก browser)
 // ═══════════════════════════════════════════════════════════
 const SAVE_KEY = 'construction-progress-v1';
 let _saveTimer = null;
@@ -455,7 +603,6 @@ function applyState(s){
   set('r41',s.r41);set('r42',s.r42);set('r43',s.r43);set('r44',s.r44);set('r45',s.r45);
   if(s.fd) FD.forEach((f,i)=>{if(s.fd[i]!==undefined) f.pct=s.fd[i];});
   if(s.od) OD.forEach((o,i)=>{if(s.od[i]){o.fd=s.od[i].fd;o.bd=s.od[i].bd;o.sd=s.od[i].sd;}});
-  // rebuild tables & sync
   buildS2(); buildS3();
   setBar('s1','s1b','s1p');
   setBar('s4t','s4tb','s4tp');
@@ -466,53 +613,74 @@ function applyState(s){
   updPlaster(); buildDonuts(); ra();
 }
 
+// ── localStorage save (ใช้ได้ทุก browser ทุก device) ──
 async function saveData(){
   setSaveStatus('saving','กำลังบันทึก...');
   try{
-    const state = collectState();
-    const result = await window.storage.set(SAVE_KEY, JSON.stringify(state));
-    if(result){
-      const t=new Date().toLocaleString('th-TH');
-      setSaveStatus('saved','บันทึกสำเร็จ ✓',t);
-      showToast('บันทึกข้อมูลสำเร็จ 💾','ok');
-      _unsaved=false;
-    } else {
-      setSaveStatus('unsaved','บันทึกล้มเหลว');
-      showToast('ไม่สามารถบันทึกได้','err');
+    const json = JSON.stringify(collectState());
+    // localStorage — ทำงานได้ทุกที่ รวมถึงเปิดไฟล์ตรงๆ
+    localStorage.setItem(SAVE_KEY, json);
+    // window.storage — เฉพาะ Claude.ai (ถ้ามี)
+    if(window.storage && typeof window.storage.set==='function'){
+      try{ await window.storage.set(SAVE_KEY, json); }catch(e){}
     }
+    const t=new Date().toLocaleString('th-TH');
+    setSaveStatus('saved','บันทึกสำเร็จ ✓',t);
+    showToast('บันทึกข้อมูลสำเร็จ 💾','ok');
+    _unsaved=false;
   }catch(e){
-    setSaveStatus('unsaved','บันทึกล้มเหลว: '+e.message);
-    showToast('เกิดข้อผิดพลาด: '+e.message,'err');
+    setSaveStatus('unsaved','บันทึกล้มเหลว');
+    showToast('บันทึกล้มเหลว: '+e.message,'err');
   }
 }
 
 async function loadData(){
   setSaveStatus('saving','กำลังโหลดข้อมูล...');
+  let loaded=false;
+
+  // 1) localStorage ก่อน (ทำงานได้ทุก browser / ทุก device)
   try{
-    const result = await window.storage.get(SAVE_KEY);
-    if(result && result.value){
-      const s = JSON.parse(result.value);
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(raw){
+      const s=JSON.parse(raw);
       applyState(s);
-      const t = s.savedAt ? new Date(s.savedAt).toLocaleString('th-TH') : '—';
+      const t=s.savedAt?new Date(s.savedAt).toLocaleString('th-TH'):'—';
       setSaveStatus('saved','โหลดข้อมูลสำเร็จ ✓',t);
       showToast('โหลดข้อมูลสำเร็จ 📂','ok');
-    } else {
-      setSaveStatus('unsaved','ไม่พบข้อมูลที่บันทึกไว้');
-      showToast('ยังไม่มีข้อมูลที่บันทึกไว้','info',4000);
+      loaded=true;
     }
-  }catch(e){
-    setSaveStatus('unsaved','โหลดล้มเหลว');
-    showToast('ไม่พบข้อมูลบันทึก (ยังไม่เคยบันทึก)','info',4000);
+  }catch(e){}
+
+  // 2) window.storage (Claude.ai) — ถ้า localStorage ไม่มีข้อมูล
+  if(!loaded && window.storage && typeof window.storage.get==='function'){
+    try{
+      const result=await window.storage.get(SAVE_KEY);
+      if(result && result.value){
+        const s=JSON.parse(result.value);
+        applyState(s);
+        localStorage.setItem(SAVE_KEY, result.value); // ซิงค์ลง localStorage
+        const t=s.savedAt?new Date(s.savedAt).toLocaleString('th-TH'):'—';
+        setSaveStatus('saved','โหลดข้อมูลสำเร็จ ✓',t);
+        showToast('โหลดข้อมูลสำเร็จ 📂','ok');
+        loaded=true;
+      }
+    }catch(e){}
+  }
+
+  if(!loaded){
+    setSaveStatus('unsaved','ยังไม่มีข้อมูลที่บันทึก');
+    showToast('กดปุ่ม 💾 บันทึก เพื่อบันทึกข้อมูลครั้งแรก','info',5000);
   }
 }
 
 async function clearData(){
-  if(!confirm('ต้องการล้างข้อมูลที่บันทึกไว้ทั้งหมดและคืนค่าเริ่มต้นใช่ไหม?')) return;
-  try{
-    await window.storage.delete(SAVE_KEY);
-    showToast('ล้างข้อมูลสำเร็จ 🗑️','ok');
-    setSaveStatus('unsaved','ล้างข้อมูลแล้ว');
-  }catch(e){ showToast('ล้างข้อมูลสำเร็จ (local)','ok'); }
+  if(!confirm('ต้องการล้างข้อมูลที่บันทึกไว้ทั้งหมดใช่ไหม?')) return;
+  try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+  if(window.storage && typeof window.storage.delete==='function'){
+    try{ await window.storage.delete(SAVE_KEY); }catch(e){}
+  }
+  showToast('ล้างข้อมูลสำเร็จ 🗑️','ok');
+  setSaveStatus('unsaved','ล้างข้อมูลแล้ว');
 }
 
 // auto-save after 2s of inactivity
@@ -834,24 +1002,89 @@ function showTab(name,btn){
 }
 
 // ═══════════════════════════════════════════════════════════
-// S2 TABLE
+// S2 TABLE + MOBILE CARDS
 // ═══════════════════════════════════════════════════════════
 function buildS2(){
-  const tb=document.getElementById('s2body');tb.innerHTML='';
-  FD.forEach(f=>{
-    const rd=Math.ceil(f.pct/(100/f.rooms)),cv=gcol(f.pct/100);
-    const tr=document.createElement('tr');tr.className='FR';
-    tr.innerHTML=`<td><span class="FB">${f.label}</span></td><td style="font-size:12px;color:var(--tx2)">ซ้าย→ขวา</td><td style="font-size:13px;font-weight:600">${f.rooms} ห้อง</td><td><span style="font-size:13px;font-weight:700;color:${cv}">${rd} ห้อง</span></td><td><div class="TP"><div class="TPB"><div class="TPF" id="bar-${f.id}" style="width:${f.pct}%;background:${cv}"></div></div><span style="font-family:var(--m);font-size:13px;font-weight:700;min-width:40px;text-align:right;color:${cv}" id="pct-${f.id}">${f.pct}%</span></div></td><td style="text-align:right"><div class="IG" style="justify-content:flex-end"><input class="PI" type="number" min="0" max="100" id="inp-${f.id}" value="${f.pct}" oninput="updateFloor('${f.id}')"><span class="Ps">%</span></div></td>`;
-    tb.appendChild(tr);
-  });
+  // ── Desktop table ──
+  const tb=document.getElementById('s2body');
+  if(tb){
+    tb.innerHTML='';
+    FD.forEach(f=>{
+      const rd=Math.ceil(f.pct/(100/f.rooms)),cv=gcol(f.pct/100);
+      const tr=document.createElement('tr');tr.className='FR';
+      tr.innerHTML=`<td><span class="FB">${f.label}</span></td>
+        <td style="font-size:12px;color:var(--tx2)">ซ้าย→ขวา</td>
+        <td style="font-size:13px;font-weight:600">${f.rooms} ห้อง</td>
+        <td><span style="font-size:13px;font-weight:700;color:${cv}" id="rdm-${f.id}">${rd} ห้อง</span></td>
+        <td><div class="TP"><div class="TPB"><div class="TPF" id="bar-${f.id}" style="width:${f.pct}%;background:${cv}"></div></div>
+          <span style="font-family:var(--m);font-size:13px;font-weight:700;min-width:40px;text-align:right;color:${cv}" id="pct-${f.id}">${f.pct}%</span></div></td>
+        <td style="text-align:right"><div class="IG" style="justify-content:flex-end">
+          <input class="PI" type="number" min="0" max="100" id="inp-${f.id}" value="${f.pct}" oninput="updateFloor('${f.id}')">
+          <span class="Ps">%</span></div></td>`;
+      tb.appendChild(tr);
+    });
+  }
+  // ── Mobile cards ──
+  const mc=document.getElementById('s2cards');
+  if(mc){
+    mc.innerHTML='';
+    FD.forEach(f=>{
+      const rd=Math.ceil(f.pct/(100/f.rooms)),cv=gcol(f.pct/100);
+      const div=document.createElement('div');
+      div.className='s2card';
+      div.innerHTML=`
+        <div class="s2card-accent" style="background:${cv}"></div>
+        <div class="s2card-top">
+          <div>
+            <div class="s2card-lbl">${f.label}</div>
+            <div class="s2card-stat">ซ้าย→ขวา · ${f.rooms} ห้อง</div>
+          </div>
+          <span id="mrd-${f.id}" style="font-size:13px;font-weight:700;color:${cv}">${rd} ห้อง</span>
+        </div>
+        <div class="s2card-bar-row">
+          <div class="TPB" style="flex:1;height:10px">
+            <div class="TPF" id="mbar-${f.id}" style="width:${f.pct}%;background:${cv};height:100%;border-radius:99px"></div>
+          </div>
+          <span id="mpct-${f.id}" style="font-family:var(--m);font-size:14px;font-weight:800;color:${cv};min-width:44px;text-align:right">${f.pct}%</span>
+        </div>
+        <div class="s2card-input-row">
+          <span style="font-size:12px;color:var(--tx2)">กรอกความคืบหน้า:</span>
+          <input class="PI" type="number" min="0" max="100" id="minp-${f.id}" value="${f.pct}"
+            oninput="updateFloor('${f.id}',true)" style="width:72px;font-size:15px;padding:7px 10px">
+          <span class="Ps" style="font-size:13px">%</span>
+        </div>`;
+      mc.appendChild(div);
+    });
+  }
 }
-function updateFloor(id){
-  const v=gv('inp-'+id);
-  const fd=FD.find(f=>f.id===id);fd.pct=v;
+
+function updateFloor(id, fromMobile=false){
+  const v = fromMobile ? gv('minp-'+id) : gv('inp-'+id);
+  const fd=FD.find(f=>f.id===id); fd.pct=v;
   const rd=Math.ceil(v/(100/fd.rooms)),cv=gcol(v/100);
-  document.getElementById('bar-'+id).style.cssText=`width:${v}%;background:${cv}`;
-  document.getElementById('pct-'+id).style.color=cv;document.getElementById('pct-'+id).textContent=v+'%';
-  document.getElementById('inp-'+id).closest('tr').cells[3].innerHTML=`<span style="font-size:13px;font-weight:700;color:${cv}">${rd} ห้อง</span>`;
+
+  // Sync both inputs
+  const desk=document.getElementById('inp-'+id);
+  const mob=document.getElementById('minp-'+id);
+  if(desk && document.activeElement!==desk) desk.value=v;
+  if(mob && document.activeElement!==mob) mob.value=v;
+
+  // Desktop table
+  const bar=document.getElementById('bar-'+id);
+  const pct=document.getElementById('pct-'+id);
+  const rdm=document.getElementById('rdm-'+id);
+  if(bar) bar.style.cssText=`width:${v}%;background:${cv}`;
+  if(pct){pct.style.color=cv;pct.textContent=v+'%';}
+  if(rdm){rdm.style.color=cv;rdm.textContent=rd+' ห้อง';}
+
+  // Mobile cards
+  const mbar=document.getElementById('mbar-'+id);
+  const mpct=document.getElementById('mpct-'+id);
+  const mrd=document.getElementById('mrd-'+id);
+  if(mbar) mbar.style.cssText=`width:${v}%;background:${cv};height:100%;border-radius:99px`;
+  if(mpct){mpct.style.color=cv;mpct.textContent=v+'%';}
+  if(mrd){mrd.style.color=cv;mrd.textContent=rd+' ห้อง';}
+
   ra();
 }
 
@@ -936,8 +1169,208 @@ function ra(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// INIT
+// EXCEL EXPORT
 // ═══════════════════════════════════════════════════════════
+function exportExcel(){
+  try{
+    const V=getVals();
+    const wb=XLSX.utils.book_new();
+
+    // ─── สี helpers ───
+    const gcX=(v,t)=>{const r=v/t;return r>=.9?'FF00E676':r>=.3?'FFFF9500':'FFFF4444';};
+    const mk=(bg,fc,bold=false,sz=11,align='center',wrap=false)=>({
+      fill:{patternType:'solid',fgColor:{rgb:bg}},
+      font:{color:{rgb:fc},bold,sz,name:'Sarabun'},
+      alignment:{horizontal:align,vertical:'center',wrapText:wrap},
+      border:{top:{style:'thin',color:{rgb:'FF1A2D45'}},bottom:{style:'thin',color:{rgb:'FF1A2D45'}},
+              left:{style:'thin',color:{rgb:'FF1A2D45'}},right:{style:'thin',color:{rgb:'FF1A2D45'}}}
+    });
+    const D='FF080D14',C='FF111B28',B2='FF0D1520';
+    const BL='FF388BFD',GR='FF00E676',OR='FFFF9500',RD='FFFF4444',CY='FF00D4FF',PU='FFCE93D8',GL='FFFFD600',TE='FF00BCD4';
+    const TX='FFE8F0FE',T2='FF8899AA',T3='FF445566';
+
+    // ──────────────────────────────────────────
+    // SHEET 1 : ภาพรวมโครงการ
+    // ──────────────────────────────────────────
+    const all=[{v:V.s1,t:100},{v:V.f25,t:100},{v:V.out,t:50},{v:V.s4,t:100},{v:V.s5,t:80},{v:V.s6,t:50},{v:V.s7,t:40}];
+    const done=all.filter(x=>x.v>=x.t).length;
+    const ns=all.filter(x=>x.v<1).length;
+    const prog=all.length-done-ns;
+    const ovr=all.reduce((a,x)=>a+(x.v/x.t),0)/all.length*100;
+
+    const ws1_data=[
+      // Row 0: Title
+      ['Construction Progress Dashboard — ภาพรวมโครงการ','','','','',''],
+      // Row 1: blank
+      ['','','','','',''],
+      // Row 2: KPI headers
+      ['งานเสร็จสมบูรณ์','กำลังดำเนินการ','ความคืบหน้ารวม','ยังไม่เริ่ม','',''],
+      // Row 3: KPI values
+      [done, prog, ovr.toFixed(1)+'%', ns,'',''],
+      ['จาก 7 รายการ','รายการ','เฉลี่ยทุกหัวข้อ','รายการ','',''],
+      ['','','','','',''],
+      // Row 6: Table header
+      ['หัวข้องาน','ความคืบหน้า (%)','เป้าหมาย (%)','% ต่อเป้าหมาย','สถานะ','หมายเหตุ'],
+      // Rows 7-13: Data
+      ...SUMDEF.map(s=>{
+        const v=V[s.key],ratio=v/s.tgt;
+        const status=ratio>=1?'✅ เสร็จแล้ว':ratio>=.01?'🔄 กำลังดำเนินการ':'⏳ ยังไม่เริ่ม';
+        return[s.lbl, v, s.tgt, (ratio*100).toFixed(1)+'%', status, ''];
+      }),
+    ];
+    const ws1=XLSX.utils.aoa_to_sheet(ws1_data);
+
+    // Apply styles
+    const kpiColors=[GR,OR,BL,RD];
+    ws1['A1'].s=mk(D,BL,true,14,'left');
+    ['A3','B3','C3','D3'].forEach((c,i)=>{if(ws1[c])ws1[c].s=mk(C,kpiColors[i],true,11);});
+    ['A4','B4','C4','D4'].forEach((c,i)=>{if(ws1[c])ws1[c].s=mk(C,kpiColors[i],true,20);});
+    ['A5','B5','C5','D5'].forEach((c,i)=>{if(ws1[c])ws1[c].s=mk(C,T3,false,9);});
+    ['A7','B7','C7','D7','E7','F7'].forEach(c=>{if(ws1[c])ws1[c].s=mk(B2,BL,true,11);});
+    SUMDEF.forEach((s,i)=>{
+      const r=8+i,v=V[s.key],ratio=v/s.tgt,col=gcX(v,s.tgt),bg=i%2===0?C:B2;
+      const cells=[`A${r}`,`B${r}`,`C${r}`,`D${r}`,`E${r}`,`F${r}`];
+      cells.forEach((c,j)=>{
+        if(ws1[c]){
+          ws1[c].s=mk(bg,j===0?TX:j===1||j===3?col:j===4?col:T2,j<=1||j===3||j===4,11,j===0?'left':'center');
+        }
+      });
+    });
+    ws1['!cols']=[{wch:28},{wch:16},{wch:14},{wch:18},{wch:22},{wch:16}];
+    ws1['!rows']=[{hpt:28},{hpt:8},{hpt:22},{hpt:32},{hpt:16},{hpt:8},{hpt:22},...SUMDEF.map(()=>({hpt:24}))];
+    ws1['!merges']=[{s:{r:0,c:0},e:{r:0,c:5}}];
+    XLSX.utils.book_append_sheet(wb,ws1,'ภาพรวมโครงการ');
+
+    // ──────────────────────────────────────────
+    // SHEET 2 : ก่ออิฐภายใน ชั้น 2-5
+    // ──────────────────────────────────────────
+    const ws2_data=[
+      ['งานก่ออิฐภายใน ชั้น 2–5','','','','',''],
+      ['เป้าหมาย: 100% ต่อชั้น  |  ทิศทาง: ซ้าย→ขวา','','','','',''],
+      [''],
+      ['ชั้น','จำนวนห้อง','ห้องที่ทำแล้ว','ความคืบหน้า (%)','เป้าหมาย (%)','สถานะ'],
+      ...FD.map(f=>{
+        const rd=Math.ceil(f.pct/(100/f.rooms));
+        const s=f.pct>=100?'✅ เสร็จ':f.pct>0?'🔄 กำลังทำ':'⏳ ยังไม่เริ่ม';
+        return[f.label,f.rooms,rd,f.pct,100,s];
+      }),
+      [''],
+      ['เฉลี่ยทุกชั้น','','',(FD.reduce((a,f)=>a+f.pct,0)/FD.length).toFixed(1),'100%',''],
+    ];
+    const ws2=XLSX.utils.aoa_to_sheet(ws2_data);
+    ws2['A1'].s=mk(D,CY,true,14,'left');
+    ws2['A2'].s=mk(D,T2,false,10,'left');
+    ['A4','B4','C4','D4','E4','F4'].forEach(c=>{if(ws2[c])ws2[c].s=mk(B2,BL,true);});
+    FD.forEach((f,i)=>{
+      const r=5+i,col=gcX(f.pct,100),bg=i%2===0?C:B2;
+      ['A','B','C','D','E','F'].forEach((l,j)=>{
+        const c=l+r;if(ws2[c])ws2[c].s=mk(bg,j===0?TX:j===3?col:j===5?col:T2,j===0||j===3,11,j===0?'left':'center');
+      });
+    });
+    ws2['!cols']=[{wch:14},{wch:14},{wch:16},{wch:20},{wch:14},{wch:22}];
+    ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:5}},{s:{r:1,c:0},e:{r:1,c:5}}];
+    XLSX.utils.book_append_sheet(wb,ws2,'ก่ออิฐภายใน 2-5');
+
+    // ──────────────────────────────────────────
+    // SHEET 3 : ก่ออิฐภายนอก
+    // ──────────────────────────────────────────
+    let outTotal=0;
+    const ws3_data=[
+      ['งานก่ออิฐภายนอก','','','','','',''],
+      ['พื้นที่รวม 980 ตร.ม.  |  เป้าหมาย: 50%','','','','','',''],
+      [''],
+      ['ชั้น','น้ำหนัก (%)','หน้า-ทำแล้ว (ตร.ม.)','หลัง-ทำแล้ว (ตร.ม.)','ข้าง-ทำแล้ว (ตร.ม.)','%สมทบ','สถานะ'],
+      ...OD.map(o=>{
+        const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,fp=(da/fa)*100,wp=(da/fa)*o.wt;
+        outTotal+=wp;
+        return[o.label,o.wt,o.fd,o.bd,o.sd*2,wp.toFixed(1)+'%',fp>=100?'✅ เสร็จ':fp>0?'🔄 กำลังทำ':'⏳ ยังไม่เริ่ม'];
+      }),
+      [''],
+      ['รวมทั้งหมด','100%','','','',outTotal.toFixed(1)+'%','เป้าหมาย 50%'],
+    ];
+    const ws3=XLSX.utils.aoa_to_sheet(ws3_data);
+    ws3['A1'].s=mk(D,TE,true,14,'left');
+    ws3['A2'].s=mk(D,T2,false,10,'left');
+    ['A4','B4','C4','D4','E4','F4','G4'].forEach(c=>{if(ws3[c])ws3[c].s=mk(B2,BL,true);});
+    OD.forEach((o,i)=>{
+      const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,fp=(da/fa)*100,col=gcX(fp,100),bg=i%2===0?C:B2;
+      ['A','B','C','D','E','F','G'].forEach((l,j)=>{
+        const c=l+(5+i);if(ws3[c])ws3[c].s=mk(bg,j===0?TX:j===5||j===6?col:T2,j===0||j===5,11,j===0?'left':'center');
+      });
+    });
+    ws3['!cols']=[{wch:12},{wch:12},{wch:20},{wch:20},{wch:20},{wch:14},{wch:20}];
+    ws3['!merges']=[{s:{r:0,c:0},e:{r:0,c:6}},{s:{r:1,c:0},e:{r:1,c:6}}];
+    XLSX.utils.book_append_sheet(wb,ws3,'ก่ออิฐภายนอก');
+
+    // ──────────────────────────────────────────
+    // SHEET 4 : ก่ออิฐ ชั้น 1
+    // ──────────────────────────────────────────
+    const s4t=gv('s4t');
+    const ws4_data=[
+      ['งานก่ออิฐภายใน ชั้น 1','','',''],
+      ['เป้าหมาย: 100%  |  5 ห้อง','','',''],
+      [''],
+      ['ห้อง','น้ำหนัก (%)','ความคืบหน้า (%)','สถานะ'],
+      ...S4R.map(r=>{const v=gv(r.id);return[r.lbl,r.wt+'%',v+'%',v>=100?'✅ เสร็จ':v>0?'🔄 กำลังทำ':'⏳ ยังไม่เริ่ม'];}),
+      [''],
+      ['รวมทั้งชั้น 1','100%',s4t.toFixed(1)+'%',s4t>=100?'✅ เสร็จ':s4t>0?'🔄 กำลังทำ':'⏳ ยังไม่เริ่ม'],
+    ];
+    const ws4=XLSX.utils.aoa_to_sheet(ws4_data);
+    ws4['A1'].s=mk(D,OR,true,14,'left');
+    ['A4','B4','C4','D4'].forEach(c=>{if(ws4[c])ws4[c].s=mk(B2,BL,true);});
+    S4R.forEach((r,i)=>{
+      const v=gv(r.id),col=gcX(v,100),bg=i%2===0?C:B2;
+      ['A','B','C','D'].forEach((l,j)=>{const c=l+(5+i);if(ws4[c])ws4[c].s=mk(bg,j===0?TX:j===2||j===3?col:T2,j===0||j===2,11,j===0?'left':'center');});
+    });
+    ws4['!cols']=[{wch:20},{wch:14},{wch:20},{wch:22}];
+    ws4['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:1,c:0},e:{r:1,c:3}}];
+    XLSX.utils.book_append_sheet(wb,ws4,'ก่ออิฐ ชั้น 1');
+
+    // ──────────────────────────────────────────
+    // SHEET 5 : งานไฟฟ้า + ท่อน้ำดี + ฉาบผนัง
+    // ──────────────────────────────────────────
+    const s5=gv('s5'),s6=gv('s6'),s7=gv('s7');
+    const ws5_data=[
+      ['งานระบบและงานฉาบ','','',''],
+      [''],
+      ['งาน','ความคืบหน้า (%)','เป้าหมาย (%)','คงเหลือ (%)'],
+      ['งานไฟฟ้า กรีดผนัง+ฝังท่อ (ชั้น 2-5)',s5,80,Math.max(0,80-s5).toFixed(1)],
+      ['งานเดินท่อน้ำดี (ชั้น 1-3)',s6,50,Math.max(0,50-s6).toFixed(1)],
+      ['งานฉาบผนังภายใน (ชั้น 4+2)',s7,40,Math.max(0,40-s7).toFixed(1)],
+      [''],
+      ['','44 ห้อง  น้ำหนัก 2.27%/ห้อง','',''],
+      ['','26 ห้อง  น้ำหนัก 3.85%/ห้อง','',''],
+      ['','9 ห้อง  น้ำหนัก 4.55%/ห้อง','',''],
+      [''],
+      ['งานฉาบผนัง — รายละเอียดห้อง','','',''],
+      ['ห้อง','น้ำหนัก (%)','สถานะ',''],
+      ...Array.from({length:9},(_,i)=>{
+        const done=i<Math.round(s7/4.55);
+        return['ห้อง '+(i+1),'4.55%',done?'✅ ฉาบแล้ว':'⏳ รอดำเนินการ',''];
+      }),
+    ];
+    const ws5=XLSX.utils.aoa_to_sheet(ws5_data);
+    ws5['A1'].s=mk(D,PU,true,14,'left');
+    ['A3','B3','C3','D3'].forEach(c=>{if(ws5[c])ws5[c].s=mk(B2,BL,true);});
+    [[s5,80,PU],[s6,50,BL],[s7,40,GL]].forEach(([v,t,col],i)=>{
+      const r=4+i,gc=gcX(v,t),bg=i%2===0?C:B2;
+      ['A','B','C','D'].forEach((l,j)=>{const c=l+r;if(ws5[c])ws5[c].s=mk(bg,j===0?TX:j===1||j===3?gc:T2,j===0||j===1,11,j===0?'left':'center');});
+    });
+    ws5['!cols']=[{wch:34},{wch:18},{wch:14},{wch:14}];
+    ws5['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:11,c:0},e:{r:11,c:3}}];
+    XLSX.utils.book_append_sheet(wb,ws5,'งานระบบ+ฉาบผนัง');
+
+    // ─── Export ───
+    const date=new Date().toLocaleDateString('th-TH').replace(/\//g,'-');
+    XLSX.writeFile(wb,`construction_progress_${date}.xlsx`);
+    showToast('Export Excel สำเร็จ 📊','ok');
+  }catch(e){
+    console.error(e);
+    showToast('Export ล้มเหลว: '+e.message,'err');
+  }
+}
+
+
 async function init(){
   buildS2(); buildS3(); buildDonuts(); updPlaster(); updKPI();
   buildPieChart();
