@@ -1,4 +1,11 @@
-ibs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Construction Progress Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -165,7 +172,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 .SBv{font-size:14px;font-weight:800;font-family:var(--m)}
 .LU{font-size:11px;color:var(--tx3);font-family:var(--m);margin-top:16px;text-align:right}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdrb);border-radius:99px}
- 
+
 /* ── S2 mobile/desktop toggle ── */
 .s2-desktop{display:block}
 .s2-mobile{display:none}
@@ -177,7 +184,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 .s2card-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .s2card-input-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .s2card-accent{position:absolute;top:0;left:0;width:4px;bottom:0;border-radius:var(--rs) 0 0 var(--rs)}
- 
+
 /* ══════════════════════════════
    RESPONSIVE — TABLET ≤900px
 ══════════════════════════════ */
@@ -192,7 +199,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   #tab-s2 .DGrid{grid-template-columns:repeat(3,1fr)!important}
   #tab-s3 .DGrid{grid-template-columns:repeat(3,1fr)!important}
 }
- 
+
 /* ══════════════════════════════
    RESPONSIVE — MOBILE ≤600px
 ══════════════════════════════ */
@@ -244,7 +251,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   /* S7 grid แนวตั้ง */
   .s7-grid{grid-template-columns:1fr!important}
 }
- 
+
 /* ══════════════════════════════
    LANDSCAPE MOBILE
 ══════════════════════════════ */
@@ -264,7 +271,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .pie-layout{grid-template-columns:240px 1fr}
   .pie-wrap{max-width:240px}
 }
- 
+
 /* ══════════════════════════════
    PRINT — สีสันเหมือนหน้าจอ
 ══════════════════════════════ */
@@ -311,12 +318,12 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 </head>
 <body>
 <div class="orb o1"></div><div class="orb o2"></div>
- 
+
 <!-- TOAST -->
 <div id="toast"></div>
- 
+
 <div class="W">
- 
+
 <!-- HEADER -->
 <header>
   <div style="display:flex;align-items:center;gap:16px">
@@ -338,7 +345,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     <button class="btn" onclick="window.print()" style="background:transparent;color:var(--tx2);border:1px solid var(--bdr);padding:8px 16px;font-size:12px;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--bdrb)';this.style.color='var(--tx)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--tx2)'">พิมพ์</button>
   </div>
 </header>
- 
+
 <!-- SAVE STATUS BAR -->
 <div class="save-bar">
   <div class="save-dot" id="sv-dot"></div>
@@ -346,7 +353,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <span id="save-time" style="margin-left:auto;font-size:11px;color:var(--tx3);font-family:var(--m)"></span>
   <span style="font-size:11px;color:var(--tx3);font-family:var(--m);margin-left:16px">☁️ Cloud Sync — ทุกเครื่องเห็นข้อมูลเดียวกัน</span>
 </div>
- 
+
 <!-- KPI -->
 <div class="kg">
   <div class="kc G"><div class="ki">✅</div><div class="kl">งานเสร็จสมบูรณ์</div><div class="kv" id="kp-d">—</div><div class="ks">จาก 7 รายการ</div></div>
@@ -354,7 +361,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="kc B"><div class="ki">📊</div><div class="kl">ความคืบหน้าโดยรวม</div><div class="kv" id="kp-o">—</div><div class="ks">เฉลี่ยทุกหัวข้อ</div></div>
   <div class="kc R"><div class="ki">⏳</div><div class="kl">ยังไม่เริ่ม</div><div class="kv" id="kp-n">—</div><div class="ks">รายการ</div></div>
 </div>
- 
+
 <!-- ══════════ 3D PIE CHART ══════════ -->
 <div class="pie-section">
   <div class="pie-top">
@@ -402,7 +409,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     </div>
   </div>
 </div>
- 
+
 <!-- DONUT CIRCULAR DASHBOARD -->
 <div class="DS">
   <div class="DSH">
@@ -429,7 +436,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="DP" id="tab-s6"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">งานเดินท่อน้ำดี · 26 ห้อง · เป้า 50%</div><div class="DGrid" style="grid-template-columns:repeat(4,1fr)" id="g-s6"></div></div>
   <div class="DP" id="tab-s7"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">งานฉาบผนังภายใน · ชั้น 4 และชั้น 2 · เป้า 40%</div><div class="DGrid" style="grid-template-columns:repeat(5,1fr)" id="g-s7"></div></div>
 </div>
- 
+
 <!-- S1 + S4 -->
 <div class="G2">
 <div class="card">
@@ -457,7 +464,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </div>
 </div>
 </div>
- 
+
 <!-- S2 -->
 <div class="card">
   <div class="SH"><div class="SN">2</div><div class="ST">งานก่ออิฐภายใน (ชั้น 2–5)</div><div class="Stg" style="margin-left:auto">เป้า 100% ต่อชั้น</div></div>
@@ -468,7 +475,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <!-- Mobile: cards แนวตั้ง -->
   <div class="s2-mobile" id="s2cards"></div>
 </div>
- 
+
 <!-- S3 -->
 <div class="card">
   <div class="SH"><div class="SN" style="background:var(--cyan);color:#000">3</div><div class="ST">งานก่ออิฐภายนอก</div><div class="Stg" style="margin-left:8px">เป้า 50%</div><span style="font-size:11px;color:var(--tx3);background:var(--bg2);border:1px solid var(--bdr);padding:2px 8px;border-radius:4px">พื้นที่รวม 980 ตร.ม.</span><div style="margin-left:auto;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--tx2)">รวม:</span><span style="font-size:20px;font-weight:800;font-family:var(--m);color:var(--orange)" id="s3tp">—</span></div></div>
@@ -489,7 +496,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <!-- Mobile cards -->
   <div class="s2-mobile" id="s3cards"></div>
 </div>
- 
+
 <!-- S5 S6 -->
 <div class="C2">
 <div class="card">
@@ -505,7 +512,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div style="margin-top:12px;padding:10px 14px;background:var(--bg2);border-radius:8px;border:1px solid var(--bdr)"><div style="font-size:12px;color:var(--tx2)">ยังต้องทำอีก: <span style="color:var(--orange);font-weight:700;font-family:var(--m)" id="s6r">—</span></div><div style="font-size:12px;color:var(--tx2);margin-top:4px">ห้องที่ทำแล้ว: <span style="color:var(--tx);font-weight:700;font-family:var(--m)" id="s6rm">—</span></div></div>
 </div>
 </div>
- 
+
 <!-- S7 -->
 <div class="card">
   <div class="SH"><div class="SN" style="background:#f57c00">7</div><div class="ST">งานฉาบผนังภายใน (ชั้น 4 และ ชั้น 2)</div><div class="Stg" style="margin-left:auto">เป้า 40%</div><span style="font-size:11px;color:var(--tx3);background:var(--bg2);border:1px solid var(--bdr);padding:2px 8px;border-radius:4px">น้ำหนักห้องละ 4.55%</span></div>
@@ -517,16 +524,16 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     <div><div style="font-size:12px;color:var(--tx2);margin-bottom:10px">สถานะห้อง (แต่ละช่อง = 4.55%)</div><div class="PR" id="prooms"></div></div>
   </div>
 </div>
- 
+
 <!-- SUMMARY -->
 <div class="SB">
   <div class="SBt">สรุปภาพรวมโครงการ</div>
   <div class="SBg" id="sbg"></div>
   <div class="LU" id="lu"></div>
 </div>
- 
+
 </div><!-- /W -->
- 
+
 <script>
 // ═══════════════════════════════════════════════════════════
 // DATA
@@ -562,7 +569,7 @@ const SUMDEF=[
   {lbl:'งานท่อน้ำดี',     key:'s6',   tgt:50, col:'#388bfd'},
   {lbl:'งานฉาบผนัง',      key:'s7',   tgt:40, col:'#ffd600'},
 ];
- 
+
 // ═══════════════════════════════════════════════════════════
 // CLOUD SAVE / LOAD — Firebase Realtime Database
 // ทุกเครื่องที่เปิด URL เดียวกัน จะเห็นข้อมูลเดียวกันทันที
@@ -578,10 +585,10 @@ const SUMDEF=[
 let _fbUrl = localStorage.getItem('cp_fb_url') || '';
 let _saveTimer = null;
 let _unsaved = false;
- 
+
 function isFirebaseReady(){ return _fbUrl && _fbUrl.startsWith('https://'); }
 function fbPath(){ return _fbUrl.replace(/\/+$/, '') + '/construction_progress.json'; }
- 
+
 function showToast(msg, type='ok', dur=3500){
   const t=document.getElementById('toast');
   t.innerHTML=`<span>${type==='ok'?'✅':type==='err'?'❌':'ℹ️'}</span> ${msg}`;
@@ -589,7 +596,7 @@ function showToast(msg, type='ok', dur=3500){
   clearTimeout(t._t);
   t._t=setTimeout(()=>t.style.display='none',dur);
 }
- 
+
 function setSaveStatus(status, msg, time=''){
   const dot=document.getElementById('sv-dot');
   const st=document.getElementById('save-status');
@@ -598,7 +605,7 @@ function setSaveStatus(status, msg, time=''){
   st.textContent=msg;
   if(time) tm.textContent='อัพเดท: '+time;
 }
- 
+
 function collectState(){
   return {
     s1:gv('s1'), s4t:gv('s4t'), s5:gv('s5'), s6:gv('s6'), s7:gv('s7'),
@@ -608,7 +615,7 @@ function collectState(){
     savedAt: new Date().toISOString()
   };
 }
- 
+
 function applyState(s){
   if(!s) return;
   const set=(id,v)=>{const el=document.getElementById(id);if(el) el.value=v;};
@@ -622,7 +629,7 @@ function applyState(s){
   ['r41','r42','r43','r44','r45'].forEach(id=>setBar(id,id+'b',id+'p'));
   updPlaster(); buildDonuts(); ra();
 }
- 
+
 // ── บันทึกขึ้น Firebase ──
 async function saveData(){
   if(!isFirebaseReady()){ showFirebaseGuide(); return; }
@@ -645,7 +652,7 @@ async function saveData(){
     showToast('บันทึก Cloud ล้มเหลว: '+e.message,'err',5000);
   }
 }
- 
+
 // ── โหลดจาก Firebase ──
 async function loadData(){
   if(!isFirebaseReady()){ showFirebaseGuide(); return; }
@@ -670,7 +677,7 @@ async function loadData(){
     try{ const bk=localStorage.getItem('cp_backup'); if(bk) applyState(JSON.parse(bk)); }catch(e2){}
   }
 }
- 
+
 async function clearData(){
   if(!confirm('ล้างข้อมูล Cloud ทั้งหมด?\n(ทุกเครื่องจะเห็นว่าถูกล้าง)')) return;
   try{
@@ -680,7 +687,7 @@ async function clearData(){
     setSaveStatus('unsaved','ล้างข้อมูลแล้ว');
   }catch(e){ showToast('ล้างล้มเหลว: '+e.message,'err'); }
 }
- 
+
 // ── popup แนะนำตั้งค่า Firebase ──
 function showFirebaseGuide(){
   if(document.getElementById('fb-guide')) return;
@@ -715,7 +722,7 @@ function showFirebaseGuide(){
   </div>`;
   document.body.appendChild(d);
 }
- 
+
 async function connectFirebase(){
   const url=(document.getElementById('fb-url-inp').value||'').trim().replace(/\/+$/,'');
   if(!url||!url.startsWith('https://')){
@@ -727,7 +734,7 @@ async function connectFirebase(){
   showToast('เชื่อมต่อ Firebase สำเร็จ ✓ กำลังโหลดข้อมูล...','ok');
   await loadData();
 }
- 
+
 // auto-save after 2s of inactivity
 function scheduleAutoSave(){
   _unsaved=true;
@@ -735,18 +742,18 @@ function scheduleAutoSave(){
   setSaveStatus('unsaved','มีการเปลี่ยนแปลง...');
   _saveTimer=setTimeout(()=>{if(_unsaved) saveData();},2500);
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 // 3D PIE CHART
 // ═══════════════════════════════════════════════════════════
 let pieChart=null;
 let pieMode=0; // 0=actual%, 1=vs target ratio
- 
+
 const PIE_COLORS=[
   '#00e676','#00d4ff','#00bcd4','#ff9500','#ce93d8','#388bfd','#ffd600'
 ];
 const PIE_COLORS_ALPHA = PIE_COLORS.map(c=>c+'cc');
- 
+
 function getPieData(V){
   if(pieMode===0){
     // Show actual % values
@@ -759,20 +766,20 @@ function getPieData(V){
     ];
   }
 }
- 
+
 function buildPieChart(){
   const V=getVals();
   const labels=SUMDEF.map(s=>s.lbl);
   const data=getPieData(V);
   const canvas=document.getElementById('pieChart');
- 
+
   // 3D effect: offset each slice slightly
   const offsets=data.map((_,i)=> i===0?12:0); // highlight first slice
- 
+
   if(pieChart){pieChart.destroy();}
- 
+
   Chart.defaults.font.family="'Sarabun', sans-serif";
- 
+
   pieChart=new Chart(canvas,{
     type:'doughnut',
     data:{
@@ -845,12 +852,12 @@ function buildPieChart(){
       }
     }
   });
- 
+
   // Draw 3D shadow bottom arc via plugin
   buildPieLegend(data, V);
   updatePieStats(V);
 }
- 
+
 function buildPieLegend(data, V){
   const lg=document.getElementById('pie-legend');
   const tgts=[100,100,50,100,80,50,40];
@@ -868,7 +875,7 @@ function buildPieLegend(data, V){
     </div>`;
   }).join('');
 }
- 
+
 function updatePieStats(V){
   const all=[{v:V.s1,t:100},{v:V.f25,t:100},{v:V.out,t:50},{v:V.s4,t:100},{v:V.s5,t:80},{v:V.s6,t:50},{v:V.s7,t:40}];
   const done=all.filter(x=>x.v>=x.t).length;
@@ -879,7 +886,7 @@ function updatePieStats(V){
   document.getElementById('pie-center-pct').textContent=ovr.toFixed(0)+'%';
   document.getElementById('pie-center-lbl').textContent='ภาพรวม';
 }
- 
+
 function highlightPie(idx){
   if(!pieChart) return;
   const meta=pieChart.getDatasetMeta(0);
@@ -890,7 +897,7 @@ function highlightPie(idx){
   document.getElementById('pie-center-pct').textContent=parseFloat(data[idx]).toFixed(1)+'%';
   document.getElementById('pie-center-lbl').textContent=s.lbl;
 }
- 
+
 function updatePieChart(){
   if(!pieChart) return;
   const V=getVals();
@@ -901,14 +908,14 @@ function updatePieChart(){
   buildPieLegend(data,V);
   updatePieStats(V);
 }
- 
+
 let pieModeNames=['โหมด: แสดง % ที่ทำได้','โหมด: แสดง % ต่อเป้าหมาย'];
 function togglePieMode(){
   pieMode=(pieMode+1)%2;
   document.getElementById('pie-mode-lbl').textContent=pieModeNames[(pieMode+1)%2];
   buildPieChart();
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════════
@@ -916,14 +923,14 @@ const R=50,CX=60,CY=60,CIRC=2*Math.PI*R;
 function gcol(r){return r>=.9?'#00e676':r>=.3?'#ff9500':'#ff4444'}
 function gclass(v,t=100){const r=v/t;return r>=.9?'g':r>=.3?'o':'r'}
 function gv(id){return Math.min(100,Math.max(0,parseFloat(document.getElementById(id)?.value)||0))}
- 
+
 function getVals(){
   const s1=gv('s1'),s4=gv('s4t'),s5=gv('s5'),s6=gv('s6'),s7=gv('s7');
   const f25=FD.reduce((a,f)=>a+f.pct,0)/FD.length;
   let out=0;OD.forEach(o=>{const {fp:_fp2,wp:_wp2}=calcOut(o);out+=_wp2;});
   return{s1,f25,out,s4,s5,s6,s7};
 }
- 
+
 function setBar(iid,bid,pid,tgt=100){
   const v=gv(iid);
   const bar=document.getElementById(bid),pct=document.getElementById(pid);
@@ -937,7 +944,7 @@ function setBar(iid,bid,pid,tgt=100){
   return v;
 }
 function onS1(){setBar('s1','s1b','s1p');ra();}
- 
+
 // ═══════════════════════════════════════════════════════════
 // DONUT CHART
 // ═══════════════════════════════════════════════════════════
@@ -972,7 +979,7 @@ function onDI(id){
   FD.forEach(f=>{if(id==='d-'+f.id){f.pct=v;const i=document.getElementById('inp-'+f.id);if(i)i.value=v;updateFloor(f.id);}});
   S4R.forEach(r=>{if(id==='d-'+r.id){document.getElementById(r.id).value=v;setBar(r.id,r.id+'b',r.id+'p');ra();}});
 }
- 
+
 function buildDonuts(){
   const V=getVals();
   // ALL
@@ -1016,7 +1023,7 @@ function buildDonuts(){
   document.getElementById('g-s7').innerHTML=donutHTML('d-s7-ov',t7,40,'#ffd600','ภาพรวม ฉาบผนัง','ชั้น 4+2',[{k:'ทำแล้ว',v:rd+' ห้อง'},{k:'คงเหลือ',v:Math.max(0,40-t7).toFixed(1)+'%'}],true,'0.01')+
     Array.from({length:9},(_,i)=>donutHTML('d-s7-r'+i,i<rd?100:0,100,i<rd?'#00e676':'#334155','ห้อง '+(i+1),i<rd?'ฉาบแล้ว':'รอดำเนินการ',[{k:'น้ำหนัก',v:'4.55%'}])).join('');
 }
- 
+
 function updateDonuts(){
   const V=getVals();
   const ovr=(V.s1/100+V.f25/100+V.out/50+V.s4/100+V.s5/80+V.s6/50+V.s7/40)/7*100;
@@ -1035,7 +1042,7 @@ function updateDonuts(){
   syncMap.forEach(([did,mid])=>{const el=document.getElementById(did+'-I');if(el&&document.activeElement!==el)el.value=gv(mid);});
   FD.forEach(f=>{const el=document.getElementById('d-'+f.id+'-I');if(el&&document.activeElement!==el)el.value=f.pct;});
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════════════════════
@@ -1045,7 +1052,7 @@ function showTab(name,btn){
   document.getElementById('tab-'+name).classList.add('SHW');
   btn.classList.add('ACT');
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 // S2 TABLE + MOBILE CARDS
 // ═══════════════════════════════════════════════════════════
@@ -1102,18 +1109,18 @@ function buildS2(){
     });
   }
 }
- 
+
 function updateFloor(id, fromMobile=false){
   const v = fromMobile ? gv('minp-'+id) : gv('inp-'+id);
   const fd=FD.find(f=>f.id===id); fd.pct=v;
   const rd=Math.ceil(v/(100/fd.rooms)),cv=gcol(v/100);
- 
+
   // Sync both inputs
   const desk=document.getElementById('inp-'+id);
   const mob=document.getElementById('minp-'+id);
   if(desk && document.activeElement!==desk) desk.value=v;
   if(mob && document.activeElement!==mob) mob.value=v;
- 
+
   // Desktop table
   const bar=document.getElementById('bar-'+id);
   const pct=document.getElementById('pct-'+id);
@@ -1121,7 +1128,7 @@ function updateFloor(id, fromMobile=false){
   if(bar) bar.style.cssText=`width:${v}%;background:${cv}`;
   if(pct){pct.style.color=cv;pct.textContent=v+'%';}
   if(rdm){rdm.style.color=cv;rdm.textContent=rd+' ห้อง';}
- 
+
   // Mobile cards
   const mbar=document.getElementById('mbar-'+id);
   const mpct=document.getElementById('mpct-'+id);
@@ -1129,10 +1136,10 @@ function updateFloor(id, fromMobile=false){
   if(mbar) mbar.style.cssText=`width:${v}%;background:${cv};height:100%;border-radius:99px`;
   if(mpct){mpct.style.color=cv;mpct.textContent=v+'%';}
   if(mrd){mrd.style.color=cv;mrd.textContent=rd+' ห้อง';}
- 
+
   ra();
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 // S3 TABLE + MOBILE CARDS  (หน้า / หลัง / ซ้าย / ขวา)
 // ═══════════════════════════════════════════════════════════
@@ -1143,7 +1150,7 @@ function calcOut(o){
   const wp = (doneArea / totalArea) * o.wt || 0;
   return { totalArea, doneArea, fp, wp };
 }
- 
+
 function buildS3(){
   // ── Desktop table ──
   const tb=document.getElementById('s3body');
@@ -1230,7 +1237,7 @@ function buildS3(){
   }
   updOutTotal();
 }
- 
+
 function updOut(id, fromMobile=false){
   const o=OD.find(x=>x.id===id);
   if(fromMobile){
@@ -1268,7 +1275,7 @@ function updOut(id, fromMobile=false){
   if(mow){mow.style.color=cv;mow.textContent=wp.toFixed(1)+'%';}
   updOutTotal(); ra();
 }
- 
+
 function updOutTotal(){
   let t=0;
   OD.forEach(o=>{ const {fp}=calcOut(o); t+=(fp/100)*o.wt; });
@@ -1278,7 +1285,7 @@ function updOutTotal(){
   if(s3tp){s3tp.textContent=t.toFixed(1)+'%';s3tp.style.color=cv;}
   if(s3bar) s3bar.style.width=Math.min(t*2,100)+'%';
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 // S7 PLASTER
 // ═══════════════════════════════════════════════════════════
@@ -1293,7 +1300,7 @@ function updPlaster(){
     g.appendChild(d);
   }
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 // KPI + SUMMARY
 // ═══════════════════════════════════════════════════════════
@@ -1318,14 +1325,14 @@ function updKPI(){
   document.getElementById('s6rm').textContent=Math.round(s6v/3.85)+' ห้อง';
   document.getElementById('lu').textContent='อัปเดตล่าสุด: '+new Date().toLocaleString('th-TH');
 }
- 
+
 function ra(){
   updKPI();
   updateDonuts();
   updatePieChart();
   scheduleAutoSave();
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 // EXCEL EXPORT
 // ═══════════════════════════════════════════════════════════
@@ -1333,7 +1340,7 @@ function exportExcel(){
   try{
     const V=getVals();
     const wb=XLSX.utils.book_new();
- 
+
     // ─── สี helpers ───
     const gcX=(v,t)=>{const r=v/t;return r>=.9?'FF00E676':r>=.3?'FFFF9500':'FFFF4444';};
     const mk=(bg,fc,bold=false,sz=11,align='center',wrap=false)=>({
@@ -1346,7 +1353,7 @@ function exportExcel(){
     const D='FF080D14',C='FF111B28',B2='FF0D1520';
     const BL='FF388BFD',GR='FF00E676',OR='FFFF9500',RD='FFFF4444',CY='FF00D4FF',PU='FFCE93D8',GL='FFFFD600',TE='FF00BCD4';
     const TX='FFE8F0FE',T2='FF8899AA',T3='FF445566';
- 
+
     // ──────────────────────────────────────────
     // SHEET 1 : ภาพรวมโครงการ
     // ──────────────────────────────────────────
@@ -1355,7 +1362,7 @@ function exportExcel(){
     const ns=all.filter(x=>x.v<1).length;
     const prog=all.length-done-ns;
     const ovr=all.reduce((a,x)=>a+(x.v/x.t),0)/all.length*100;
- 
+
     const ws1_data=[
       // Row 0: Title
       ['Construction Progress Dashboard — ภาพรวมโครงการ','','','','',''],
@@ -1377,7 +1384,7 @@ function exportExcel(){
       }),
     ];
     const ws1=XLSX.utils.aoa_to_sheet(ws1_data);
- 
+
     // Apply styles
     const kpiColors=[GR,OR,BL,RD];
     ws1['A1'].s=mk(D,BL,true,14,'left');
@@ -1398,7 +1405,7 @@ function exportExcel(){
     ws1['!rows']=[{hpt:28},{hpt:8},{hpt:22},{hpt:32},{hpt:16},{hpt:8},{hpt:22},...SUMDEF.map(()=>({hpt:24}))];
     ws1['!merges']=[{s:{r:0,c:0},e:{r:0,c:5}}];
     XLSX.utils.book_append_sheet(wb,ws1,'ภาพรวมโครงการ');
- 
+
     // ──────────────────────────────────────────
     // SHEET 2 : ก่ออิฐภายใน ชั้น 2-5
     // ──────────────────────────────────────────
@@ -1428,7 +1435,7 @@ function exportExcel(){
     ws2['!cols']=[{wch:14},{wch:14},{wch:16},{wch:20},{wch:14},{wch:22}];
     ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:5}},{s:{r:1,c:0},e:{r:1,c:5}}];
     XLSX.utils.book_append_sheet(wb,ws2,'ก่ออิฐภายใน 2-5');
- 
+
     // ──────────────────────────────────────────
     // SHEET 3 : ก่ออิฐภายนอก
     // ──────────────────────────────────────────
@@ -1459,7 +1466,7 @@ function exportExcel(){
     ws3['!cols']=[{wch:12},{wch:12},{wch:20},{wch:20},{wch:20},{wch:14},{wch:20}];
     ws3['!merges']=[{s:{r:0,c:0},e:{r:0,c:6}},{s:{r:1,c:0},e:{r:1,c:6}}];
     XLSX.utils.book_append_sheet(wb,ws3,'ก่ออิฐภายนอก');
- 
+
     // ──────────────────────────────────────────
     // SHEET 4 : ก่ออิฐ ชั้น 1
     // ──────────────────────────────────────────
@@ -1483,7 +1490,7 @@ function exportExcel(){
     ws4['!cols']=[{wch:20},{wch:14},{wch:20},{wch:22}];
     ws4['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:1,c:0},e:{r:1,c:3}}];
     XLSX.utils.book_append_sheet(wb,ws4,'ก่ออิฐ ชั้น 1');
- 
+
     // ──────────────────────────────────────────
     // SHEET 5 : งานไฟฟ้า + ท่อน้ำดี + ฉาบผนัง
     // ──────────────────────────────────────────
@@ -1517,7 +1524,7 @@ function exportExcel(){
     ws5['!cols']=[{wch:34},{wch:18},{wch:14},{wch:14}];
     ws5['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:11,c:0},e:{r:11,c:3}}];
     XLSX.utils.book_append_sheet(wb,ws5,'งานระบบ+ฉาบผนัง');
- 
+
     // ─── Export ───
     const date=new Date().toLocaleDateString('th-TH').replace(/\//g,'-');
     XLSX.writeFile(wb,`construction_progress_${date}.xlsx`);
@@ -1527,8 +1534,8 @@ function exportExcel(){
     showToast('Export ล้มเหลว: '+e.message,'err');
   }
 }
- 
- 
+
+
 async function init(){
   buildS2(); buildS3(); buildDonuts(); updPlaster(); updKPI();
   buildPieChart();
@@ -1539,7 +1546,7 @@ async function init(){
     await loadData();
   }
 }
- 
+
 init();
 </script>
 </body>
