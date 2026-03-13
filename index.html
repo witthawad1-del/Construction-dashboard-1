@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>Construction Progress Dashboard</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+ibs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -172,7 +165,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 .SBv{font-size:14px;font-weight:800;font-family:var(--m)}
 .LU{font-size:11px;color:var(--tx3);font-family:var(--m);margin-top:16px;text-align:right}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdrb);border-radius:99px}
-
+ 
 /* ── S2 mobile/desktop toggle ── */
 .s2-desktop{display:block}
 .s2-mobile{display:none}
@@ -184,7 +177,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 .s2card-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .s2card-input-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .s2card-accent{position:absolute;top:0;left:0;width:4px;bottom:0;border-radius:var(--rs) 0 0 var(--rs)}
-
+ 
 /* ══════════════════════════════
    RESPONSIVE — TABLET ≤900px
 ══════════════════════════════ */
@@ -199,7 +192,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   #tab-s2 .DGrid{grid-template-columns:repeat(3,1fr)!important}
   #tab-s3 .DGrid{grid-template-columns:repeat(3,1fr)!important}
 }
-
+ 
 /* ══════════════════════════════
    RESPONSIVE — MOBILE ≤600px
 ══════════════════════════════ */
@@ -251,7 +244,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   /* S7 grid แนวตั้ง */
   .s7-grid{grid-template-columns:1fr!important}
 }
-
+ 
 /* ══════════════════════════════
    LANDSCAPE MOBILE
 ══════════════════════════════ */
@@ -271,7 +264,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .pie-layout{grid-template-columns:240px 1fr}
   .pie-wrap{max-width:240px}
 }
-
+ 
 /* ══════════════════════════════
    PRINT — สีสันเหมือนหน้าจอ
 ══════════════════════════════ */
@@ -318,12 +311,12 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 </head>
 <body>
 <div class="orb o1"></div><div class="orb o2"></div>
-
+ 
 <!-- TOAST -->
 <div id="toast"></div>
-
+ 
 <div class="W">
-
+ 
 <!-- HEADER -->
 <header>
   <div style="display:flex;align-items:center;gap:16px">
@@ -339,20 +332,21 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     <div class="live"><div class="ld"></div>LIVE</div>
     <button class="btn btn-green" onclick="saveData()">💾 บันทึก</button>
     <button class="btn btn-orange" onclick="loadData()">📂 โหลด</button>
+    <button class="btn" onclick="showFirebaseGuide()" style="background:rgba(56,139,253,.15);color:#388bfd;border:1px solid rgba(56,139,253,.4)" onmouseover="this.style.background='rgba(56,139,253,.28)'" onmouseout="this.style.background='rgba(56,139,253,.15)'">⚙️ ตั้งค่า Cloud</button>
     <button class="btn btn-red" onclick="clearData()">🗑️ ล้างข้อมูล</button>
     <button class="btn" onclick="exportExcel()" style="background:rgba(0,200,83,.15);color:#00c853;border:1px solid rgba(0,200,83,.4)" onmouseover="this.style.background='rgba(0,200,83,.28)'" onmouseout="this.style.background='rgba(0,200,83,.15)'">📊 Export Excel</button>
     <button class="btn" onclick="window.print()" style="background:transparent;color:var(--tx2);border:1px solid var(--bdr);padding:8px 16px;font-size:12px;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--bdrb)';this.style.color='var(--tx)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--tx2)'">พิมพ์</button>
   </div>
 </header>
-
+ 
 <!-- SAVE STATUS BAR -->
 <div class="save-bar">
   <div class="save-dot" id="sv-dot"></div>
-  <span id="save-status" style="color:var(--tx2)">กำลังโหลดข้อมูลล่าสุด...</span>
-  <span id="save-time" style="margin-left:auto"></span>
-  <span style="font-size:11px;color:var(--tx3);font-family:var(--m);margin-left:16px">🔑 รหัสข้อมูล: <b style="color:var(--blue)">construction-progress-v1</b></span>
+  <span id="save-status" style="color:var(--tx2)">กำลังโหลดข้อมูล...</span>
+  <span id="save-time" style="margin-left:auto;font-size:11px;color:var(--tx3);font-family:var(--m)"></span>
+  <span style="font-size:11px;color:var(--tx3);font-family:var(--m);margin-left:16px">☁️ Cloud Sync — ทุกเครื่องเห็นข้อมูลเดียวกัน</span>
 </div>
-
+ 
 <!-- KPI -->
 <div class="kg">
   <div class="kc G"><div class="ki">✅</div><div class="kl">งานเสร็จสมบูรณ์</div><div class="kv" id="kp-d">—</div><div class="ks">จาก 7 รายการ</div></div>
@@ -360,7 +354,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="kc B"><div class="ki">📊</div><div class="kl">ความคืบหน้าโดยรวม</div><div class="kv" id="kp-o">—</div><div class="ks">เฉลี่ยทุกหัวข้อ</div></div>
   <div class="kc R"><div class="ki">⏳</div><div class="kl">ยังไม่เริ่ม</div><div class="kv" id="kp-n">—</div><div class="ks">รายการ</div></div>
 </div>
-
+ 
 <!-- ══════════ 3D PIE CHART ══════════ -->
 <div class="pie-section">
   <div class="pie-top">
@@ -408,7 +402,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     </div>
   </div>
 </div>
-
+ 
 <!-- DONUT CIRCULAR DASHBOARD -->
 <div class="DS">
   <div class="DSH">
@@ -435,7 +429,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="DP" id="tab-s6"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">งานเดินท่อน้ำดี · 26 ห้อง · เป้า 50%</div><div class="DGrid" style="grid-template-columns:repeat(4,1fr)" id="g-s6"></div></div>
   <div class="DP" id="tab-s7"><div style="font-size:13px;color:var(--tx2);margin-bottom:16px">งานฉาบผนังภายใน · ชั้น 4 และชั้น 2 · เป้า 40%</div><div class="DGrid" style="grid-template-columns:repeat(5,1fr)" id="g-s7"></div></div>
 </div>
-
+ 
 <!-- S1 + S4 -->
 <div class="G2">
 <div class="card">
@@ -463,7 +457,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </div>
 </div>
 </div>
-
+ 
 <!-- S2 -->
 <div class="card">
   <div class="SH"><div class="SN">2</div><div class="ST">งานก่ออิฐภายใน (ชั้น 2–5)</div><div class="Stg" style="margin-left:auto">เป้า 100% ต่อชั้น</div></div>
@@ -474,22 +468,28 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <!-- Mobile: cards แนวตั้ง -->
   <div class="s2-mobile" id="s2cards"></div>
 </div>
-
+ 
 <!-- S3 -->
 <div class="card">
   <div class="SH"><div class="SN" style="background:var(--cyan);color:#000">3</div><div class="ST">งานก่ออิฐภายนอก</div><div class="Stg" style="margin-left:8px">เป้า 50%</div><span style="font-size:11px;color:var(--tx3);background:var(--bg2);border:1px solid var(--bdr);padding:2px 8px;border-radius:4px">พื้นที่รวม 980 ตร.ม.</span><div style="margin-left:auto;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--tx2)">รวม:</span><span style="font-size:20px;font-weight:800;font-family:var(--m);color:var(--orange)" id="s3tp">—</span></div></div>
   <div class="PBG" style="height:8px;margin-bottom:20px"><div class="PF o" id="s3bar" style="width:0%"></div></div>
-  <div style="overflow-x:auto"><table style="width:100%;border-collapse:separate;border-spacing:0 6px"><thead><tr>
-    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:left;text-transform:uppercase">ชั้น</th>
-    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">น้ำหนัก</th>
-    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านหน้า (ตร.ม.)</th>
-    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านหลัง (ตร.ม.)</th>
-    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านข้าง (ตร.ม.)</th>
-    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">%ชั้นนี้</th>
-    <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">แถบ</th>
-  </tr></thead><tbody id="s3body"></tbody></table></div>
+  <!-- Desktop table -->
+  <div class="s2-desktop">
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:separate;border-spacing:0 6px"><thead><tr>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:left;text-transform:uppercase">ชั้น</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">น้ำหนัก</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านหน้า (ตร.ม.)</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านหลัง (ตร.ม.)</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านซ้าย (ตร.ม.)</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านขวา (ตร.ม.)</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">%ชั้นนี้</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">แถบ</th>
+    </tr></thead><tbody id="s3body"></tbody></table></div>
+  </div>
+  <!-- Mobile cards -->
+  <div class="s2-mobile" id="s3cards"></div>
 </div>
-
+ 
 <!-- S5 S6 -->
 <div class="C2">
 <div class="card">
@@ -505,7 +505,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div style="margin-top:12px;padding:10px 14px;background:var(--bg2);border-radius:8px;border:1px solid var(--bdr)"><div style="font-size:12px;color:var(--tx2)">ยังต้องทำอีก: <span style="color:var(--orange);font-weight:700;font-family:var(--m)" id="s6r">—</span></div><div style="font-size:12px;color:var(--tx2);margin-top:4px">ห้องที่ทำแล้ว: <span style="color:var(--tx);font-weight:700;font-family:var(--m)" id="s6rm">—</span></div></div>
 </div>
 </div>
-
+ 
 <!-- S7 -->
 <div class="card">
   <div class="SH"><div class="SN" style="background:#f57c00">7</div><div class="ST">งานฉาบผนังภายใน (ชั้น 4 และ ชั้น 2)</div><div class="Stg" style="margin-left:auto">เป้า 40%</div><span style="font-size:11px;color:var(--tx3);background:var(--bg2);border:1px solid var(--bdr);padding:2px 8px;border-radius:4px">น้ำหนักห้องละ 4.55%</span></div>
@@ -517,16 +517,16 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     <div><div style="font-size:12px;color:var(--tx2);margin-bottom:10px">สถานะห้อง (แต่ละช่อง = 4.55%)</div><div class="PR" id="prooms"></div></div>
   </div>
 </div>
-
+ 
 <!-- SUMMARY -->
 <div class="SB">
   <div class="SBt">สรุปภาพรวมโครงการ</div>
   <div class="SBg" id="sbg"></div>
   <div class="LU" id="lu"></div>
 </div>
-
+ 
 </div><!-- /W -->
-
+ 
 <script>
 // ═══════════════════════════════════════════════════════════
 // DATA
@@ -538,11 +538,13 @@ const FD=[
   {id:'f5',label:'ชั้น 5',rooms:11,pct:97},
 ];
 const OD=[
-  {id:'o1',label:'ชั้น 1',wt:13,fa:33.6, ba:33.6, sa:30,fd:0, bd:0, sd:0},
-  {id:'o2',label:'ชั้น 2',wt:21,fa:72.94,ba:72.94,sa:30,fd:30,bd:30,sd:0},
-  {id:'o3',label:'ชั้น 3',wt:21,fa:72.94,ba:72.94,sa:30,fd:25,bd:30,sd:0},
-  {id:'o4',label:'ชั้น 4',wt:21,fa:72.94,ba:72.94,sa:30,fd:35,bd:20,sd:0},
-  {id:'o5',label:'ชั้น 5',wt:24,fa:87.45,ba:87.45,sa:30,fd:80,bd:80,sd:0},
+  // fa=พท.หน้า, ba=พท.หลัง, sl=พท.ซ้าย, sr=พท.ขวา
+  // fd=ทำแล้วหน้า, bd=ทำแล้วหลัง, sld=ทำแล้วซ้าย, srd=ทำแล้วขวา
+  {id:'o1',label:'ชั้น 1',wt:13,fa:33.6, ba:33.6, sl:30,sr:30, fd:0, bd:0, sld:0, srd:0},
+  {id:'o2',label:'ชั้น 2',wt:21,fa:72.94,ba:72.94,sl:30,sr:30, fd:30,bd:30,sld:0, srd:0},
+  {id:'o3',label:'ชั้น 3',wt:21,fa:72.94,ba:72.94,sl:30,sr:30, fd:25,bd:30,sld:0, srd:0},
+  {id:'o4',label:'ชั้น 4',wt:21,fa:72.94,ba:72.94,sl:30,sr:30, fd:35,bd:20,sld:0, srd:0},
+  {id:'o5',label:'ชั้น 5',wt:24,fa:87.45,ba:87.45,sl:30,sr:30, fd:80,bd:80,sld:0, srd:0},
 ];
 const S4R=[
   {id:'r41',lbl:'ห้องซักรีด', wt:30},
@@ -560,129 +562,172 @@ const SUMDEF=[
   {lbl:'งานท่อน้ำดี',     key:'s6',   tgt:50, col:'#388bfd'},
   {lbl:'งานฉาบผนัง',      key:'s7',   tgt:40, col:'#ffd600'},
 ];
-
+ 
 // ═══════════════════════════════════════════════════════════
-// SAVE / LOAD  (localStorage — ทำงานได้ทุก browser)
+// CLOUD SAVE / LOAD — Firebase Realtime Database
+// ทุกเครื่องที่เปิด URL เดียวกัน จะเห็นข้อมูลเดียวกันทันที
 // ═══════════════════════════════════════════════════════════
-const SAVE_KEY = 'construction-progress-v1';
+// วิธีตั้งค่า Firebase (3 นาที ฟรี):
+//  1. ไป https://console.firebase.google.com
+//  2. Add project → ตั้งชื่อ → Create
+//  3. Build → Realtime Database → Create database
+//     → Start in test mode → Enable
+//  4. Copy URL (https://xxx-default-rtdb.firebaseio.com)
+//  5. กด "⚙️ ตั้งค่า Cloud" บนหน้าเว็บแล้ววาง URL
+// ═══════════════════════════════════════════════════════════
+let _fbUrl = localStorage.getItem('cp_fb_url') || '';
 let _saveTimer = null;
 let _unsaved = false;
-
-function showToast(msg, type='ok', dur=3000){
+ 
+function isFirebaseReady(){ return _fbUrl && _fbUrl.startsWith('https://'); }
+function fbPath(){ return _fbUrl.replace(/\/+$/, '') + '/construction_progress.json'; }
+ 
+function showToast(msg, type='ok', dur=3500){
   const t=document.getElementById('toast');
   t.innerHTML=`<span>${type==='ok'?'✅':type==='err'?'❌':'ℹ️'}</span> ${msg}`;
-  t.className=type;
-  t.style.display='flex';
+  t.className=type; t.style.display='flex';
   clearTimeout(t._t);
   t._t=setTimeout(()=>t.style.display='none',dur);
 }
-
+ 
 function setSaveStatus(status, msg, time=''){
   const dot=document.getElementById('sv-dot');
   const st=document.getElementById('save-status');
   const tm=document.getElementById('save-time');
   dot.className='save-dot '+status;
   st.textContent=msg;
-  if(time) tm.textContent='บันทึกล่าสุด: '+time;
+  if(time) tm.textContent='อัพเดท: '+time;
 }
-
+ 
 function collectState(){
   return {
-    s1: gv('s1'), s4t: gv('s4t'), s5: gv('s5'), s6: gv('s6'), s7: gv('s7'),
+    s1:gv('s1'), s4t:gv('s4t'), s5:gv('s5'), s6:gv('s6'), s7:gv('s7'),
     r41:gv('r41'),r42:gv('r42'),r43:gv('r43'),r44:gv('r44'),r45:gv('r45'),
     fd: FD.map(f=>f.pct),
-    od: OD.map(o=>({fd:o.fd,bd:o.bd,sd:o.sd})),
+    od: OD.map(o=>({fd:o.fd,bd:o.bd,sld:o.sld,srd:o.srd})),
     savedAt: new Date().toISOString()
   };
 }
-
+ 
 function applyState(s){
   if(!s) return;
-  const set=(id,v)=>{const el=document.getElementById(id);if(el){el.value=v;}};
-  set('s1',s.s1);set('s4t',s.s4t);set('s5',s.s5);set('s6',s.s6);set('s7',s.s7);
+  const set=(id,v)=>{const el=document.getElementById(id);if(el) el.value=v;};
+  set('s1',s.s1); set('s4t',s.s4t); set('s5',s.s5); set('s6',s.s6); set('s7',s.s7);
   set('r41',s.r41);set('r42',s.r42);set('r43',s.r43);set('r44',s.r44);set('r45',s.r45);
-  if(s.fd) FD.forEach((f,i)=>{if(s.fd[i]!==undefined) f.pct=s.fd[i];});
-  if(s.od) OD.forEach((o,i)=>{if(s.od[i]){o.fd=s.od[i].fd;o.bd=s.od[i].bd;o.sd=s.od[i].sd;}});
+  if(s.fd) FD.forEach((f,i)=>{ if(s.fd[i]!==undefined) f.pct=s.fd[i]; });
+  if(s.od) OD.forEach((o,i)=>{ if(s.od[i]){o.fd=s.od[i].fd||0;o.bd=s.od[i].bd||0;o.sld=s.od[i].sld||s.od[i].sd||0;o.srd=s.od[i].srd||0;} });
   buildS2(); buildS3();
-  setBar('s1','s1b','s1p');
-  setBar('s4t','s4tb','s4tp');
-  setBar('s5','s5b','s5p');
-  setBar('s6','s6b','s6p');
-  setBar('s7','s7b','s7p');
+  setBar('s1','s1b','s1p'); setBar('s4t','s4tb','s4tp');
+  setBar('s5','s5b','s5p'); setBar('s6','s6b','s6p'); setBar('s7','s7b','s7p');
   ['r41','r42','r43','r44','r45'].forEach(id=>setBar(id,id+'b',id+'p'));
   updPlaster(); buildDonuts(); ra();
 }
-
-// ── localStorage save (ใช้ได้ทุก browser ทุก device) ──
+ 
+// ── บันทึกขึ้น Firebase ──
 async function saveData(){
-  setSaveStatus('saving','กำลังบันทึก...');
+  if(!isFirebaseReady()){ showFirebaseGuide(); return; }
+  setSaveStatus('saving','☁️ กำลังบันทึก...');
   try{
-    const json = JSON.stringify(collectState());
-    // localStorage — ทำงานได้ทุกที่ รวมถึงเปิดไฟล์ตรงๆ
-    localStorage.setItem(SAVE_KEY, json);
-    // window.storage — เฉพาะ Claude.ai (ถ้ามี)
-    if(window.storage && typeof window.storage.set==='function'){
-      try{ await window.storage.set(SAVE_KEY, json); }catch(e){}
-    }
-    const t=new Date().toLocaleString('th-TH');
-    setSaveStatus('saved','บันทึกสำเร็จ ✓',t);
-    showToast('บันทึกข้อมูลสำเร็จ 💾','ok');
+    const state = collectState();
+    const res = await fetch(fbPath(), {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(state)
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    try{ localStorage.setItem('cp_backup', JSON.stringify(state)); }catch(e){}
+    const t = new Date().toLocaleString('th-TH');
+    setSaveStatus('saved','☁️ Cloud บันทึกสำเร็จ ✓', t);
+    showToast('บันทึก Cloud สำเร็จ 💾 ทุกเครื่องเห็นข้อมูลนี้แล้ว','ok');
     _unsaved=false;
   }catch(e){
-    setSaveStatus('unsaved','บันทึกล้มเหลว');
-    showToast('บันทึกล้มเหลว: '+e.message,'err');
+    setSaveStatus('unsaved','บันทึกล้มเหลว — ตรวจ URL Firebase');
+    showToast('บันทึก Cloud ล้มเหลว: '+e.message,'err',5000);
   }
 }
-
+ 
+// ── โหลดจาก Firebase ──
 async function loadData(){
-  setSaveStatus('saving','กำลังโหลดข้อมูล...');
-  let loaded=false;
-
-  // 1) localStorage ก่อน (ทำงานได้ทุก browser / ทุก device)
+  if(!isFirebaseReady()){ showFirebaseGuide(); return; }
+  setSaveStatus('saving','☁️ กำลังโหลด...');
   try{
-    const raw=localStorage.getItem(SAVE_KEY);
-    if(raw){
-      const s=JSON.parse(raw);
-      applyState(s);
-      const t=s.savedAt?new Date(s.savedAt).toLocaleString('th-TH'):'—';
-      setSaveStatus('saved','โหลดข้อมูลสำเร็จ ✓',t);
-      showToast('โหลดข้อมูลสำเร็จ 📂','ok');
-      loaded=true;
+    const res = await fetch(fbPath());
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const s = await res.json();
+    if(!s){
+      setSaveStatus('unsaved','ยังไม่มีข้อมูลใน Cloud');
+      showToast('ยังไม่มีข้อมูล — กด 💾 บันทึก เพื่อเริ่มต้น','info',5000);
+      return;
     }
-  }catch(e){}
-
-  // 2) window.storage (Claude.ai) — ถ้า localStorage ไม่มีข้อมูล
-  if(!loaded && window.storage && typeof window.storage.get==='function'){
-    try{
-      const result=await window.storage.get(SAVE_KEY);
-      if(result && result.value){
-        const s=JSON.parse(result.value);
-        applyState(s);
-        localStorage.setItem(SAVE_KEY, result.value); // ซิงค์ลง localStorage
-        const t=s.savedAt?new Date(s.savedAt).toLocaleString('th-TH'):'—';
-        setSaveStatus('saved','โหลดข้อมูลสำเร็จ ✓',t);
-        showToast('โหลดข้อมูลสำเร็จ 📂','ok');
-        loaded=true;
-      }
-    }catch(e){}
-  }
-
-  if(!loaded){
-    setSaveStatus('unsaved','ยังไม่มีข้อมูลที่บันทึก');
-    showToast('กดปุ่ม 💾 บันทึก เพื่อบันทึกข้อมูลครั้งแรก','info',5000);
+    applyState(s);
+    try{ localStorage.setItem('cp_backup', JSON.stringify(s)); }catch(e){}
+    const t = s.savedAt ? new Date(s.savedAt).toLocaleString('th-TH') : '—';
+    setSaveStatus('saved','☁️ Cloud โหลดสำเร็จ ✓', t);
+    showToast('โหลดข้อมูล Cloud สำเร็จ 📂','ok');
+  }catch(e){
+    setSaveStatus('unsaved','โหลด Cloud ล้มเหลว');
+    showToast('Cloud ไม่ตอบสนอง: '+e.message,'err',4000);
+    try{ const bk=localStorage.getItem('cp_backup'); if(bk) applyState(JSON.parse(bk)); }catch(e2){}
   }
 }
-
+ 
 async function clearData(){
-  if(!confirm('ต้องการล้างข้อมูลที่บันทึกไว้ทั้งหมดใช่ไหม?')) return;
-  try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
-  if(window.storage && typeof window.storage.delete==='function'){
-    try{ await window.storage.delete(SAVE_KEY); }catch(e){}
-  }
-  showToast('ล้างข้อมูลสำเร็จ 🗑️','ok');
-  setSaveStatus('unsaved','ล้างข้อมูลแล้ว');
+  if(!confirm('ล้างข้อมูล Cloud ทั้งหมด?\n(ทุกเครื่องจะเห็นว่าถูกล้าง)')) return;
+  try{
+    if(isFirebaseReady()) await fetch(fbPath(),{method:'DELETE'});
+    localStorage.removeItem('cp_backup');
+    showToast('ล้างข้อมูล Cloud สำเร็จ 🗑️','ok');
+    setSaveStatus('unsaved','ล้างข้อมูลแล้ว');
+  }catch(e){ showToast('ล้างล้มเหลว: '+e.message,'err'); }
 }
-
+ 
+// ── popup แนะนำตั้งค่า Firebase ──
+function showFirebaseGuide(){
+  if(document.getElementById('fb-guide')) return;
+  const saved = localStorage.getItem('cp_fb_url') || '';
+  const d=document.createElement('div');
+  d.id='fb-guide';
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto';
+  d.innerHTML=`
+  <div style="background:#111b28;border:1px solid rgba(56,139,253,.5);border-radius:16px;padding:28px;max-width:480px;width:100%">
+    <div style="font-size:18px;font-weight:800;color:#e8f0fe;margin-bottom:4px">☁️ เชื่อมต่อ Cloud Share</div>
+    <div style="font-size:12px;color:#8899aa;margin-bottom:20px">ทำครั้งเดียว — ทุกเครื่องเห็นข้อมูลเดียวกัน ฟรี 100%</div>
+    <div style="background:#080d14;border-radius:10px;padding:14px 16px;font-size:12px;color:#aabbc8;line-height:2.1;margin-bottom:18px">
+      <b style="color:#00d4ff;font-size:13px">ขั้นตอน (~3 นาที):</b><br>
+      1. ไป <a href="https://console.firebase.google.com" target="_blank" style="color:#388bfd;font-weight:700">console.firebase.google.com</a> (Login Google)<br>
+      2. กด <b style="color:#fff">Add project</b> → ตั้งชื่อ (อะไรก็ได้) → Continue → Create project<br>
+      3. เมนูซ้าย → <b style="color:#fff">Build</b> → <b style="color:#fff">Realtime Database</b><br>
+      4. กด <b style="color:#fff">Create database</b> → เลือก <b style="color:#fff">Start in test mode</b> → Enable<br>
+      5. Copy URL ที่แสดง เช่น:<br>
+         <code style="color:#ffd600;background:#1a2d45;padding:3px 8px;border-radius:4px;font-size:11px">https://my-project-rtdb.firebaseio.com</code><br>
+      6. วาง URL ด้านล่าง → กด <b style="color:#00e676">เชื่อมต่อ</b>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;color:#8899aa;margin-bottom:6px">Firebase Database URL:</div>
+      <input id="fb-url-inp" type="text" value="${saved}" placeholder="https://your-project-default-rtdb.firebaseio.com"
+        style="width:100%;background:#0d1520;border:1px solid rgba(56,139,253,.4);border-radius:8px;padding:11px 12px;color:#e8f0fe;font-size:12px;font-family:monospace;outline:none;box-sizing:border-box">
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="connectFirebase()" style="flex:1;padding:12px;background:linear-gradient(135deg,#1565c0,#388bfd);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(56,139,253,.3)">🔗 เชื่อมต่อและโหลดข้อมูล</button>
+      <button onclick="document.getElementById('fb-guide').remove()" style="padding:12px 16px;background:transparent;color:#8899aa;border:1px solid rgba(255,255,255,.15);border-radius:8px;cursor:pointer;font-size:13px">ปิด</button>
+    </div>
+    <div style="font-size:10px;color:#445566;margin-top:14px;text-align:center">URL จะถูกจำในเครื่องนี้ — ทุกเครื่องต้องใส่ URL ครั้งแรกเพียงครั้งเดียว</div>
+  </div>`;
+  document.body.appendChild(d);
+}
+ 
+async function connectFirebase(){
+  const url=(document.getElementById('fb-url-inp').value||'').trim().replace(/\/+$/,'');
+  if(!url||!url.startsWith('https://')){
+    showToast('URL ไม่ถูกต้อง ต้องขึ้นต้นด้วย https://','err'); return;
+  }
+  localStorage.setItem('cp_fb_url', url);
+  _fbUrl = url;
+  document.getElementById('fb-guide').remove();
+  showToast('เชื่อมต่อ Firebase สำเร็จ ✓ กำลังโหลดข้อมูล...','ok');
+  await loadData();
+}
+ 
 // auto-save after 2s of inactivity
 function scheduleAutoSave(){
   _unsaved=true;
@@ -690,18 +735,18 @@ function scheduleAutoSave(){
   setSaveStatus('unsaved','มีการเปลี่ยนแปลง...');
   _saveTimer=setTimeout(()=>{if(_unsaved) saveData();},2500);
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // 3D PIE CHART
 // ═══════════════════════════════════════════════════════════
 let pieChart=null;
 let pieMode=0; // 0=actual%, 1=vs target ratio
-
+ 
 const PIE_COLORS=[
   '#00e676','#00d4ff','#00bcd4','#ff9500','#ce93d8','#388bfd','#ffd600'
 ];
 const PIE_COLORS_ALPHA = PIE_COLORS.map(c=>c+'cc');
-
+ 
 function getPieData(V){
   if(pieMode===0){
     // Show actual % values
@@ -714,20 +759,20 @@ function getPieData(V){
     ];
   }
 }
-
+ 
 function buildPieChart(){
   const V=getVals();
   const labels=SUMDEF.map(s=>s.lbl);
   const data=getPieData(V);
   const canvas=document.getElementById('pieChart');
-
+ 
   // 3D effect: offset each slice slightly
   const offsets=data.map((_,i)=> i===0?12:0); // highlight first slice
-
+ 
   if(pieChart){pieChart.destroy();}
-
+ 
   Chart.defaults.font.family="'Sarabun', sans-serif";
-
+ 
   pieChart=new Chart(canvas,{
     type:'doughnut',
     data:{
@@ -800,12 +845,12 @@ function buildPieChart(){
       }
     }
   });
-
+ 
   // Draw 3D shadow bottom arc via plugin
   buildPieLegend(data, V);
   updatePieStats(V);
 }
-
+ 
 function buildPieLegend(data, V){
   const lg=document.getElementById('pie-legend');
   const tgts=[100,100,50,100,80,50,40];
@@ -823,7 +868,7 @@ function buildPieLegend(data, V){
     </div>`;
   }).join('');
 }
-
+ 
 function updatePieStats(V){
   const all=[{v:V.s1,t:100},{v:V.f25,t:100},{v:V.out,t:50},{v:V.s4,t:100},{v:V.s5,t:80},{v:V.s6,t:50},{v:V.s7,t:40}];
   const done=all.filter(x=>x.v>=x.t).length;
@@ -834,7 +879,7 @@ function updatePieStats(V){
   document.getElementById('pie-center-pct').textContent=ovr.toFixed(0)+'%';
   document.getElementById('pie-center-lbl').textContent='ภาพรวม';
 }
-
+ 
 function highlightPie(idx){
   if(!pieChart) return;
   const meta=pieChart.getDatasetMeta(0);
@@ -845,7 +890,7 @@ function highlightPie(idx){
   document.getElementById('pie-center-pct').textContent=parseFloat(data[idx]).toFixed(1)+'%';
   document.getElementById('pie-center-lbl').textContent=s.lbl;
 }
-
+ 
 function updatePieChart(){
   if(!pieChart) return;
   const V=getVals();
@@ -856,14 +901,14 @@ function updatePieChart(){
   buildPieLegend(data,V);
   updatePieStats(V);
 }
-
+ 
 let pieModeNames=['โหมด: แสดง % ที่ทำได้','โหมด: แสดง % ต่อเป้าหมาย'];
 function togglePieMode(){
   pieMode=(pieMode+1)%2;
   document.getElementById('pie-mode-lbl').textContent=pieModeNames[(pieMode+1)%2];
   buildPieChart();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════════
@@ -871,14 +916,14 @@ const R=50,CX=60,CY=60,CIRC=2*Math.PI*R;
 function gcol(r){return r>=.9?'#00e676':r>=.3?'#ff9500':'#ff4444'}
 function gclass(v,t=100){const r=v/t;return r>=.9?'g':r>=.3?'o':'r'}
 function gv(id){return Math.min(100,Math.max(0,parseFloat(document.getElementById(id)?.value)||0))}
-
+ 
 function getVals(){
   const s1=gv('s1'),s4=gv('s4t'),s5=gv('s5'),s6=gv('s6'),s7=gv('s7');
   const f25=FD.reduce((a,f)=>a+f.pct,0)/FD.length;
-  let out=0;OD.forEach(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2;out+=(da/fa)*o.wt;});
+  let out=0;OD.forEach(o=>{const {fp:_fp2,wp:_wp2}=calcOut(o);out+=_wp2;});
   return{s1,f25,out,s4,s5,s6,s7};
 }
-
+ 
 function setBar(iid,bid,pid,tgt=100){
   const v=gv(iid);
   const bar=document.getElementById(bid),pct=document.getElementById(pid);
@@ -892,7 +937,7 @@ function setBar(iid,bid,pid,tgt=100){
   return v;
 }
 function onS1(){setBar('s1','s1b','s1p');ra();}
-
+ 
 // ═══════════════════════════════════════════════════════════
 // DONUT CHART
 // ═══════════════════════════════════════════════════════════
@@ -927,7 +972,7 @@ function onDI(id){
   FD.forEach(f=>{if(id==='d-'+f.id){f.pct=v;const i=document.getElementById('inp-'+f.id);if(i)i.value=v;updateFloor(f.id);}});
   S4R.forEach(r=>{if(id==='d-'+r.id){document.getElementById(r.id).value=v;setBar(r.id,r.id+'b',r.id+'p');ra();}});
 }
-
+ 
 function buildDonuts(){
   const V=getVals();
   // ALL
@@ -951,9 +996,9 @@ function buildDonuts(){
   gs2.innerHTML=donutHTML('d-f-avg',V.f25,100,'#00d4ff','เฉลี่ยทุกชั้น','ก่ออิฐใน 2-5',[{k:'4 ชั้น',v:'รวม'},{k:'เฉลี่ย',v:V.f25.toFixed(1)+'%'}])+
     FD.map(f=>donutHTML('d-'+f.id,f.pct,100,gcol(f.pct/100),f.label,'ก่ออิฐภายใน',[{k:'ห้อง',v:f.rooms+''},{k:'ทำแล้ว',v:Math.ceil(f.pct/(100/f.rooms))+' ห้อง'},{k:'ทิศทาง',v:'ซ้าย→ขวา'}],true,f.id+'-DI')).join('');
   // S3
-  let outT=0;OD.forEach(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2;outT+=(da/fa)*o.wt;});
+  let outT=0;OD.forEach(o=>{const {fp:_fp3,wp:_wp3}=calcOut(o);outT+=_wp3;});
   document.getElementById('g-s3').innerHTML=donutHTML('d-out-ov',outT,50,'#00bcd4','ภาพรวมภายนอก','5 ชั้น 4 ด้าน',[{k:'เป้าหมาย',v:'50%'},{k:'คงเหลือ',v:Math.max(0,50-outT).toFixed(1)+'%'}])+
-    OD.map(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,pct=(da/fa)*100,wp=(da/fa)*o.wt;return donutHTML('d-out-'+o.id,pct,100,gcol(pct/100),o.label,'ก่ออิฐนอก',[{k:'น้ำหนัก',v:o.wt+'%'},{k:'%สมทบ',v:wp.toFixed(1)+'%'}]);}).join('');
+    OD.map(o=>{const {fp:pct,wp}=calcOut(o);return donutHTML('d-out-'+o.id,pct,100,gcol(pct/100),o.label,'ก่ออิฐนอก',[{k:'น้ำหนัก',v:o.wt+'%'},{k:'%สมทบ',v:wp.toFixed(1)+'%'}]);}).join('');
   // S4
   const s4t=gv('s4t');
   document.getElementById('g-s4').innerHTML=donutHTML('d-s4-ov',s4t,100,'#ff9500','รวม ชั้น 1','5 ห้อง',[{k:'เป้าหมาย',v:'100%'},{k:'ทำได้',v:s4t+'%'}])+
@@ -971,7 +1016,7 @@ function buildDonuts(){
   document.getElementById('g-s7').innerHTML=donutHTML('d-s7-ov',t7,40,'#ffd600','ภาพรวม ฉาบผนัง','ชั้น 4+2',[{k:'ทำแล้ว',v:rd+' ห้อง'},{k:'คงเหลือ',v:Math.max(0,40-t7).toFixed(1)+'%'}],true,'0.01')+
     Array.from({length:9},(_,i)=>donutHTML('d-s7-r'+i,i<rd?100:0,100,i<rd?'#00e676':'#334155','ห้อง '+(i+1),i<rd?'ฉาบแล้ว':'รอดำเนินการ',[{k:'น้ำหนัก',v:'4.55%'}])).join('');
 }
-
+ 
 function updateDonuts(){
   const V=getVals();
   const ovr=(V.s1/100+V.f25/100+V.out/50+V.s4/100+V.s5/80+V.s6/50+V.s7/40)/7*100;
@@ -979,7 +1024,7 @@ function updateDonuts(){
   setDonut('d-ov',ovr,100);setDonut('d-s1-r',V.s1,100);
   setDonut('d-f-avg',V.f25,100,'#00d4ff');
   FD.forEach(f=>setDonut('d-'+f.id,f.pct,100));
-  let outT=0;OD.forEach(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,p=(da/fa)*100;setDonut('d-out-'+o.id,p,100);outT+=(da/fa)*o.wt;});
+  let outT=0;OD.forEach(o=>{const {fp:p,wp:_ww}=calcOut(o);outT+=_ww;setDonut('d-out-'+o.id,p,100);outT+=(da/fa)*o.wt;});
   setDonut('d-out-ov',outT,50,'#00bcd4');
   setDonut('d-s4-ov',V.s4,100,'#ff9500');
   S4R.forEach(r=>setDonut('d-'+r.id,gv(r.id),100));
@@ -990,7 +1035,7 @@ function updateDonuts(){
   syncMap.forEach(([did,mid])=>{const el=document.getElementById(did+'-I');if(el&&document.activeElement!==el)el.value=gv(mid);});
   FD.forEach(f=>{const el=document.getElementById('d-'+f.id+'-I');if(el&&document.activeElement!==el)el.value=f.pct;});
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════════════════════
@@ -1000,7 +1045,7 @@ function showTab(name,btn){
   document.getElementById('tab-'+name).classList.add('SHW');
   btn.classList.add('ACT');
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // S2 TABLE + MOBILE CARDS
 // ═══════════════════════════════════════════════════════════
@@ -1057,18 +1102,18 @@ function buildS2(){
     });
   }
 }
-
+ 
 function updateFloor(id, fromMobile=false){
   const v = fromMobile ? gv('minp-'+id) : gv('inp-'+id);
   const fd=FD.find(f=>f.id===id); fd.pct=v;
   const rd=Math.ceil(v/(100/fd.rooms)),cv=gcol(v/100);
-
+ 
   // Sync both inputs
   const desk=document.getElementById('inp-'+id);
   const mob=document.getElementById('minp-'+id);
   if(desk && document.activeElement!==desk) desk.value=v;
   if(mob && document.activeElement!==mob) mob.value=v;
-
+ 
   // Desktop table
   const bar=document.getElementById('bar-'+id);
   const pct=document.getElementById('pct-'+id);
@@ -1076,7 +1121,7 @@ function updateFloor(id, fromMobile=false){
   if(bar) bar.style.cssText=`width:${v}%;background:${cv}`;
   if(pct){pct.style.color=cv;pct.textContent=v+'%';}
   if(rdm){rdm.style.color=cv;rdm.textContent=rd+' ห้อง';}
-
+ 
   // Mobile cards
   const mbar=document.getElementById('mbar-'+id);
   const mpct=document.getElementById('mpct-'+id);
@@ -1084,43 +1129,156 @@ function updateFloor(id, fromMobile=false){
   if(mbar) mbar.style.cssText=`width:${v}%;background:${cv};height:100%;border-radius:99px`;
   if(mpct){mpct.style.color=cv;mpct.textContent=v+'%';}
   if(mrd){mrd.style.color=cv;mrd.textContent=rd+' ห้อง';}
-
+ 
   ra();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-// S3 TABLE
+// S3 TABLE + MOBILE CARDS  (หน้า / หลัง / ซ้าย / ขวา)
 // ═══════════════════════════════════════════════════════════
+function calcOut(o){
+  const totalArea = o.fa + o.ba + o.sl + o.sr;
+  const doneArea  = o.fd + o.bd + o.sld + o.srd;
+  const fp = totalArea > 0 ? (doneArea / totalArea) * 100 : 0;
+  const wp = (doneArea / totalArea) * o.wt || 0;
+  return { totalArea, doneArea, fp, wp };
+}
+ 
 function buildS3(){
-  const tb=document.getElementById('s3body');tb.innerHTML='';
-  OD.forEach(o=>{
-    const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,fp=(da/fa)*100,wp=(da/fa)*o.wt;
-    const cv=gcol(fp/100);
-    const tr=document.createElement('tr');tr.className='FR';
-    tr.innerHTML=`<td><span class="FB" style="background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:var(--cyan)">${o.label}</span></td><td style="text-align:center;font-family:var(--m);font-size:12px;color:var(--tx2)">${o.wt}%</td><td style="text-align:center"><div style="font-size:10px;color:var(--tx3)">พท. ${o.fa}</div><div class="IG" style="justify-content:center;margin-top:4px"><input class="PI" style="width:60px" type="number" min="0" max="${o.fa}" step=".1" id="of-${o.id}" value="${o.fd}" oninput="updOut('${o.id}')"><span class="Ps">ตร.ม.</span></div></td><td style="text-align:center"><div style="font-size:10px;color:var(--tx3)">พท. ${o.ba}</div><div class="IG" style="justify-content:center;margin-top:4px"><input class="PI" style="width:60px" type="number" min="0" max="${o.ba}" step=".1" id="ob-${o.id}" value="${o.bd}" oninput="updOut('${o.id}')"><span class="Ps">ตร.ม.</span></div></td><td style="text-align:center"><div style="font-size:10px;color:var(--tx3)">พท. ${o.sa}×2</div><div class="IG" style="justify-content:center;margin-top:4px"><input class="PI" style="width:60px" type="number" min="0" max="${o.sa}" step=".1" id="os-${o.id}" value="${o.sd}" oninput="updOut('${o.id}')"><span class="Ps">ตร.ม.</span></div></td><td style="text-align:center"><span id="ow-${o.id}" style="font-size:16px;font-weight:800;font-family:var(--m);color:${cv}">${wp.toFixed(1)}%</span></td><td style="min-width:120px;padding-right:14px"><div class="TP"><div class="TPB"><div class="TPF" id="obar-${o.id}" style="width:${fp.toFixed(0)}%;background:${cv}"></div></div><span style="font-size:11px;font-family:var(--m);font-weight:700;min-width:36px;text-align:right;color:${cv}" id="opct-${o.id}">${fp.toFixed(0)}%</span></div></td>`;
-    tb.appendChild(tr);
-  });
+  // ── Desktop table ──
+  const tb=document.getElementById('s3body');
+  if(tb){
+    tb.innerHTML='';
+    OD.forEach(o=>{
+      const {fp,wp}=calcOut(o);
+      const cv=gcol(fp/100);
+      const tr=document.createElement('tr'); tr.className='FR';
+      tr.innerHTML=`
+        <td><span class="FB" style="background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:var(--cyan)">${o.label}</span></td>
+        <td style="text-align:center;font-family:var(--m);font-size:12px;color:var(--tx2)">${o.wt}%</td>
+        <td style="text-align:center">
+          <div style="font-size:10px;color:var(--tx3)">พท. ${o.fa}</div>
+          <div class="IG" style="justify-content:center;margin-top:4px">
+            <input class="PI" style="width:60px" type="number" min="0" max="${o.fa}" step=".1" id="of-${o.id}" value="${o.fd}" oninput="updOut('${o.id}')">
+            <span class="Ps">ตร.ม.</span></div></td>
+        <td style="text-align:center">
+          <div style="font-size:10px;color:var(--tx3)">พท. ${o.ba}</div>
+          <div class="IG" style="justify-content:center;margin-top:4px">
+            <input class="PI" style="width:60px" type="number" min="0" max="${o.ba}" step=".1" id="ob-${o.id}" value="${o.bd}" oninput="updOut('${o.id}')">
+            <span class="Ps">ตร.ม.</span></div></td>
+        <td style="text-align:center">
+          <div style="font-size:10px;color:var(--tx3)">พท. ${o.sl}</div>
+          <div class="IG" style="justify-content:center;margin-top:4px">
+            <input class="PI" style="width:60px" type="number" min="0" max="${o.sl}" step=".1" id="osl-${o.id}" value="${o.sld}" oninput="updOut('${o.id}')">
+            <span class="Ps">ตร.ม.</span></div></td>
+        <td style="text-align:center">
+          <div style="font-size:10px;color:var(--tx3)">พท. ${o.sr}</div>
+          <div class="IG" style="justify-content:center;margin-top:4px">
+            <input class="PI" style="width:60px" type="number" min="0" max="${o.sr}" step=".1" id="osr-${o.id}" value="${o.srd}" oninput="updOut('${o.id}')">
+            <span class="Ps">ตร.ม.</span></div></td>
+        <td style="text-align:center">
+          <span id="ow-${o.id}" style="font-size:16px;font-weight:800;font-family:var(--m);color:${cv}">${wp.toFixed(1)}%</span></td>
+        <td style="min-width:120px;padding-right:14px">
+          <div class="TP"><div class="TPB"><div class="TPF" id="obar-${o.id}" style="width:${fp.toFixed(0)}%;background:${cv}"></div></div>
+          <span style="font-size:11px;font-family:var(--m);font-weight:700;min-width:36px;text-align:right;color:${cv}" id="opct-${o.id}">${fp.toFixed(0)}%</span></div></td>`;
+      tb.appendChild(tr);
+    });
+  }
+  // ── Mobile cards ──
+  const mc=document.getElementById('s3cards');
+  if(mc){
+    mc.innerHTML='';
+    OD.forEach(o=>{
+      const {fp,wp}=calcOut(o);
+      const cv=gcol(fp/100);
+      const div=document.createElement('div');
+      div.className='s2card';
+      div.innerHTML=`
+        <div class="s2card-accent" style="background:${cv}"></div>
+        <div class="s2card-top">
+          <div>
+            <div class="s2card-lbl" style="color:var(--cyan)">${o.label}</div>
+            <div class="s2card-stat">น้ำหนัก ${o.wt}% · %สมทบ <span id="mow-${o.id}" style="color:${cv}">${wp.toFixed(1)}%</span></div>
+          </div>
+          <span id="mopct-${o.id}" style="font-size:16px;font-weight:800;font-family:var(--m);color:${cv}">${fp.toFixed(0)}%</span>
+        </div>
+        <div class="s2card-bar-row">
+          <div class="TPB" style="flex:1;height:10px">
+            <div class="TPF" id="mobar-${o.id}" style="width:${fp.toFixed(0)}%;background:${cv};height:100%;border-radius:99px"></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px">
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">ด้านหน้า (พท. ${o.fa} ตร.ม.)</div>
+            <div class="IG"><input class="PI" style="width:100%;font-size:14px" type="number" min="0" max="${o.fa}" step=".1" id="mof-${o.id}" value="${o.fd}" oninput="updOut('${o.id}',true)"><span class="Ps">ตร.ม.</span></div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px">
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">ด้านหลัง (พท. ${o.ba} ตร.ม.)</div>
+            <div class="IG"><input class="PI" style="width:100%;font-size:14px" type="number" min="0" max="${o.ba}" step=".1" id="mob-${o.id}" value="${o.bd}" oninput="updOut('${o.id}',true)"><span class="Ps">ตร.ม.</span></div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px">
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">ด้านซ้าย (พท. ${o.sl} ตร.ม.)</div>
+            <div class="IG"><input class="PI" style="width:100%;font-size:14px" type="number" min="0" max="${o.sl}" step=".1" id="mosl-${o.id}" value="${o.sld}" oninput="updOut('${o.id}',true)"><span class="Ps">ตร.ม.</span></div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px">
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">ด้านขวา (พท. ${o.sr} ตร.ม.)</div>
+            <div class="IG"><input class="PI" style="width:100%;font-size:14px" type="number" min="0" max="${o.sr}" step=".1" id="mosr-${o.id}" value="${o.srd}" oninput="updOut('${o.id}',true)"><span class="Ps">ตร.ม.</span></div>
+          </div>
+        </div>`;
+      mc.appendChild(div);
+    });
+  }
   updOutTotal();
 }
-function updOut(id){
+ 
+function updOut(id, fromMobile=false){
   const o=OD.find(x=>x.id===id);
-  o.fd=parseFloat(document.getElementById('of-'+id).value)||0;
-  o.bd=parseFloat(document.getElementById('ob-'+id).value)||0;
-  o.sd=parseFloat(document.getElementById('os-'+id).value)||0;
-  const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,fp=(da/fa)*100,wp=(da/fa)*o.wt;
+  if(fromMobile){
+    o.fd  = parseFloat(document.getElementById('mof-'+id)?.value)  ||0;
+    o.bd  = parseFloat(document.getElementById('mob-'+id)?.value)  ||0;
+    o.sld = parseFloat(document.getElementById('mosl-'+id)?.value) ||0;
+    o.srd = parseFloat(document.getElementById('mosr-'+id)?.value) ||0;
+    // sync → desktop
+    const sf=(id2,v)=>{const el=document.getElementById(id2);if(el)el.value=v;};
+    sf('of-'+id,o.fd); sf('ob-'+id,o.bd); sf('osl-'+id,o.sld); sf('osr-'+id,o.srd);
+  } else {
+    o.fd  = parseFloat(document.getElementById('of-'+id)?.value)  ||0;
+    o.bd  = parseFloat(document.getElementById('ob-'+id)?.value)  ||0;
+    o.sld = parseFloat(document.getElementById('osl-'+id)?.value) ||0;
+    o.srd = parseFloat(document.getElementById('osr-'+id)?.value) ||0;
+    // sync → mobile
+    const sf=(id2,v)=>{const el=document.getElementById(id2);if(el)el.value=v;};
+    sf('mof-'+id,o.fd); sf('mob-'+id,o.bd); sf('mosl-'+id,o.sld); sf('mosr-'+id,o.srd);
+  }
+  const {fp,wp}=calcOut(o);
   const cv=gcol(fp/100);
-  document.getElementById('obar-'+id).style.cssText=`width:${fp}%;background:${cv}`;
-  document.getElementById('opct-'+id).style.color=cv;document.getElementById('opct-'+id).textContent=fp.toFixed(0)+'%';
-  document.getElementById('ow-'+id).style.color=cv;document.getElementById('ow-'+id).textContent=wp.toFixed(1)+'%';
-  updOutTotal();ra();
+  // update desktop
+  const obar=document.getElementById('obar-'+id);
+  const opct=document.getElementById('opct-'+id);
+  const ow=document.getElementById('ow-'+id);
+  if(obar) obar.style.cssText=`width:${fp}%;background:${cv}`;
+  if(opct){opct.style.color=cv;opct.textContent=fp.toFixed(0)+'%';}
+  if(ow){ow.style.color=cv;ow.textContent=wp.toFixed(1)+'%';}
+  // update mobile
+  const mobar=document.getElementById('mobar-'+id);
+  const mopct=document.getElementById('mopct-'+id);
+  const mow=document.getElementById('mow-'+id);
+  if(mobar) mobar.style.cssText=`width:${fp}%;background:${cv};height:100%;border-radius:99px`;
+  if(mopct){mopct.style.color=cv;mopct.textContent=fp.toFixed(0)+'%';}
+  if(mow){mow.style.color=cv;mow.textContent=wp.toFixed(1)+'%';}
+  updOutTotal(); ra();
 }
+ 
 function updOutTotal(){
-  let t=0;OD.forEach(o=>{const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2;t+=(da/fa)*o.wt;});
+  let t=0;
+  OD.forEach(o=>{ const {fp}=calcOut(o); t+=(fp/100)*o.wt; });
   const cv=gcol(t/50);
-  document.getElementById('s3tp').textContent=t.toFixed(1)+'%';document.getElementById('s3tp').style.color=cv;
-  document.getElementById('s3bar').style.width=Math.min(t*2,100)+'%';
+  const s3tp=document.getElementById('s3tp');
+  const s3bar=document.getElementById('s3bar');
+  if(s3tp){s3tp.textContent=t.toFixed(1)+'%';s3tp.style.color=cv;}
+  if(s3bar) s3bar.style.width=Math.min(t*2,100)+'%';
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // S7 PLASTER
 // ═══════════════════════════════════════════════════════════
@@ -1135,7 +1293,7 @@ function updPlaster(){
     g.appendChild(d);
   }
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // KPI + SUMMARY
 // ═══════════════════════════════════════════════════════════
@@ -1160,14 +1318,14 @@ function updKPI(){
   document.getElementById('s6rm').textContent=Math.round(s6v/3.85)+' ห้อง';
   document.getElementById('lu').textContent='อัปเดตล่าสุด: '+new Date().toLocaleString('th-TH');
 }
-
+ 
 function ra(){
   updKPI();
   updateDonuts();
   updatePieChart();
   scheduleAutoSave();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // EXCEL EXPORT
 // ═══════════════════════════════════════════════════════════
@@ -1175,7 +1333,7 @@ function exportExcel(){
   try{
     const V=getVals();
     const wb=XLSX.utils.book_new();
-
+ 
     // ─── สี helpers ───
     const gcX=(v,t)=>{const r=v/t;return r>=.9?'FF00E676':r>=.3?'FFFF9500':'FFFF4444';};
     const mk=(bg,fc,bold=false,sz=11,align='center',wrap=false)=>({
@@ -1188,7 +1346,7 @@ function exportExcel(){
     const D='FF080D14',C='FF111B28',B2='FF0D1520';
     const BL='FF388BFD',GR='FF00E676',OR='FFFF9500',RD='FFFF4444',CY='FF00D4FF',PU='FFCE93D8',GL='FFFFD600',TE='FF00BCD4';
     const TX='FFE8F0FE',T2='FF8899AA',T3='FF445566';
-
+ 
     // ──────────────────────────────────────────
     // SHEET 1 : ภาพรวมโครงการ
     // ──────────────────────────────────────────
@@ -1197,7 +1355,7 @@ function exportExcel(){
     const ns=all.filter(x=>x.v<1).length;
     const prog=all.length-done-ns;
     const ovr=all.reduce((a,x)=>a+(x.v/x.t),0)/all.length*100;
-
+ 
     const ws1_data=[
       // Row 0: Title
       ['Construction Progress Dashboard — ภาพรวมโครงการ','','','','',''],
@@ -1219,7 +1377,7 @@ function exportExcel(){
       }),
     ];
     const ws1=XLSX.utils.aoa_to_sheet(ws1_data);
-
+ 
     // Apply styles
     const kpiColors=[GR,OR,BL,RD];
     ws1['A1'].s=mk(D,BL,true,14,'left');
@@ -1240,7 +1398,7 @@ function exportExcel(){
     ws1['!rows']=[{hpt:28},{hpt:8},{hpt:22},{hpt:32},{hpt:16},{hpt:8},{hpt:22},...SUMDEF.map(()=>({hpt:24}))];
     ws1['!merges']=[{s:{r:0,c:0},e:{r:0,c:5}}];
     XLSX.utils.book_append_sheet(wb,ws1,'ภาพรวมโครงการ');
-
+ 
     // ──────────────────────────────────────────
     // SHEET 2 : ก่ออิฐภายใน ชั้น 2-5
     // ──────────────────────────────────────────
@@ -1270,7 +1428,7 @@ function exportExcel(){
     ws2['!cols']=[{wch:14},{wch:14},{wch:16},{wch:20},{wch:14},{wch:22}];
     ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:5}},{s:{r:1,c:0},e:{r:1,c:5}}];
     XLSX.utils.book_append_sheet(wb,ws2,'ก่ออิฐภายใน 2-5');
-
+ 
     // ──────────────────────────────────────────
     // SHEET 3 : ก่ออิฐภายนอก
     // ──────────────────────────────────────────
@@ -1281,9 +1439,9 @@ function exportExcel(){
       [''],
       ['ชั้น','น้ำหนัก (%)','หน้า-ทำแล้ว (ตร.ม.)','หลัง-ทำแล้ว (ตร.ม.)','ข้าง-ทำแล้ว (ตร.ม.)','%สมทบ','สถานะ'],
       ...OD.map(o=>{
-        const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,fp=(da/fa)*100,wp=(da/fa)*o.wt;
+        const {fp,wp}=calcOut(o);
         outTotal+=wp;
-        return[o.label,o.wt,o.fd,o.bd,o.sd*2,wp.toFixed(1)+'%',fp>=100?'✅ เสร็จ':fp>0?'🔄 กำลังทำ':'⏳ ยังไม่เริ่ม'];
+        return[o.label,o.wt,o.fd,o.bd,o.sld,o.srd,wp.toFixed(1)+'%',fp>=100?'✅ เสร็จ':fp>0?'🔄 กำลังทำ':'⏳ ยังไม่เริ่ม'];
       }),
       [''],
       ['รวมทั้งหมด','100%','','','',outTotal.toFixed(1)+'%','เป้าหมาย 50%'],
@@ -1293,7 +1451,7 @@ function exportExcel(){
     ws3['A2'].s=mk(D,T2,false,10,'left');
     ['A4','B4','C4','D4','E4','F4','G4'].forEach(c=>{if(ws3[c])ws3[c].s=mk(B2,BL,true);});
     OD.forEach((o,i)=>{
-      const fa=o.fa+o.ba+o.sa*2,da=o.fd+o.bd+o.sd*2,fp=(da/fa)*100,col=gcX(fp,100),bg=i%2===0?C:B2;
+      const {fp,wp:_w2}=calcOut(o);const col=gcX(fp,100),bg=i%2===0?C:B2;
       ['A','B','C','D','E','F','G'].forEach((l,j)=>{
         const c=l+(5+i);if(ws3[c])ws3[c].s=mk(bg,j===0?TX:j===5||j===6?col:T2,j===0||j===5,11,j===0?'left':'center');
       });
@@ -1301,7 +1459,7 @@ function exportExcel(){
     ws3['!cols']=[{wch:12},{wch:12},{wch:20},{wch:20},{wch:20},{wch:14},{wch:20}];
     ws3['!merges']=[{s:{r:0,c:0},e:{r:0,c:6}},{s:{r:1,c:0},e:{r:1,c:6}}];
     XLSX.utils.book_append_sheet(wb,ws3,'ก่ออิฐภายนอก');
-
+ 
     // ──────────────────────────────────────────
     // SHEET 4 : ก่ออิฐ ชั้น 1
     // ──────────────────────────────────────────
@@ -1325,7 +1483,7 @@ function exportExcel(){
     ws4['!cols']=[{wch:20},{wch:14},{wch:20},{wch:22}];
     ws4['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:1,c:0},e:{r:1,c:3}}];
     XLSX.utils.book_append_sheet(wb,ws4,'ก่ออิฐ ชั้น 1');
-
+ 
     // ──────────────────────────────────────────
     // SHEET 5 : งานไฟฟ้า + ท่อน้ำดี + ฉาบผนัง
     // ──────────────────────────────────────────
@@ -1359,7 +1517,7 @@ function exportExcel(){
     ws5['!cols']=[{wch:34},{wch:18},{wch:14},{wch:14}];
     ws5['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:11,c:0},e:{r:11,c:3}}];
     XLSX.utils.book_append_sheet(wb,ws5,'งานระบบ+ฉาบผนัง');
-
+ 
     // ─── Export ───
     const date=new Date().toLocaleDateString('th-TH').replace(/\//g,'-');
     XLSX.writeFile(wb,`construction_progress_${date}.xlsx`);
@@ -1369,15 +1527,19 @@ function exportExcel(){
     showToast('Export ล้มเหลว: '+e.message,'err');
   }
 }
-
-
+ 
+ 
 async function init(){
   buildS2(); buildS3(); buildDonuts(); updPlaster(); updKPI();
   buildPieChart();
-  // Try to load saved data
-  await loadData();
+  if(!isFirebaseReady()){
+    setSaveStatus('unsaved','กรุณาตั้งค่า Cloud ก่อนใช้งาน');
+    setTimeout(()=>showFirebaseGuide(), 800);
+  } else {
+    await loadData();
+  }
 }
-
+ 
 init();
 </script>
 </body>
