@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -315,6 +314,134 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .DP.SHW{display:block!important}
   @page{size:A4 landscape;margin:8mm}
 }
+
+/* ── Lock / Read-only mode ── */
+body.view-mode input, body.view-mode .DCI, body.view-mode .PI {
+  pointer-events:none!important; opacity:.5!important; cursor:not-allowed!important;
+}
+body.view-mode .edit-only { display:none!important; }
+body.view-mode .view-badge { display:flex!important; }
+.view-badge { display:none; align-items:center; gap:6px; padding:6px 14px;
+  background:rgba(255,149,0,.12); border:1px solid rgba(255,149,0,.35);
+  border-radius:20px; font-size:12px; font-weight:600; color:var(--orange); font-family:var(--m); }
+/* ── Lock Modal ── */
+#lock-modal{
+  position:fixed;inset:0;z-index:99999;
+  display:none;
+  align-items:center;justify-content:center;
+  background:rgba(3,7,14,.97);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  padding:20px;
+}
+#lock-modal.show{display:flex!important}
+.lm-card{
+  width:100%;max-width:390px;margin:auto;
+  background:#08111e;
+  border:1px solid rgba(56,139,253,.15);
+  border-radius:20px;
+  box-shadow:0 48px 120px rgba(0,0,0,.9),
+             0 0 0 1px rgba(255,255,255,.02) inset;
+  overflow:hidden;
+}
+.lm-accent{
+  height:2px;
+  background:linear-gradient(90deg,transparent,#1a56db 30%,#38bdf8 60%,transparent);
+}
+.lm-content{padding:38px 34px 32px}
+.lm-lockbox{
+  width:50px;height:50px;margin:0 auto 22px;
+  background:rgba(56,139,253,.07);
+  border:1px solid rgba(56,139,253,.18);
+  border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.lm-h{
+  font-size:20px;font-weight:800;color:#dce8fb;
+  letter-spacing:-.5px;text-align:center;margin-bottom:7px;
+}
+.lm-p{
+  font-size:11.5px;color:#253548;font-family:var(--m);
+  text-align:center;line-height:1.8;margin-bottom:32px;
+}
+.lm-lbl{
+  display:block;font-size:9.5px;font-weight:700;
+  color:#1e3050;letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.lm-field{position:relative;margin-bottom:8px}
+.lm-field input{
+  width:100%;box-sizing:border-box;
+  background:#040b14;
+  border:1.5px solid #101e2e;
+  border-radius:10px;
+  padding:14px 46px 14px 16px;
+  color:#c0d4ec;font-size:16px;
+  font-family:var(--m);letter-spacing:5px;
+  outline:none;
+  -webkit-appearance:none;appearance:none;
+  touch-action:manipulation;
+  transition:border .18s,box-shadow .18s,background .18s;
+}
+.lm-field input::placeholder{
+  color:#101e2e;letter-spacing:2px;font-size:14px;
+}
+.lm-field input:focus{
+  border-color:rgba(56,139,253,.45);
+  box-shadow:0 0 0 3px rgba(56,139,253,.08);
+  background:#050d18;
+}
+.lm-eye{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  background:none;border:none;padding:5px;
+  color:#1e3050;cursor:pointer;line-height:0;
+  touch-action:manipulation;transition:color .15s;
+}
+.lm-eye:hover{color:#2d4a6a}
+.lm-err{
+  font-size:11px;color:#dc6060;font-family:var(--m);
+  min-height:18px;margin:6px 0 20px;letter-spacing:.2px;
+}
+.lm-submit{
+  width:100%;padding:14px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,#1740b8,#1e90d4);
+  color:#fff;font-size:14px;font-weight:700;font-family:var(--f);
+  letter-spacing:.4px;cursor:pointer;
+  box-shadow:0 6px 24px rgba(23,64,184,.3);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:filter .15s,transform .12s;
+}
+.lm-submit:hover{filter:brightness(1.1)}
+.lm-submit:active{transform:scale(.98)}
+.lm-or{
+  display:flex;align-items:center;gap:10px;margin:16px 0;
+}
+.lm-or::before,.lm-or::after{
+  content:'';flex:1;height:1px;background:#080f1a;
+}
+.lm-or span{font-size:9px;color:#101e2e;letter-spacing:2px}
+.lm-ghost{
+  width:100%;padding:11px;border-radius:10px;
+  background:transparent;
+  border:1px solid #080f1a;
+  color:#1e3050;font-size:12px;font-weight:600;font-family:var(--f);
+  cursor:pointer;letter-spacing:.3px;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.lm-ghost:hover{background:#040b14;color:#2d4a6a;border-color:#101e2e}
+.lm-footer-bar{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:24px;padding-top:18px;
+  border-top:1px solid #050c16;
+  font-size:9.5px;color:#0d1a28;
+  font-family:var(--m);letter-spacing:.5px;
+}
+.lm-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:#102030;flex-shrink:0;
+  animation:lmdot 3s ease-in-out infinite;
+}
+@keyframes lmdot{0%,100%{opacity:.3}50%{opacity:.8}}
 </style>
 </head>
 <body>
@@ -338,13 +465,14 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
     <div class="live"><div class="ld"></div>LIVE</div>
-    <button class="btn btn-green" onclick="saveData()">💾 บันทึก</button>
-    <button class="btn btn-orange" onclick="loadData()">📂 โหลด</button>
-    <button class="btn" onclick="showFirebaseGuide()" style="background:rgba(56,139,253,.15);color:#388bfd;border:1px solid rgba(56,139,253,.4)" onmouseover="this.style.background='rgba(56,139,253,.28)'" onmouseout="this.style.background='rgba(56,139,253,.15)'">⚙️ ตั้งค่า Cloud</button>
-    <button class="btn btn-red" onclick="clearData()">🗑️ ล้างข้อมูล</button>
-    <button class="btn" onclick="exportPDF()" id="pdf-btn" style="background:rgba(220,38,38,.15);color:#ff4444;border:1px solid rgba(220,38,38,.4)" onmouseover="this.style.background='rgba(220,38,38,.28)'" onmouseout="this.style.background='rgba(220,38,38,.15)'">📄 Export PDF</button>
+    <div class="view-badge">👁️ โหมดดูอย่างเดียว</div>
+    <button class="btn btn-green edit-only" onclick="saveData()">💾 บันทึก</button>
+    <button class="btn btn-orange edit-only" onclick="loadData()">📂 โหลด</button>
+    <button class="btn edit-only" onclick="showFirebaseGuide()" style="background:rgba(56,139,253,.15);color:#388bfd;border:1px solid rgba(56,139,253,.4)" onmouseover="this.style.background='rgba(56,139,253,.28)'" onmouseout="this.style.background='rgba(56,139,253,.15)'">⚙️ ตั้งค่า Cloud</button>
+    <button class="btn btn-red edit-only" onclick="clearData()">🗑️ ล้างข้อมูล</button>
+    <button class="btn edit-only" onclick="exportPDF()" style="background:rgba(220,38,38,.15);color:#ff4444;border:1px solid rgba(220,38,38,.4)" onmouseover="this.style.background='rgba(220,38,38,.28)'" onmouseout="this.style.background='rgba(220,38,38,.15)'">📄 Export PDF</button>
     <button class="btn" onclick="exportExcel()" style="background:rgba(0,200,83,.15);color:#00c853;border:1px solid rgba(0,200,83,.4)" onmouseover="this.style.background='rgba(0,200,83,.28)'" onmouseout="this.style.background='rgba(0,200,83,.15)'">📊 Export Excel</button>
-    <button class="btn" onclick="window.print()" style="background:transparent;color:var(--tx2);border:1px solid var(--bdr);padding:8px 16px;font-size:12px;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--bdrb)';this.style.color='var(--tx)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--tx2)'">พิมพ์</button>
+    <button id="lock-btn" class="btn" onclick="toggleLock()" style="background:rgba(255,149,0,.12);color:var(--orange);border:1px solid rgba(255,149,0,.35)" title="ล็อก/ปลดล็อกการแก้ไข">🔒 ล็อก</button>
   </div>
 </header>
 
@@ -574,6 +702,9 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 
 <!-- Jupiter + วิเคราะห์ buttons -->
 <div style="display:flex;justify-content:center;gap:14px;padding:16px 0 8px;flex-wrap:wrap">
+  <button onclick="showRealtimeGuide()" style="background:linear-gradient(135deg,rgba(56,139,253,.2),rgba(0,212,255,.1));color:var(--blue);border:1px solid rgba(56,139,253,.4);border-radius:12px;padding:10px 22px;font-size:13px;cursor:pointer;font-family:var(--f);font-weight:700;display:flex;align-items:center;gap:8px;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+    <span>🌐</span><span>คู่มือแชร์ Realtime</span>
+  </button>
   <button onclick="openJupiterPage()" style="background:linear-gradient(135deg,rgba(26,35,126,.6),rgba(255,214,0,.2));color:var(--gold);border:1px solid rgba(255,214,0,.5);border-radius:12px;padding:14px 32px;font-size:15px;cursor:pointer;font-family:var(--f);font-weight:700;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(255,214,0,.15);transition:all .2s" onmouseover="this.style.boxShadow='0 6px 28px rgba(255,214,0,.35)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 4px 20px rgba(255,214,0,.15)';this.style.transform='translateY(0)'">
     <span style="font-size:22px">🪐</span>
     <span>Jupiter — คำแนะนำการบริหารงานก่อสร้าง</span>
@@ -586,6 +717,71 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </button>
 </div>
 <div id="advice-body" style="display:none"></div>
+
+<!-- LOCK MODAL -->
+<div id="lock-modal">
+  <div class="lm-card">
+    <div class="lm-accent"></div>
+    <div class="lm-content">
+
+      <div class="lm-lockbox">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="#2a6cb8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <line x1="12" y1="15" x2="12" y2="17"/>
+        </svg>
+      </div>
+
+      <div class="lm-h">Restricted Access</div>
+      <div class="lm-p">ระบบนี้ถูกจำกัดสิทธิ์การแก้ไข<br>กรอกรหัสผ่านเพื่อเข้าสู่โหมดแก้ไขข้อมูล</div>
+
+      <label class="lm-lbl" for="lm-pw">Access Password</label>
+      <div class="lm-field">
+        <input
+          id="lm-pw"
+          type="password"
+          placeholder="••••••••"
+          maxlength="30"
+          autocomplete="current-password"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();doUnlock();}">
+        <button type="button" class="lm-eye" id="lm-eye-btn" title="แสดง/ซ่อนรหัสผ่าน"
+          onclick="(function(){
+            var i=document.getElementById('lm-pw');
+            var toText=(i.type==='password');
+            i.type=toText?'text':'password';
+            document.getElementById('lm-eye-btn').innerHTML=toText
+              ?'<svg width=15 height=15 viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'><line x1='1' y1='1' x2='23' y2='23'/><path d='M10.6 5.1A9 9 0 0 1 12 5c7 0 11 7 11 7a18 18 0 0 1-2.5 3.3M6.6 6.6A18 18 0 0 0 1 12s4 7 11 7a9 9 0 0 0 5.4-1.8'/></svg>'
+              :'<svg width=15 height=15 viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'><path d='M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z'/><circle cx='12' cy='12' r='3'/></svg>';
+          })()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="lm-err" id="lm-err"></div>
+
+      <button class="lm-submit" onclick="doUnlock()">เข้าสู่ระบบ</button>
+
+      <div class="lm-or"><span>OR</span></div>
+
+      <button class="lm-ghost" onclick="closeLockModal()">ดูข้อมูลอย่างเดียว &nbsp;(Read Only)</button>
+
+      <div class="lm-footer-bar">
+        <div class="lm-dot"></div>
+        Construction Progress Dashboard &nbsp;·&nbsp; Secured
+        <div class="lm-dot"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
 </div><!-- /W -->
 
 <script>
@@ -695,15 +891,23 @@ async function saveData(){
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify(state)
     });
-    if(!res.ok) throw new Error('HTTP '+res.status);
+    if(!res.ok){
+      const txt = await res.text().catch(()=>'');
+      if(res.status===401||res.status===403)
+        throw new Error(`Firebase ปฏิเสธ (${res.status}) — ตรวจ Rules: ต้องตั้ง ".write": true`);
+      throw new Error(`HTTP ${res.status}: ${txt.slice(0,80)}`);
+    }
     try{ localStorage.setItem('cp_backup', JSON.stringify(state)); }catch(e){}
     const t = new Date().toLocaleString('th-TH');
     setSaveStatus('saved','☁️ Cloud บันทึกสำเร็จ ✓', t);
-    showToast('บันทึก Cloud สำเร็จ 💾 ทุกเครื่องเห็นข้อมูลนี้แล้ว','ok');
+    showToast('บันทึก Cloud สำเร็จ 💾','ok');
     _unsaved=false;
   }catch(e){
-    setSaveStatus('unsaved','บันทึกล้มเหลว — ตรวจ URL Firebase');
-    showToast('บันทึก Cloud ล้มเหลว: '+e.message,'err',5000);
+    let msg = e.message;
+    if(msg.includes('Failed to fetch')||msg.includes('NetworkError'))
+      msg = 'เชื่อมต่อ Firebase ไม่ได้ — ตรวจอินเทอร์เน็ต หรือเปิดจาก Web Server (ไม่ใช่ file://)';
+    setSaveStatus('unsaved','บันทึกล้มเหลว — กด ⚙️ ตั้งค่า Cloud');
+    showToast('❌ บันทึกล้มเหลว: '+msg,'err',6000);
   }
 }
 
@@ -713,7 +917,12 @@ async function loadData(){
   setSaveStatus('saving','☁️ กำลังโหลด...');
   try{
     const res = await fetch(fbPath());
-    if(!res.ok) throw new Error('HTTP '+res.status);
+    if(!res.ok){
+      const txt = await res.text().catch(()=>'');
+      if(res.status===401||res.status===403)
+        throw new Error(`Firebase ปฏิเสธ (${res.status}) — ตรวจ Rules: ต้องตั้ง ".read": true`);
+      throw new Error(`HTTP ${res.status}: ${txt.slice(0,80)}`);
+    }
     const s = await res.json();
     if(!s){
       setSaveStatus('unsaved','ยังไม่มีข้อมูลใน Cloud');
@@ -726,9 +935,13 @@ async function loadData(){
     setSaveStatus('saved','☁️ Cloud โหลดสำเร็จ ✓', t);
     showToast('โหลดข้อมูล Cloud สำเร็จ 📂','ok');
   }catch(e){
-    setSaveStatus('unsaved','โหลด Cloud ล้มเหลว');
-    showToast('Cloud ไม่ตอบสนอง: '+e.message,'err',4000);
-    try{ const bk=localStorage.getItem('cp_backup'); if(bk) applyState(JSON.parse(bk)); }catch(e2){}
+    let msg = e.message;
+    if(msg.includes('Failed to fetch')||msg.includes('NetworkError'))
+      msg = 'เชื่อมต่อ Firebase ไม่ได้ — ตรวจอินเทอร์เน็ต หรือเปิดจาก Web Server (ไม่ใช่ file://)';
+    setSaveStatus('unsaved','โหลดล้มเหลว — กด ⚙️ ตั้งค่า Cloud');
+    showToast('❌ Cloud ล้มเหลว: '+msg,'err',6000);
+    // fallback local
+    try{ const bk=localStorage.getItem('cp_backup'); if(bk){ applyState(JSON.parse(bk)); showToast('📦 โหลดจาก Cache แทน','info',3000); } }catch(e2){}
   }
 }
 
@@ -746,47 +959,142 @@ async function clearData(){
 function showFirebaseGuide(){
   if(document.getElementById('fb-guide')) return;
   const saved = localStorage.getItem('cp_fb_url') || '';
-  const d=document.createElement('div');
-  d.id='fb-guide';
-  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto';
-  d.innerHTML=`
-  <div style="background:#111b28;border:1px solid rgba(56,139,253,.5);border-radius:16px;padding:28px;max-width:480px;width:100%">
-    <div style="font-size:18px;font-weight:800;color:#e8f0fe;margin-bottom:4px">☁️ เชื่อมต่อ Cloud Share</div>
-    <div style="font-size:12px;color:#8899aa;margin-bottom:20px">ทำครั้งเดียว — ทุกเครื่องเห็นข้อมูลเดียวกัน ฟรี 100%</div>
-    <div style="background:#080d14;border-radius:10px;padding:14px 16px;font-size:12px;color:#aabbc8;line-height:2.1;margin-bottom:18px">
-      <b style="color:#00d4ff;font-size:13px">ขั้นตอน (~3 นาที):</b><br>
-      1. ไป <a href="https://console.firebase.google.com" target="_blank" style="color:#388bfd;font-weight:700">console.firebase.google.com</a> (Login Google)<br>
-      2. กด <b style="color:#fff">Add project</b> → ตั้งชื่อ (อะไรก็ได้) → Continue → Create project<br>
-      3. เมนูซ้าย → <b style="color:#fff">Build</b> → <b style="color:#fff">Realtime Database</b><br>
-      4. กด <b style="color:#fff">Create database</b> → เลือก <b style="color:#fff">Start in test mode</b> → Enable<br>
-      5. Copy URL ที่แสดง เช่น:<br>
-         <code style="color:#ffd600;background:#1a2d45;padding:3px 8px;border-radius:4px;font-size:11px">https://my-project-rtdb.firebaseio.com</code><br>
-      6. วาง URL ด้านล่าง → กด <b style="color:#00e676">เชื่อมต่อ</b>
+  const d = document.createElement('div');
+  d.id = 'fb-guide';
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(4,8,16,.96);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(12px)';
+  d.innerHTML = `
+  <div style="background:#0b1628;border:1px solid rgba(56,139,253,.2);border-radius:18px;max-width:500px;width:100%;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.8)">
+    <div style="height:2px;background:linear-gradient(90deg,#1a56db,#38bdf8);"></div>
+    <div style="padding:32px 28px 28px">
+
+      <div style="font-size:17px;font-weight:800;color:#c9d9f0;letter-spacing:-.3px;margin-bottom:4px">Cloud Sync — Firebase Setup</div>
+      <div style="font-size:11px;color:#2d4260;font-family:monospace;margin-bottom:24px">ทำครั้งเดียว · ทุกเครื่องเห็นข้อมูลเดียวกัน · ฟรี</div>
+
+      <div style="background:#060e1a;border:1px solid #0f1e30;border-radius:10px;padding:16px;font-size:12px;color:#4a5e76;line-height:2.2;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:#1a56db;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">ขั้นตอนการตั้งค่า</div>
+        1 · ไป <a href="https://console.firebase.google.com" target="_blank" style="color:#38bdf8;text-decoration:none;font-weight:600">console.firebase.google.com</a> แล้ว Login Google<br>
+        2 · กด <b style="color:#c9d9f0">Add project</b> → ตั้งชื่อ → Create project<br>
+        3 · เมนูซ้าย → <b style="color:#c9d9f0">Build</b> → <b style="color:#c9d9f0">Realtime Database</b> → <b style="color:#c9d9f0">Create database</b><br>
+        4 · เลือก location → <b style="color:#c9d9f0">Start in test mode</b> → Enable<br>
+        5 · Copy URL ที่ได้ เช่น <code style="background:#0f1e30;color:#fbbf24;padding:2px 7px;border-radius:4px;font-size:10px">https://my-project-default-rtdb.firebaseio.com</code><br>
+        6 · วาง URL ด้านล่าง → กด <b style="color:#34d399">บันทึกและเชื่อมต่อ</b>
+      </div>
+
+      <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:12px 14px;font-size:11px;color:#f87171;margin-bottom:18px;line-height:1.9">
+        <b style="color:#fca5a5;letter-spacing:.3px">หากเชื่อมต่อไม่ได้ — ตรวจสอบ Rules</b><br>
+        Firebase Console → Realtime Database → Rules → แก้เป็น<br>
+        <code style="background:#1a0a0a;color:#fbbf24;padding:2px 8px;border-radius:4px;font-size:10px">{ "rules": { ".read": true, ".write": true } }</code>
+        แล้วกด <b style="color:#fff">Publish</b>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:#2d4260;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px">Database URL</div>
+      <input id="fb-url-inp" type="text" value="${saved}"
+        placeholder="https://your-project-default-rtdb.firebaseio.com"
+        style="width:100%;box-sizing:border-box;background:#060e1a;border:1.5px solid #1c2d45;border-radius:9px;padding:12px 14px;color:#c9d9f0;font-size:12px;font-family:monospace;outline:none;margin-bottom:10px;transition:border .2s"
+        onfocus="this.style.borderColor='rgba(56,139,253,.5)'"
+        onblur="this.style.borderColor='#1c2d45'">
+
+      <div id="fb-test-result" style="display:none;padding:10px 13px;border-radius:8px;font-size:11px;margin-bottom:12px;white-space:pre-line;font-family:monospace;line-height:1.8"></div>
+
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button id="fb-connect-btn" onclick="connectFirebase()"
+          style="flex:1;padding:12px;background:linear-gradient(135deg,#1a4fc7,#2196f3);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.3px;font-family:inherit;box-shadow:0 4px 16px rgba(33,150,243,.2)">
+          บันทึกและเชื่อมต่อ
+        </button>
+        <button onclick="document.getElementById('fb-guide').remove()"
+          style="padding:12px 16px;background:transparent;color:#2d4260;border:1px solid #0f1e30;border-radius:9px;cursor:pointer;font-size:12px;font-family:inherit;transition:background .15s"
+          onmouseover="this.style.background='#0a1628'" onmouseout="this.style.background='transparent'">
+          ปิด
+        </button>
+      </div>
+
+      <div style="font-size:10px;color:#1c2d45;margin-top:14px;text-align:center;font-family:monospace;letter-spacing:.3px">URL จะถูกจำในเครื่องนี้ · ทุกเครื่องที่ใช้งานต้องใส่ URL ครั้งแรกครั้งเดียว</div>
     </div>
-    <div style="margin-bottom:14px">
-      <div style="font-size:11px;color:#8899aa;margin-bottom:6px">Firebase Database URL:</div>
-      <input id="fb-url-inp" type="text" value="${saved}" placeholder="https://your-project-default-rtdb.firebaseio.com"
-        style="width:100%;background:#0d1520;border:1px solid rgba(56,139,253,.4);border-radius:8px;padding:11px 12px;color:#e8f0fe;font-size:12px;font-family:monospace;outline:none;box-sizing:border-box">
-    </div>
-    <div style="display:flex;gap:10px">
-      <button onclick="connectFirebase()" style="flex:1;padding:12px;background:linear-gradient(135deg,#1565c0,#388bfd);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(56,139,253,.3)">🔗 เชื่อมต่อและโหลดข้อมูล</button>
-      <button onclick="document.getElementById('fb-guide').remove()" style="padding:12px 16px;background:transparent;color:#8899aa;border:1px solid rgba(255,255,255,.15);border-radius:8px;cursor:pointer;font-size:13px">ปิด</button>
-    </div>
-    <div style="font-size:10px;color:#445566;margin-top:14px;text-align:center">URL จะถูกจำในเครื่องนี้ — ทุกเครื่องต้องใส่ URL ครั้งแรกเพียงครั้งเดียว</div>
   </div>`;
   document.body.appendChild(d);
 }
 
 async function connectFirebase(){
-  const url=(document.getElementById('fb-url-inp').value||'').trim().replace(/\/+$/,'');
-  if(!url||!url.startsWith('https://')){
-    showToast('URL ไม่ถูกต้อง ต้องขึ้นต้นด้วย https://','err'); return;
-  }
+  const raw = (document.getElementById('fb-url-inp').value||'').trim();
+  const url = raw.replace(/\/+$/,'');
+  const btn = document.getElementById('fb-connect-btn');
+  const show = (t,m) => _showFbResult(t,m);
+
+  if(!url){ show('err','กรุณากรอก URL'); return; }
+  if(!url.startsWith('https://')){ show('err','URL ต้องขึ้นต้นด้วย https://'); return; }
+  if(!url.includes('firebase')){ show('err','URL ไม่ใช่ Firebase URL'); return; }
+
+  // บันทึก URL ก่อนเสมอ
   localStorage.setItem('cp_fb_url', url);
   _fbUrl = url;
-  document.getElementById('fb-guide').remove();
-  showToast('เชื่อมต่อ Firebase สำเร็จ ✓ กำลังโหลดข้อมูล...','ok');
-  await loadData();
+
+  // เปิดจาก file:// — บันทึกแล้ว แต่ test ไม่ได้
+  if(location.protocol === 'file:'){
+    show('warn',
+      'บันทึก URL สำเร็จแล้ว\n\n'+
+      'แต่ยังทดสอบไม่ได้ เพราะเปิดไฟล์แบบ file://\n'+
+      'Browser บล็อก internet request จาก local file\n\n'+
+      'วิธีแก้: อัปโหลดไฟล์ .html ขึ้น GitHub Pages\n'+
+      'แล้วเปิดผ่าน URL — Firebase จะ sync ทันที');
+    setTimeout(()=> document.getElementById('fb-guide')?.remove(), 3000);
+    return;
+  }
+
+  btn.textContent = 'กำลังทดสอบ...';
+  btn.disabled = true;
+
+  try{
+    // PUT ทดสอบ — Firebase Realtime DB ตอบ CORS ถูกต้องกับ PUT + Content-Type json
+    const res = await fetch(url + '/.ping.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ts: Date.now() })
+    });
+
+    if(res.status===401 || res.status===403){
+      show('err',
+        'Firebase ปฏิเสธ (Error '+res.status+')\n\n'+
+        'วิธีแก้ใน Firebase Console:\n'+
+        '  Realtime Database → Rules\n'+
+        '  แก้ทั้งสองค่าเป็น true:\n'+
+        '  ".read": true\n'+
+        '  ".write": true\n'+
+        '  กด Publish แล้วลองใหม่');
+      btn.textContent='บันทึกและเชื่อมต่อ'; btn.disabled=false; return;
+    }
+    // สำเร็จ (200 = ok, 404 บาง path ก็ยอมรับได้)
+    show('ok','เชื่อมต่อสำเร็จ — กำลังโหลดข้อมูล...');
+    setTimeout(async()=>{
+      document.getElementById('fb-guide')?.remove();
+      showToast('Firebase เชื่อมต่อสำเร็จ','ok');
+      await loadData();
+    }, 700);
+
+  } catch(e){
+    show('err',
+      'ไม่สามารถเชื่อมต่อได้\n\n'+
+      'ตรวจสอบ:\n'+
+      '  1. URL ถูกต้อง: https://xxxx-default-rtdb.firebaseio.com\n'+
+      '  2. Firebase Rules: .read และ .write = true → กด Publish\n'+
+      '  3. อินเทอร์เน็ตปกติ\n\n'+
+      'Error: '+(e.message||'unknown'));
+    btn.textContent='บันทึกและเชื่อมต่อ'; btn.disabled=false;
+  }
+}
+
+
+function _showFbResult(type, msg){
+  const el = document.getElementById('fb-test-result');
+  if(!el) return;
+  const col = type==='ok'?'rgba(0,230,118,.15)':type==='warn'?'rgba(255,149,0,.15)':'rgba(255,68,68,.15)';
+  const bdr = type==='ok'?'rgba(0,230,118,.4)':type==='warn'?'rgba(255,149,0,.4)':'rgba(255,68,68,.4)';
+  const tc  = type==='ok'?'#00e676':type==='warn'?'#ff9500':'#ff6666';
+  el.style.display='block';
+  el.style.background=col;
+  el.style.border='1px solid '+bdr;
+  el.style.color=tc;
+  el.style.whiteSpace='pre-line';
+  el.textContent=msg;
 }
 
 // auto-save after 2s of inactivity
@@ -1085,7 +1393,7 @@ function updateDonuts(){
   setDonut('d-ov',ovr,100);setDonut('d-s1-r',V.s1,100);
   setDonut('d-f-avg',V.f25,100,'#00d4ff');
   FD.forEach(f=>setDonut('d-'+f.id,f.pct,100));
-  let outT=0;OD.forEach(o=>{const {fp:p,wp:_ww}=calcOut(o);outT+=_ww;setDonut('d-out-'+o.id,p,100);outT+=(da/fa)*o.wt;});
+  let outT=0;OD.forEach(o=>{const {fp:p,wp:_ww}=calcOut(o);outT+=_ww;setDonut('d-out-'+o.id,p,100);});
   setDonut('d-out-ov',outT,50,'#00bcd4');
   setDonut('d-s4-ov',V.s4,100,'#ff9500');
   S4R.forEach(r=>setDonut('d-'+r.id,gv(r.id),100));
@@ -1948,15 +2256,51 @@ function refreshAdvice(){
 // สี กราฟ progress bar ครบ — เหมือนหน้าจอ 100%
 // ═══════════════════════════════════════════════════════════
 function exportPDF(){
-  // บันทึก class ที่ซ่อนอยู่เดิม
-  const body = document.body;
-  // เพิ่ม class พิเศษสำหรับ PDF mode
-  body.classList.add('pdf-export-mode');
-  showToast('กำลังเปิดหน้าต่างพิมพ์ — เลือก "Save as PDF" ครับ','info',5000);
-  setTimeout(()=>{
-    window.print();
-    setTimeout(()=> body.classList.remove('pdf-export-mode'), 1000);
-  }, 300);
+  showToast('กำลังสร้าง PDF... รอสักครู่ครับ','info',4000);
+  // โหลด html2canvas + jsPDF แบบ dynamic
+  const s1=document.createElement('script');
+  s1.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s1.onload=()=>{
+    const s2=document.createElement('script');
+    s2.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s2.onload=async()=>{
+      try{
+        const el=document.querySelector('.W');
+        const canvas=await html2canvas(el,{
+          scale:1.5, useCORS:true, backgroundColor:'#080d14',
+          ignoreElements:e=>e.id==='lock-modal'||e.id==='jupiter-overlay'||e.id==='analysis-overlay'
+        });
+        const {jsPDF}=window.jspdf;
+        const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a3'});
+        const W=pdf.internal.pageSize.getWidth();
+        const H=pdf.internal.pageSize.getHeight();
+        const ratio=Math.min(W/canvas.width,H/canvas.height)*0.96;
+        const iw=canvas.width*ratio; const ih=canvas.height*ratio;
+        const x=(W-iw)/2; const y=6;
+        // แบ่งหน้าถ้าสูงเกิน
+        const pageH=H-12;
+        let srcY=0;
+        while(srcY<canvas.height){
+          const tmpC=document.createElement('canvas');
+          const ph=Math.min(pageH/ratio, canvas.height-srcY);
+          tmpC.width=canvas.width; tmpC.height=ph;
+          tmpC.getContext('2d').drawImage(canvas,0,srcY,canvas.width,ph,0,0,canvas.width,ph);
+          const img=tmpC.toDataURL('image/jpeg',0.88);
+          if(srcY>0) pdf.addPage();
+          pdf.addImage(img,'JPEG',x,y,canvas.width*ratio,ph*ratio);
+          srcY+=ph;
+        }
+        const d=new Date().toLocaleDateString('th-TH').replace(/\//g,'-');
+        pdf.save('Construction_Report_'+d+'.pdf');
+        showToast('✅ บันทึก PDF สำเร็จครับ','ok');
+      }catch(e){
+        console.error(e);
+        showToast('❌ เกิดข้อผิดพลาด: '+e.message,'err');
+      }
+    };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s1);
 }
 
 
@@ -2645,17 +2989,272 @@ function saveLogEntry(){
   showToast('บันทึกรายวันสำเร็จ 📋','ok');
 }
 
+// ═══════════════════════════════════════════════════════════
+// PASSWORD LOCK SYSTEM
+// ═══════════════════════════════════════════════════════════
+const PASS_HASH = '3f3523ac168330e6b429b23d2b25b6c6d7efaf564c1a9f1feaf5398d2bb45318'; // "2589"
+
+let _isUnlocked = false;
+
+// SHA-256 แบบ pure JS — ทำงานได้ทั้ง file:// และ https://
+function sha256(str){
+  function rightRotate(value,amount){return (value>>>amount)|(value<<(32-amount));}
+  const mathPow=Math.pow;
+  const maxWord=mathPow(2,32);
+  let result='';
+  const words=[];
+  const asciiBitLength=str.length*8;
+  let hash=[];
+  let k=[];
+  let primeCounter=0;
+  const isComposite={};
+  for(let candidate=2;primeCounter<64;candidate++){
+    if(!isComposite[candidate]){
+      for(let i=candidate*candidate;i<313;i+=candidate) isComposite[i]=true;
+      hash[primeCounter]=mathPow(candidate,.5)*maxWord|0;
+      k[primeCounter++]=mathPow(candidate,1/3)*maxWord|0;
+    }
+  }
+  str+='\x80';
+  while(str.length%64-56) str+='\x00';
+  for(let i=0;i<str.length;i++){
+    const j=str.charCodeAt(i);
+    if(j>>8) return '';
+    words[i>>2]|=j<<((3-i)%4*8);
+  }
+  words[words.length]=((asciiBitLength/maxWord)|0);
+  words[words.length]=(asciiBitLength|0);
+  for(let j=0;j<words.length;){
+    const W=words.slice(j,j+=16);
+    const oldHash=hash.slice(0);
+    for(let i=0;i<64;i++){
+      const w=W[i];
+      if(i<16){W[i]=w;}
+      else{
+        const s0=rightRotate(W[i-15],7)^rightRotate(W[i-15],18)^(W[i-15]>>>3);
+        const s1=rightRotate(W[i-2],17)^rightRotate(W[i-2],19)^(W[i-2]>>>10);
+        W[i]=(W[i-16]+s0+W[i-7]+s1)|0;
+      }
+      const S1=rightRotate(hash[4],6)^rightRotate(hash[4],11)^rightRotate(hash[4],25);
+      const ch=(hash[4]&hash[5])^(~hash[4]&hash[6]);
+      const temp1=(hash[7]+S1+ch+k[i]+W[i])|0;
+      const S0=rightRotate(hash[0],2)^rightRotate(hash[0],13)^rightRotate(hash[0],22);
+      const maj=(hash[0]&hash[1])^(hash[0]&hash[2])^(hash[1]&hash[2]);
+      const temp2=(S0+maj)|0;
+      hash=[((temp1+temp2)|0),hash[0],hash[1],hash[2],((hash[3]+temp1)|0),hash[4],hash[5],hash[6]];
+    }
+    for(let i=0;i<8;i++) hash[i]=(hash[i]+oldHash[i])|0;
+  }
+  for(let i=0;i<8;i++){
+    for(let j=3;j+1;j--){
+      const b=(hash[i]>>(j*8))&255;
+      result+=((b<16)?'0':'')+b.toString(16);
+    }
+  }
+  return result;
+}
+
+function togglePwVis(){
+  const i = document.getElementById('lm-pw');
+  const show = i.type === 'password';
+  i.type = show ? 'text' : 'password';
+}
+
+function showLockModal(){
+  const m = document.getElementById('lock-modal');
+  m.style.display = 'flex';
+  const inp = document.getElementById('lm-pw');
+  const err = document.getElementById('lm-err');
+  if(inp){ inp.value=''; inp.type='password'; inp.removeAttribute('disabled'); }
+  if(err) err.textContent = '';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const i = document.getElementById('lm-pw');
+    if(i) i.focus();
+  }));
+}
+
+function closeLockModal(){
+  const m = document.getElementById('lock-modal');
+  m.style.display = 'none';
+  if(!_isUnlocked) applyViewMode();
+}
+
+function doUnlock(){
+  const inp = document.getElementById('lm-pw');
+  const pw = inp ? inp.value.trim() : '';
+  if(!pw){ document.getElementById('lm-err').textContent='กรุณากรอกรหัสผ่าน'; return; }
+  const hash = sha256(pw);
+  if(hash === PASS_HASH){
+    _isUnlocked = true;
+    const m = document.getElementById('lock-modal');
+    m.style.display = 'none';
+    document.getElementById('lm-err').textContent = '';
+    applyEditMode();
+    const btn = document.getElementById('lock-btn');
+    if(btn){
+      btn.textContent = '🔓 แก้ไขได้';
+      btn.style.background = 'rgba(0,230,118,.12)';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'rgba(0,230,118,.35)';
+    }
+    showToast('ปลดล็อกสำเร็จ — โหมดแก้ไขพร้อมใช้งาน','ok');
+  } else {
+    document.getElementById('lm-err').textContent = 'รหัสผ่านไม่ถูกต้อง';
+    inp.value = '';
+    inp.focus();
+    // shake animation
+    const card = document.querySelector('#lock-modal .lm-card');
+    if(card){
+      card.style.transition='none'; card.style.transform='translateX(-8px)';
+      setTimeout(()=>{ card.style.transition='transform .08s'; card.style.transform='translateX(8px)'; },80);
+      setTimeout(()=>{ card.style.transform='translateX(-4px)'; },160);
+      setTimeout(()=>{ card.style.transform='translateX(0)'; },240);
+    }
+  }
+}
+
+function applyViewMode(){
+  document.body.classList.add('view-mode');
+  // disable inputs ทุกตัว ยกเว้น input ใน #lock-modal
+  document.querySelectorAll('input[type="number"], input[type="text"], textarea').forEach(el=>{
+    if(el.closest && el.closest('#lock-modal')) return;
+    el.setAttribute('disabled','');
+    el.setAttribute('data-locked','1');
+  });
+  const btn = document.getElementById('lock-btn');
+  if(btn){
+    btn.textContent = '🔒 ล็อก';
+    btn.style.background = 'rgba(255,149,0,.12)';
+    btn.style.color = 'var(--orange)';
+    btn.style.borderColor = 'rgba(255,149,0,.35)';
+  }
+}
+
+function applyEditMode(){
+  document.body.classList.remove('view-mode');
+  // re-enable ทุก input ที่ถูก lock ไว้
+  document.querySelectorAll('input[data-locked], textarea[data-locked]').forEach(el=>{
+    el.removeAttribute('disabled');
+    el.removeAttribute('data-locked');
+  });
+}
+
+function toggleLock(){
+  if(_isUnlocked){
+    // ล็อกกลับ
+    _isUnlocked = false;
+    applyViewMode();
+    showToast('🔒 ล็อกแล้ว — โหมดดูอย่างเดียว','info');
+  } else {
+    showLockModal();
+  }
+}
+
+
+// ── คู่มือการเข้าถึงแบบ Realtime ──
+function showRealtimeGuide(){
+  if(document.getElementById('rt-guide-overlay')) return;
+  const ov=document.createElement('div');
+  ov.id='rt-guide-overlay';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(4,8,16,.98);z-index:99998;overflow-y:auto;padding:24px 16px;font-family:var(--f)';
+  ov.innerHTML=`
+  <div style="max-width:720px;margin:0 auto;padding-bottom:40px">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid rgba(56,139,253,.2)">
+      <div>
+        <div style="font-size:20px;font-weight:800;color:#e8f0fe;letter-spacing:-.3px">วิธีแชร์ให้ทีมงานเข้าถึงแบบ Realtime</div>
+        <div style="font-size:12px;color:var(--tx3);margin-top:4px;font-family:var(--m)">ทุกคนเห็นข้อมูลเดียวกัน · ฟรี 100% · ใช้เวลา ~10 นาที</div>
+      </div>
+      <button onclick="document.getElementById('rt-guide-overlay').remove()"
+        style="background:rgba(255,255,255,.05);color:var(--tx2);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;font-family:var(--f);font-weight:600;flex-shrink:0;margin-left:16px">
+        ปิด
+      </button>
+    </div>
+
+    <!-- Overview -->
+    <div style="background:rgba(56,139,253,.07);border:1px solid rgba(56,139,253,.2);border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:13px;color:var(--tx2);line-height:1.9">
+      <b style="color:var(--cyan);font-size:14px">สิ่งที่ต้องทำ 2 ขั้นตอนหลัก:</b><br>
+      <b style="color:#fff">ขั้นที่ 1</b> — อัปโหลดไฟล์ขึ้น <b style="color:#fff">GitHub Pages</b> เพื่อให้ทุกคนเปิดได้ผ่าน URL<br>
+      <b style="color:#fff">ขั้นที่ 2</b> — สร้าง <b style="color:#fff">Firebase Database</b> เพื่อให้ข้อมูลซิงค์กันแบบ Realtime
+    </div>
+
+    <!-- PART 1: GitHub Pages -->
+    <div style="background:#0a1628;border:1px solid rgba(56,139,253,.25);border-radius:14px;overflow:hidden;margin-bottom:16px">
+      <div style="background:rgba(56,139,253,.12);padding:14px 20px;border-bottom:1px solid rgba(56,139,253,.15)">
+        <div style="font-size:15px;font-weight:800;color:var(--blue)">ขั้นที่ 1 — GitHub Pages (โฮสต์ไฟล์ฟรี ไม่ต้องใส่รหัส)</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:3px">ใช้เวลา ~5 นาที · สมัครฟรี · ไม่ต้องลง software</div>
+      </div>
+      <div style="padding:20px">
+        ${[
+          ['สมัคร GitHub', 'ไปที่ <a href="https://github.com/signup" target="_blank" style="color:var(--cyan);text-decoration:underline">github.com/signup</a> → กรอก Username, Email, Password → กด <b style="color:#fff">Create account</b> → ยืนยัน Email'],
+          ['สร้าง Repository', 'กดปุ่ม <b style="color:#fff">+</b> มุมบนขวา → <b style="color:#fff">New repository</b><br>ตั้งชื่อ: <code style="background:#060e1a;padding:2px 8px;border-radius:4px;color:var(--gold)">construction-dashboard</code><br>เลือก <b style="color:#fff">Public</b> → กด <b style="color:#fff">Create repository</b>'],
+          ['อัปโหลดไฟล์', 'ในหน้า Repository → กด <b style="color:#fff">Add file</b> → <b style="color:#fff">Upload files</b><br>ลากไฟล์ <code style="background:#060e1a;padding:2px 8px;border-radius:4px;color:var(--cyan)">construction_dashboard.html</code> มาวาง<br>เลื่อนลงล่าง → กด <b style="color:#fff">Commit changes</b>'],
+          ['เปลี่ยนชื่อไฟล์เป็น index.html', 'คลิกที่ชื่อไฟล์ในรายการ → กดไอคอน ✏️ (Edit) ด้านขวา<br>แก้ชื่อเป็น <code style="background:#060e1a;padding:2px 8px;border-radius:4px;color:var(--cyan)">index.html</code> → กด <b style="color:#fff">Commit changes</b>'],
+          ['เปิด GitHub Pages', 'ไปที่ <b style="color:#fff">Settings</b> (แถบบนสุดของ Repository)<br>เลื่อนลงหา <b style="color:#fff">Pages</b> ในเมนูซ้าย<br>ใต้ Source → เลือก <b style="color:#fff">Deploy from a branch</b><br>Branch: <b style="color:#fff">main</b> → กด <b style="color:#fff">Save</b>'],
+          ['รับ URL', 'รอ 1-2 นาที → รีเฟรชหน้า Settings → Pages<br>จะปรากฏ URL เช่น:<br><code style="background:#060e1a;padding:3px 10px;border-radius:5px;color:var(--green);font-size:12px">https://ชื่อของคุณ.github.io/construction-dashboard</code><br>คัดลอก URL นี้แชร์ให้ทีมงานได้เลย'],
+        ].map(([title,desc],i)=>`
+          <div style="display:grid;grid-template-columns:36px 1fr;gap:12px;margin-bottom:18px;align-items:start">
+            <div style="width:30px;height:30px;border-radius:50%;background:rgba(56,139,253,.15);border:1px solid rgba(56,139,253,.3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--blue);flex-shrink:0;margin-top:1px">${i+1}</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#c9d9f0;margin-bottom:4px">${title}</div>
+              <div style="font-size:12px;color:var(--tx3);line-height:1.9">${desc}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- PART 2: Firebase -->
+    <div style="background:#0a1628;border:1px solid rgba(206,147,216,.2);border-radius:14px;overflow:hidden;margin-bottom:16px">
+      <div style="background:rgba(206,147,216,.08);padding:14px 20px;border-bottom:1px solid rgba(206,147,216,.12)">
+        <div style="font-size:15px;font-weight:800;color:var(--purple)">ขั้นที่ 2 — Firebase Realtime Database (ซิงค์ข้อมูลทุกเครื่อง)</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:3px">ใช้เวลา ~5 นาที · ฟรี · ทุกคนเห็นตัวเลขเดียวกันแบบ live</div>
+      </div>
+      <div style="padding:20px">
+        ${[
+          ['สร้าง Firebase Project', 'ไปที่ <a href="https://console.firebase.google.com" target="_blank" style="color:var(--cyan);text-decoration:underline">console.firebase.google.com</a><br>Login ด้วย Google Account → กด <b style="color:#fff">Add project</b><br>ตั้งชื่อ project → กด <b style="color:#fff">Continue</b> → <b style="color:#fff">Create project</b>'],
+          ['สร้าง Realtime Database', 'เมนูซ้าย → <b style="color:#fff">Build</b> → <b style="color:#fff">Realtime Database</b><br>กด <b style="color:#fff">Create database</b> → เลือก Location (ใกล้ที่สุด)<br>เลือก <b style="color:#fff">Start in test mode</b> → กด <b style="color:#fff">Enable</b>'],
+          ['คัดลอก Database URL', 'หลัง Enable จะเห็น URL รูปแบบ:<br><code style="background:#060e1a;padding:3px 10px;border-radius:5px;color:var(--green);font-size:12px">https://your-project-default-rtdb.firebaseio.com</code><br>คัดลอก URL นี้ไว้'],
+          ['ตั้งค่า Rules ให้อ่านเขียนได้', 'คลิกแถบ <b style="color:#fff">Rules</b> → แก้โค้ดเป็น:<br><code style="background:#060e1a;padding:4px 10px;border-radius:5px;color:var(--gold);font-size:12px;display:inline-block;margin-top:4px">{ "rules": { ".read": true, ".write": true } }</code><br>กด <b style="color:#fff">Publish</b> (สำคัญมาก — ถ้าไม่ทำ จะ error 403)'],
+          ['เชื่อมต่อในโปรแกรม', 'เปิด Dashboard จาก GitHub Pages URL<br>กด <b style="color:#fff">ตั้งค่า Cloud</b> → วาง Firebase URL → กด <b style="color:#fff">ทดสอบและเชื่อมต่อ</b><br>ทุกเครื่องที่ใช้ URL เดียวกันจะเห็นข้อมูลซิงค์กันทันที'],
+        ].map(([title,desc],i)=>`
+          <div style="display:grid;grid-template-columns:36px 1fr;gap:12px;margin-bottom:18px;align-items:start">
+            <div style="width:30px;height:30px;border-radius:50%;background:rgba(206,147,216,.1);border:1px solid rgba(206,147,216,.25);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--purple);flex-shrink:0;margin-top:1px">${i+1}</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#c9d9f0;margin-bottom:4px">${title}</div>
+              <div style="font-size:12px;color:var(--tx3);line-height:1.9">${desc}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Summary box -->
+    <div style="background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:12px;padding:16px 20px;font-size:13px;color:var(--tx2);line-height:2">
+      <b style="color:var(--green);font-size:14px">ผลลัพธ์ที่จะได้</b><br>
+      URL สาธารณะที่ทุกคนเปิดได้ผ่าน Browser ทั้งคอม / มือถือ / iPad<br>
+      ข้อมูลซิงค์แบบ Realtime — แก้ตัวเลขในเครื่องหนึ่ง อีกเครื่องเห็นทันที<br>
+      รองรับผู้ใช้พร้อมกัน 100+ คน · ฟรีตลอด · ไม่มี ads
+    </div>
+
+  </div>`;
+  document.body.appendChild(ov);
+}
+
 async function init(){
+  // สร้าง DOM ทั้งหมดก่อน เพื่อให้ applyViewMode เจอ input ครบทุกตัว
   buildS2(); buildS3(); buildDonuts(); updPlaster(); updKPI();
   buildPieChart();
   updS3Area();
   refreshAdvice();
+  // โหลดข้อมูลก่อน
   if(!isFirebaseReady()){
     setSaveStatus('unsaved','กรุณาตั้งค่า Cloud ก่อนใช้งาน');
-    setTimeout(()=>showFirebaseGuide(), 800);
   } else {
     await loadData();
   }
+  // ล็อกหลังสร้าง DOM และโหลดข้อมูลครบแล้ว
+  applyViewMode();
+  showLockModal();
 }
 
 init();
