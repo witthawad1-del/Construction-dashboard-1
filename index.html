@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -80,7 +79,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 .legend-name{font-size:12px;font-weight:600;flex:1}
 .legend-val{font-size:13px;font-weight:800;font-family:var(--m)}
 /* CARD */
-.card{background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--r);padding:22px;margin-bottom:20px;transition:border-color .2s}
+.card{background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--r);padding:24px;margin-bottom:32px;transition:border-color .2s}
 .card:hover{border-color:var(--bdrb)}
 .SH{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
 .SN{width:30px;height:30px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--m);flex-shrink:0}
@@ -234,7 +233,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   #tab-s6 .DGrid{grid-template-columns:repeat(2,1fr)!important}
   #tab-s7 .DGrid{grid-template-columns:repeat(2,1fr)!important}
   .ST{font-size:14px}
-  .card{padding:16px;margin-bottom:14px}
+  .card{padding:16px;margin-bottom:22px}
   .DS{padding:16px 14px}
   .TABS{gap:5px}
   .TAB{padding:6px 12px;font-size:11px}
@@ -266,7 +265,7 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .kg{gap:8px;margin-bottom:12px}
   .kv{font-size:24px}
   .kc{padding:12px 14px}
-  .card{padding:14px;margin-bottom:12px}
+  .card{padding:14px;margin-bottom:18px}
   .pie-section{padding:14px}
   .DS{padding:14px}
   .pie-layout{grid-template-columns:240px 1fr}
@@ -315,6 +314,35 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .DP.SHW{display:block!important}
   @page{size:A4 landscape;margin:8mm}
 }
+
+/* ── Lock / Read-only mode ── */
+body.view-mode input, body.view-mode .DCI, body.view-mode .PI {
+  pointer-events:none!important; opacity:.5!important; cursor:not-allowed!important;
+}
+body.view-mode .edit-only { display:none!important; }
+body.view-mode .view-badge { display:flex!important; }
+.view-badge { display:none; align-items:center; gap:6px; padding:6px 14px;
+  background:rgba(255,149,0,.12); border:1px solid rgba(255,149,0,.35);
+  border-radius:20px; font-size:12px; font-weight:600; color:var(--orange); font-family:var(--m); }
+/* lock modal */
+#lock-modal { position:fixed;inset:0;background:rgba(4,8,16,.92);z-index:99999;
+  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px); }
+#lock-modal .lm-box { background:var(--bgc);border:1px solid rgba(56,139,253,.3);
+  border-radius:16px;padding:36px 40px;width:360px;max-width:92vw;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.6); }
+#lock-modal .lm-icon { font-size:40px; margin-bottom:14px; }
+#lock-modal .lm-title { font-size:18px;font-weight:800;color:var(--tx);margin-bottom:6px; }
+#lock-modal .lm-sub { font-size:12px;color:var(--tx3);margin-bottom:24px; }
+#lock-modal input[type=password] {
+  width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;
+  padding:12px 16px;color:var(--tx);font-size:15px;font-family:var(--m);
+  outline:none;margin-bottom:12px;text-align:center;letter-spacing:4px; }
+#lock-modal input[type=password]:focus { border-color:var(--blue); }
+#lock-modal .lm-err { font-size:12px;color:var(--red);min-height:18px;margin-bottom:10px; }
+#lock-modal .lm-btn { width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:var(--f);border:none;margin-top:4px; }
+#lock-modal .lm-btn-unlock { background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff; }
+#lock-modal .lm-btn-view { background:var(--bg2);color:var(--tx2);border:1px solid var(--bdr)!important;margin-top:8px; }
 </style>
 </head>
 <body>
@@ -338,12 +366,14 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
     <div class="live"><div class="ld"></div>LIVE</div>
-    <button class="btn btn-green" onclick="saveData()">💾 บันทึก</button>
-    <button class="btn btn-orange" onclick="loadData()">📂 โหลด</button>
-    <button class="btn" onclick="showFirebaseGuide()" style="background:rgba(56,139,253,.15);color:#388bfd;border:1px solid rgba(56,139,253,.4)" onmouseover="this.style.background='rgba(56,139,253,.28)'" onmouseout="this.style.background='rgba(56,139,253,.15)'">⚙️ ตั้งค่า Cloud</button>
-    <button class="btn btn-red" onclick="clearData()">🗑️ ล้างข้อมูล</button>
+    <div class="view-badge">👁️ โหมดดูอย่างเดียว</div>
+    <button class="btn btn-green edit-only" onclick="saveData()">💾 บันทึก</button>
+    <button class="btn btn-orange edit-only" onclick="loadData()">📂 โหลด</button>
+    <button class="btn edit-only" onclick="showFirebaseGuide()" style="background:rgba(56,139,253,.15);color:#388bfd;border:1px solid rgba(56,139,253,.4)" onmouseover="this.style.background='rgba(56,139,253,.28)'" onmouseout="this.style.background='rgba(56,139,253,.15)'">⚙️ ตั้งค่า Cloud</button>
+    <button class="btn btn-red edit-only" onclick="clearData()">🗑️ ล้างข้อมูล</button>
+    <button class="btn edit-only" onclick="exportPDF()" style="background:rgba(220,38,38,.15);color:#ff4444;border:1px solid rgba(220,38,38,.4)" onmouseover="this.style.background='rgba(220,38,38,.28)'" onmouseout="this.style.background='rgba(220,38,38,.15)'">📄 Export PDF</button>
     <button class="btn" onclick="exportExcel()" style="background:rgba(0,200,83,.15);color:#00c853;border:1px solid rgba(0,200,83,.4)" onmouseover="this.style.background='rgba(0,200,83,.28)'" onmouseout="this.style.background='rgba(0,200,83,.15)'">📊 Export Excel</button>
-    <button class="btn" onclick="window.print()" style="background:transparent;color:var(--tx2);border:1px solid var(--bdr);padding:8px 16px;font-size:12px;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--bdrb)';this.style.color='var(--tx)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--tx2)'">พิมพ์</button>
+    <button id="lock-btn" class="btn" onclick="toggleLock()" style="background:rgba(255,149,0,.12);color:var(--orange);border:1px solid rgba(255,149,0,.35)" title="ล็อก/ปลดล็อกการแก้ไข">🔒 ล็อก</button>
   </div>
 </header>
 
@@ -457,9 +487,9 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="SH"><div class="SN" style="background:var(--orange)">4</div><div class="ST">งานก่ออิฐภายใน ชั้น 1</div><div class="Stg" style="margin-left:auto">เป้า 100%</div></div>
   <div class="PW" style="margin-bottom:16px"><div class="PM"><span class="PL">รวมทั้งชั้น 1</span><div class="IG"><input class="PI" type="number" min="0" max="100" id="s4t" value="2" oninput="setBar('s4t','s4tb','s4tp');ra()"><span class="Ps">%</span><span class="PP" id="s4tp">2%</span></div></div><div class="PBG"><div class="PF r" id="s4tb" style="width:2%"></div></div></div>
   <div class="RG">
-    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องซักรีด</div><div class="RW">น้ำหนัก 30%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r41b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r41" value="5" oninput="setBar('r41','r41b','r41p');ra()"><span class="Ps">%</span><span class="PP" id="r41p" style="color:var(--orange)">5%</span></div></div>
-    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องพัก 101</div><div class="RW">น้ำหนัก 25%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r42b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r42" value="5" oninput="setBar('r42','r42b','r42p');ra()"><span class="Ps">%</span><span class="PP" id="r42p" style="color:var(--orange)">5%</span></div></div>
-    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องพัก 102</div><div class="RW">น้ำหนัก 25%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r43b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r43" value="5" oninput="setBar('r43','r43b','r43p');ra()"><span class="Ps">%</span><span class="PP" id="r43p" style="color:var(--orange)">5%</span></div></div>
+    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องพัก 101</div><div class="RW">น้ำหนัก 30%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r41b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r41" value="5" oninput="setBar('r41','r41b','r41p');ra()"><span class="Ps">%</span><span class="PP" id="r41p" style="color:var(--orange)">5%</span></div></div>
+    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องพัก 102</div><div class="RW">น้ำหนัก 25%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r42b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r42" value="5" oninput="setBar('r42','r42b','r42p');ra()"><span class="Ps">%</span><span class="PP" id="r42p" style="color:var(--orange)">5%</span></div></div>
+    <div class="RC"><div class="RCT" style="background:var(--orange)"></div><div class="RN">ห้องพัก 103</div><div class="RW">น้ำหนัก 25%</div><div class="PBG" style="margin-bottom:8px"><div class="PF o" id="r43b" style="width:5%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r43" value="5" oninput="setBar('r43','r43b','r43p');ra()"><span class="Ps">%</span><span class="PP" id="r43p" style="color:var(--orange)">5%</span></div></div>
     <div class="RC"><div class="RCT" style="background:var(--red)"></div><div class="RN">ร้านค้า</div><div class="RW">น้ำหนัก 10%</div><div class="PBG" style="margin-bottom:8px"><div class="PF r" id="r44b" style="width:0%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r44" value="0" oninput="setBar('r44','r44b','r44p');ra()"><span class="Ps">%</span><span class="PP" id="r44p" style="color:var(--red)">0%</span></div></div>
     <div class="RC"><div class="RCT" style="background:var(--red)"></div><div class="RN">ห้องซักอบ</div><div class="RW">น้ำหนัก 10%</div><div class="PBG" style="margin-bottom:8px"><div class="PF r" id="r45b" style="width:0%"></div></div><div class="IG"><input class="PI" style="width:56px" type="number" min="0" max="100" id="r45" value="0" oninput="setBar('r45','r45b','r45p');ra()"><span class="Ps">%</span><span class="PP" id="r45p" style="color:var(--red)">0%</span></div></div>
   </div>
@@ -490,12 +520,47 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
       <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านหลัง (ตร.ม.)</th>
       <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านซ้าย (ตร.ม.)</th>
       <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ด้านขวา (ตร.ม.)</th>
-      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">%ชั้นนี้</th>
-      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">แถบ</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">ทำแล้ว (ตร.ม.)</th>
+      <th style="font-size:11px;color:var(--tx3);font-weight:600;padding:0 10px 8px;text-align:center;text-transform:uppercase">%คืบหน้า</th>
     </tr></thead><tbody id="s3body"></tbody></table></div>
   </div>
   <!-- Mobile cards -->
   <div class="s2-mobile" id="s3cards"></div>
+
+  <!-- S3 Area Summary — collapsible -->
+  <div style="margin-top:20px;border-top:1px solid var(--bdr);padding-top:16px">
+    <!-- แถวสรุปรวม + ปุ่ม toggle -->
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:700;color:var(--cyan)">📐 สรุปพื้นที่รวมทุกชั้น</div>
+      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;align-items:baseline;gap:5px">
+          <span style="font-size:10px;color:var(--tx3)">ทำแล้ว</span>
+          <span style="font-size:18px;font-weight:800;font-family:var(--m);color:var(--cyan)" id="s3-done">—</span>
+          <span style="font-size:10px;color:var(--tx3)">ตร.ม.</span>
+        </div>
+        <div style="width:1px;height:18px;background:var(--bdr)"></div>
+        <div style="display:flex;align-items:baseline;gap:5px">
+          <span style="font-size:10px;color:var(--tx3)">ทั้งหมด</span>
+          <span style="font-size:18px;font-weight:800;font-family:var(--m);color:var(--tx2)" id="s3-all">—</span>
+          <span style="font-size:10px;color:var(--tx3)">ตร.ม.</span>
+        </div>
+        <div style="width:1px;height:18px;background:var(--bdr)"></div>
+        <div style="display:flex;align-items:baseline;gap:5px">
+          <span style="font-size:10px;color:var(--tx3)">คงเหลือ</span>
+          <span style="font-size:18px;font-weight:800;font-family:var(--m);color:var(--orange)" id="s3-rem">—</span>
+          <span style="font-size:10px;color:var(--tx3)">ตร.ม.</span>
+        </div>
+      </div>
+      <button id="s3-toggle-btn" onclick="toggleS3Detail()" style="margin-left:auto;background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.3);border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:var(--f);font-weight:600;display:flex;align-items:center;gap:6px;transition:all .2s">
+        <span id="s3-toggle-icon">▼</span> รายละเอียดแต่ละชั้น
+      </button>
+    </div>
+
+    <!-- รายละเอียดแต่ละชั้น — ซ่อนไว้ก่อน -->
+    <div id="s3-detail-wrap" style="overflow:hidden;max-height:0;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .4s ease;opacity:0">
+      <div id="s3-area-tbl" style="margin-top:14px"></div>
+    </div>
+  </div>
 </div>
 
 <!-- S5 S6 -->
@@ -527,12 +592,47 @@ header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 </div>
 
 <!-- SUMMARY -->
-<div class="SB">
+<div class="SB" style="margin-top:40px">
   <div class="SBt">สรุปภาพรวมโครงการ</div>
   <div class="SBg" id="sbg"></div>
   <div class="LU" id="lu"></div>
 </div>
 
+
+
+
+<!-- Jupiter + วิเคราะห์ buttons -->
+<div style="display:flex;justify-content:center;gap:14px;padding:16px 0 8px;flex-wrap:wrap">
+  <button onclick="showRealtimeGuide()" style="background:linear-gradient(135deg,rgba(56,139,253,.2),rgba(0,212,255,.1));color:var(--blue);border:1px solid rgba(56,139,253,.4);border-radius:12px;padding:10px 22px;font-size:13px;cursor:pointer;font-family:var(--f);font-weight:700;display:flex;align-items:center;gap:8px;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+    <span>🌐</span><span>คู่มือแชร์ Realtime</span>
+  </button>
+  <button onclick="openJupiterPage()" style="background:linear-gradient(135deg,rgba(26,35,126,.6),rgba(255,214,0,.2));color:var(--gold);border:1px solid rgba(255,214,0,.5);border-radius:12px;padding:14px 32px;font-size:15px;cursor:pointer;font-family:var(--f);font-weight:700;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(255,214,0,.15);transition:all .2s" onmouseover="this.style.boxShadow='0 6px 28px rgba(255,214,0,.35)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 4px 20px rgba(255,214,0,.15)';this.style.transform='translateY(0)'">
+    <span style="font-size:22px">🪐</span>
+    <span>Jupiter — คำแนะนำการบริหารงานก่อสร้าง</span>
+    <span style="font-size:13px;opacity:.7">↗</span>
+  </button>
+  <button onclick="openAnalysisPage()" style="background:linear-gradient(135deg,rgba(0,100,60,.6),rgba(0,230,118,.2));color:var(--green);border:1px solid rgba(0,230,118,.4);border-radius:12px;padding:14px 32px;font-size:15px;cursor:pointer;font-family:var(--f);font-weight:700;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,230,118,.1);transition:all .2s" onmouseover="this.style.boxShadow='0 6px 28px rgba(0,230,118,.3)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 4px 20px rgba(0,230,118,.1)';this.style.transform='translateY(0)'">
+    <span style="font-size:22px">📈</span>
+    <span>วิเคราะห์ — กราฟ & แผนรายวัน</span>
+    <span style="font-size:13px;opacity:.7">↗</span>
+  </button>
+</div>
+<div id="advice-body" style="display:none"></div>
+
+<!-- ── LOCK MODAL ── -->
+<div id="lock-modal" style="display:none">
+  <div class="lm-box">
+    <div class="lm-icon" id="lm-icon">🔐</div>
+    <div class="lm-title" id="lm-title">ใส่รหัสผ่านเพื่อแก้ไข</div>
+    <div class="lm-sub" id="lm-sub">กรอกรหัสผ่านเพื่อเข้าสู่โหมดแก้ไขข้อมูล</div>
+    <input type="password" id="lm-pw" placeholder="••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter') doUnlock()"
+      style="ime-mode:disabled">
+    <div class="lm-err" id="lm-err"></div>
+    <button class="lm-btn lm-btn-unlock" onclick="doUnlock()">🔓 ปลดล็อก</button>
+    <button class="lm-btn lm-btn-view" onclick="closeLockModal()">👁️ ดูอย่างเดียว</button>
+  </div>
+</div>
 </div><!-- /W -->
 
 <script>
@@ -555,9 +655,9 @@ const OD=[
   {id:'o5',label:'ชั้น 5',wt:24,fa:87.45,ba:87.45,sl:30,sr:30, fd:80,bd:80,sld:0, srd:0},
 ];
 const S4R=[
-  {id:'r41',lbl:'ห้องซักรีด', wt:30},
-  {id:'r42',lbl:'ห้องพัก 101',wt:25},
-  {id:'r43',lbl:'ห้องพัก 102',wt:25},
+  {id:'r41',lbl:'ห้องพัก 101',wt:30},
+  {id:'r42',lbl:'ห้องพัก 102',wt:25},
+  {id:'r43',lbl:'ห้องพัก 103',wt:25},
   {id:'r44',lbl:'ร้านค้า',    wt:10},
   {id:'r45',lbl:'ห้องซักอบ', wt:10},
 ];
@@ -1158,37 +1258,40 @@ function buildS3(){
   if(tb){
     tb.innerHTML='';
     OD.forEach(o=>{
-      const {fp,wp}=calcOut(o);
+      const {fp,wp,doneArea,totalArea}=calcOut(o);
       const cv=gcol(fp/100);
       const tr=document.createElement('tr'); tr.className='FR';
       tr.innerHTML=`
         <td><span class="FB" style="background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:var(--cyan)">${o.label}</span></td>
         <td style="text-align:center;font-family:var(--m);font-size:12px;color:var(--tx2)">${o.wt}%</td>
         <td style="text-align:center">
-          <div style="font-size:10px;color:var(--tx3)">พท. ${o.fa}</div>
+          <div style="font-size:10px;color:var(--tx3)">${o.fa} ตร.ม.</div>
           <div class="IG" style="justify-content:center;margin-top:4px">
             <input class="PI" style="width:60px" type="number" min="0" max="${o.fa}" step=".1" id="of-${o.id}" value="${o.fd}" oninput="updOut('${o.id}')">
             <span class="Ps">ตร.ม.</span></div></td>
         <td style="text-align:center">
-          <div style="font-size:10px;color:var(--tx3)">พท. ${o.ba}</div>
+          <div style="font-size:10px;color:var(--tx3)">${o.ba} ตร.ม.</div>
           <div class="IG" style="justify-content:center;margin-top:4px">
             <input class="PI" style="width:60px" type="number" min="0" max="${o.ba}" step=".1" id="ob-${o.id}" value="${o.bd}" oninput="updOut('${o.id}')">
             <span class="Ps">ตร.ม.</span></div></td>
         <td style="text-align:center">
-          <div style="font-size:10px;color:var(--tx3)">พท. ${o.sl}</div>
+          <div style="font-size:10px;color:var(--tx3)">${o.sl} ตร.ม.</div>
           <div class="IG" style="justify-content:center;margin-top:4px">
             <input class="PI" style="width:60px" type="number" min="0" max="${o.sl}" step=".1" id="osl-${o.id}" value="${o.sld}" oninput="updOut('${o.id}')">
             <span class="Ps">ตร.ม.</span></div></td>
         <td style="text-align:center">
-          <div style="font-size:10px;color:var(--tx3)">พท. ${o.sr}</div>
+          <div style="font-size:10px;color:var(--tx3)">${o.sr} ตร.ม.</div>
           <div class="IG" style="justify-content:center;margin-top:4px">
             <input class="PI" style="width:60px" type="number" min="0" max="${o.sr}" step=".1" id="osr-${o.id}" value="${o.srd}" oninput="updOut('${o.id}')">
             <span class="Ps">ตร.ม.</span></div></td>
         <td style="text-align:center">
-          <span id="ow-${o.id}" style="font-size:16px;font-weight:800;font-family:var(--m);color:${cv}">${wp.toFixed(1)}%</span></td>
-        <td style="min-width:120px;padding-right:14px">
+          <div style="font-size:13px;font-weight:800;font-family:var(--m);color:${cv}" id="oda-${o.id}">${doneArea.toFixed(1)}</div>
+          <div style="font-size:10px;color:var(--tx2)">จาก ${totalArea.toFixed(1)} ตร.ม.</div>
+          <div style="font-size:10px;color:${cv};font-weight:700">${fp.toFixed(0)}%</div></td>
+        <td style="min-width:110px;padding-right:14px">
           <div class="TP"><div class="TPB"><div class="TPF" id="obar-${o.id}" style="width:${fp.toFixed(0)}%;background:${cv}"></div></div>
-          <span style="font-size:11px;font-family:var(--m);font-weight:700;min-width:36px;text-align:right;color:${cv}" id="opct-${o.id}">${fp.toFixed(0)}%</span></div></td>`;
+          <span style="font-size:11px;font-family:var(--m);font-weight:700;min-width:36px;text-align:right;color:${cv}" id="opct-${o.id}">${fp.toFixed(0)}%</span></div>
+          <div style="font-size:10px;color:var(--tx2);margin-top:3px">%สมทบ <span id="ow-${o.id}" style="color:${cv};font-weight:700">${wp.toFixed(1)}%</span></div></td>`;
       tb.appendChild(tr);
     });
   }
@@ -1197,7 +1300,7 @@ function buildS3(){
   if(mc){
     mc.innerHTML='';
     OD.forEach(o=>{
-      const {fp,wp}=calcOut(o);
+      const {fp,wp,doneArea,totalArea}=calcOut(o);
       const cv=gcol(fp/100);
       const div=document.createElement('div');
       div.className='s2card';
@@ -1208,7 +1311,10 @@ function buildS3(){
             <div class="s2card-lbl" style="color:var(--cyan)">${o.label}</div>
             <div class="s2card-stat">น้ำหนัก ${o.wt}% · %สมทบ <span id="mow-${o.id}" style="color:${cv}">${wp.toFixed(1)}%</span></div>
           </div>
-          <span id="mopct-${o.id}" style="font-size:16px;font-weight:800;font-family:var(--m);color:${cv}">${fp.toFixed(0)}%</span>
+          <div style="text-align:right">
+            <div id="mopct-${o.id}" style="font-size:18px;font-weight:800;font-family:var(--m);color:${cv}">${fp.toFixed(0)}%</div>
+            <div style="font-size:11px;color:${cv};font-weight:700"><span id="moda-${o.id}">${doneArea.toFixed(1)}</span> / ${totalArea.toFixed(1)} ตร.ม.</div>
+          </div>
         </div>
         <div class="s2card-bar-row">
           <div class="TPB" style="flex:1;height:10px">
@@ -1217,19 +1323,19 @@ function buildS3(){
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
           <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px">
-            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">ด้านหน้า (พท. ${o.fa} ตร.ม.)</div>
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:2px">ด้านหน้า (${o.fa} ตร.ม.)</div>
             <div class="IG"><input class="PI" style="width:100%;font-size:14px" type="number" min="0" max="${o.fa}" step=".1" id="mof-${o.id}" value="${o.fd}" oninput="updOut('${o.id}',true)"><span class="Ps">ตร.ม.</span></div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px">
-            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">ด้านหลัง (พท. ${o.ba} ตร.ม.)</div>
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:2px">ด้านหลัง (${o.ba} ตร.ม.)</div>
             <div class="IG"><input class="PI" style="width:100%;font-size:14px" type="number" min="0" max="${o.ba}" step=".1" id="mob-${o.id}" value="${o.bd}" oninput="updOut('${o.id}',true)"><span class="Ps">ตร.ม.</span></div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px">
-            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">ด้านซ้าย (พท. ${o.sl} ตร.ม.)</div>
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:2px">ด้านซ้าย (${o.sl} ตร.ม.)</div>
             <div class="IG"><input class="PI" style="width:100%;font-size:14px" type="number" min="0" max="${o.sl}" step=".1" id="mosl-${o.id}" value="${o.sld}" oninput="updOut('${o.id}',true)"><span class="Ps">ตร.ม.</span></div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px">
-            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">ด้านขวา (พท. ${o.sr} ตร.ม.)</div>
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:2px">ด้านขวา (${o.sr} ตร.ม.)</div>
             <div class="IG"><input class="PI" style="width:100%;font-size:14px" type="number" min="0" max="${o.sr}" step=".1" id="mosr-${o.id}" value="${o.srd}" oninput="updOut('${o.id}',true)"><span class="Ps">ตร.ม.</span></div>
           </div>
         </div>`;
@@ -1258,22 +1364,22 @@ function updOut(id, fromMobile=false){
     const sf=(id2,v)=>{const el=document.getElementById(id2);if(el)el.value=v;};
     sf('mof-'+id,o.fd); sf('mob-'+id,o.bd); sf('mosl-'+id,o.sld); sf('mosr-'+id,o.srd);
   }
-  const {fp,wp}=calcOut(o);
+  const {fp,wp,doneArea,totalArea}=calcOut(o);
   const cv=gcol(fp/100);
-  // update desktop
-  const obar=document.getElementById('obar-'+id);
-  const opct=document.getElementById('opct-'+id);
-  const ow=document.getElementById('ow-'+id);
-  if(obar) obar.style.cssText=`width:${fp}%;background:${cv}`;
-  if(opct){opct.style.color=cv;opct.textContent=fp.toFixed(0)+'%';}
-  if(ow){ow.style.color=cv;ow.textContent=wp.toFixed(1)+'%';}
-  // update mobile
-  const mobar=document.getElementById('mobar-'+id);
-  const mopct=document.getElementById('mopct-'+id);
-  const mow=document.getElementById('mow-'+id);
-  if(mobar) mobar.style.cssText=`width:${fp}%;background:${cv};height:100%;border-radius:99px`;
-  if(mopct){mopct.style.color=cv;mopct.textContent=fp.toFixed(0)+'%';}
-  if(mow){mow.style.color=cv;mow.textContent=wp.toFixed(1)+'%';}
+  // desktop
+  const sf=(id2,v)=>{const el=document.getElementById(id2);if(el)el.textContent=v;};
+  const sc=(id2,c)=>{const el=document.getElementById(id2);if(el)el.style.color=c;};
+  const sw=(id2,v)=>{const el=document.getElementById(id2);if(el)el.style.width=v;};
+  const el=n=>document.getElementById(n);
+  if(el('obar-'+id)) el('obar-'+id).style.cssText=`width:${fp}%;background:${cv}`;
+  if(el('opct-'+id)){el('opct-'+id).style.color=cv;el('opct-'+id).textContent=fp.toFixed(0)+'%';}
+  if(el('ow-'+id)){el('ow-'+id).style.color=cv;el('ow-'+id).textContent=wp.toFixed(1)+'%';}
+  if(el('oda-'+id)){el('oda-'+id).textContent=doneArea.toFixed(1);el('oda-'+id).style.color=cv;}
+  // mobile
+  if(el('mobar-'+id)) el('mobar-'+id).style.cssText=`width:${fp}%;background:${cv};height:100%;border-radius:99px`;
+  if(el('mopct-'+id)){el('mopct-'+id).style.color=cv;el('mopct-'+id).textContent=fp.toFixed(0)+'%';}
+  if(el('mow-'+id)){el('mow-'+id).style.color=cv;el('mow-'+id).textContent=wp.toFixed(1)+'%';}
+  if(el('moda-'+id)){el('moda-'+id).textContent=doneArea.toFixed(1);}
   updOutTotal(); ra();
 }
 
@@ -1331,6 +1437,8 @@ function ra(){
   updKPI();
   updateDonuts();
   updatePieChart();
+  updS3Area();
+  refreshAdvice();
   scheduleAutoSave();
 }
 
@@ -1537,9 +1645,1269 @@ function exportExcel(){
 }
 
 
+
+// ═══════════════════════════════════════════════════════════
+// S3 AREA SUMMARY
+// ═══════════════════════════════════════════════════════════
+function updS3Area(){
+  let done=0, all=0;
+  OD.forEach(o=>{ const r=calcOut(o); done+=r.doneArea; all+=r.totalArea; });
+  const rem=all-done;
+  const cv=gcol(done/all);
+  const sd=document.getElementById('s3-done');
+  const sa=document.getElementById('s3-all');
+  const sr=document.getElementById('s3-rem');
+  if(sd){sd.textContent=done.toFixed(1);sd.style.color=cv;}
+  if(sa) sa.textContent=all.toFixed(1);
+  if(sr) sr.textContent=rem.toFixed(1);
+
+  const tbl=document.getElementById('s3-area-tbl');
+  if(!tbl) return;
+
+  // ═══ ข้อมูลรวมทุกหมวด ═══
+  const V=getVals();
+  const s7v=parseFloat(V.s7)||0;
+  const s7rooms=Math.round(s7v/4.55);
+  const s4v=parseFloat(V.s4)||0;
+
+  // ── 1. กราฟเส้นภาพรวมก่ออิฐ+ฉาบ ──
+  const chartId='s3-line-chart-'+Date.now();
+  let html=`
+  <div style="margin-bottom:20px">
+    <div style="font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">📈 กราฟเปรียบเทียบ — ก่ออิฐภายใน / ภายนอก / ฉาบผนัง</div>
+    <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px">
+      <canvas id="${chartId}" height="200"></canvas>
+    </div>
+  </div>`;
+
+  // ── 2. ก่ออิฐภายนอก แยกชั้น ──
+  html+=`<div style="margin-bottom:20px">
+    <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--cyan);display:inline-block"></span>
+      งานก่ออิฐภายนอก — แยกตามชั้น
+    </div>`;
+  OD.forEach(o=>{
+    const{doneArea,totalArea,fp}=calcOut(o);
+    const cv2=gcol(fp/100);
+    const sides=[
+      {lbl:'ด้านหน้า',done:o.fd,total:o.fa},
+      {lbl:'ด้านหลัง',done:o.bd,total:o.ba},
+      {lbl:'ด้านซ้าย',done:o.sld,total:o.sl},
+      {lbl:'ด้านขวา',done:o.srd,total:o.sr},
+    ];
+    html+=`<div style="background:var(--bg2);border:1px solid var(--bdr);border-left:3px solid ${cv2};border-radius:8px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:800;color:var(--cyan)">${o.label}</span>
+        <span style="font-size:11px;color:var(--tx3)">พื้นที่ทั้งหมด ${totalArea.toFixed(1)} ตร.ม.</span>
+        <div style="margin-left:auto;text-align:right">
+          <span style="font-size:16px;font-weight:800;font-family:var(--m);color:${cv2}">${doneArea.toFixed(1)}</span>
+          <span style="font-size:10px;color:var(--tx3)"> / ${totalArea.toFixed(1)} ตร.ม. </span>
+          <span style="font-size:13px;font-weight:700;color:${cv2}">(${fp.toFixed(0)}%)</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
+        ${sides.map(s=>{
+          const sp=s.total>0?(s.done/s.total*100):0;
+          const sc=gcol(sp/100);
+          return `<div style="background:var(--bg);border-radius:7px;padding:9px;text-align:center">
+            <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">${s.lbl}</div>
+            <div style="font-size:14px;font-weight:800;font-family:var(--m);color:${sc}">${s.done.toFixed(1)}</div>
+            <div style="font-size:9px;color:var(--tx3)">/${s.total} ตร.ม.</div>
+            <div style="height:3px;background:var(--bg2);border-radius:99px;margin-top:5px"><div style="height:100%;width:${Math.min(sp,100)}%;background:${sc};border-radius:99px"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="height:5px;background:var(--bg);border-radius:99px"><div style="height:100%;width:${Math.min(fp,100)}%;background:${cv2};border-radius:99px;transition:width .5s"></div></div>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // ── 3. ก่ออิฐภายใน ──
+  html+=`<div style="margin-bottom:20px">
+    <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block"></span>
+      งานก่ออิฐภายใน — ชั้น 1–5
+    </div>`;
+
+  // ชั้น 1 (จาก S4R)
+  const s4rooms=S4R.map(r=>{
+    const v=parseFloat((document.getElementById(r.id)||{}).value)||0;
+    return {lbl:r.lbl,wt:r.wt,pct:v};
+  });
+  const s4total=s4rooms.reduce((a,r)=>a+(r.pct*r.wt/100),0);
+  const s4col=gcol(s4total/100);
+  html+=`<div style="background:var(--bg2);border:1px solid var(--bdr);border-left:3px solid ${s4col};border-radius:8px;padding:12px;margin-bottom:8px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span style="font-size:13px;font-weight:800;color:var(--orange)">ชั้น 1</span>
+      <span style="font-size:11px;color:var(--tx3)">5 ห้อง (เป้า 100%)</span>
+      <span style="margin-left:auto;font-size:16px;font-weight:800;font-family:var(--m);color:${s4col}">${s4total.toFixed(1)}%</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(${Math.min(s4rooms.length,5)},1fr);gap:6px;margin-bottom:8px">
+      ${s4rooms.map(r=>{
+        const rc=gcol(r.pct/100);
+        return `<div style="background:var(--bg);border-radius:7px;padding:8px;text-align:center">
+          <div style="font-size:9px;color:var(--tx3);margin-bottom:3px">${r.lbl}</div>
+          <div style="font-size:13px;font-weight:800;font-family:var(--m);color:${rc}">${r.pct}%</div>
+          <div style="font-size:9px;color:var(--tx3)">น้ำหนัก ${r.wt}%</div>
+          <div style="height:3px;background:var(--bg2);border-radius:99px;margin-top:4px"><div style="height:100%;width:${Math.min(r.pct,100)}%;background:${rc};border-radius:99px"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="height:5px;background:var(--bg);border-radius:99px"><div style="height:100%;width:${Math.min(s4total,100)}%;background:${s4col};border-radius:99px"></div></div>
+  </div>`;
+
+  // ชั้น 2–5 (จาก FD)
+  FD.forEach(f=>{
+    const fc=gcol(f.pct/100);
+    const roomsDone=Math.round(f.pct/(100/f.rooms));
+    html+=`<div style="background:var(--bg2);border:1px solid var(--bdr);border-left:3px solid ${fc};border-radius:8px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:800;color:var(--orange)">${f.label}</span>
+        <span style="font-size:11px;color:var(--tx3)">${f.rooms} ห้อง · ทำแล้ว ~${roomsDone} ห้อง</span>
+        <span style="margin-left:auto;font-size:16px;font-weight:800;font-family:var(--m);color:${fc}">${f.pct}%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1;height:8px;background:var(--bg);border-radius:99px">
+          <div style="height:100%;width:${f.pct}%;background:${fc};border-radius:99px;transition:width .5s"></div>
+        </div>
+        <span style="font-size:11px;color:var(--tx3);min-width:60px;text-align:right">เหลือ ${f.rooms-roomsDone} ห้อง</span>
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // ── 4. งานฉาบผนัง ──
+  html+=`<div style="margin-bottom:8px">
+    <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--gold);display:inline-block"></span>
+      งานฉาบผนังภายใน — ชั้น 4 และ ชั้น 2
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--bdr);border-left:3px solid var(--gold);border-radius:8px;padding:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--tx3)">9 ห้อง · น้ำหนักห้องละ 4.55% · เป้า 40%</span>
+        <span style="margin-left:auto;font-size:16px;font-weight:800;font-family:var(--m);color:${gcol(s7v/40)}">${s7v.toFixed(1)}% <span style="font-size:11px;color:var(--tx3)">/ 40%</span></span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-bottom:10px">
+        ${Array.from({length:9},(_,i)=>{
+          const done=i<s7rooms;
+          return `<div style="background:${done?'rgba(255,214,0,.15)':'var(--bg)'};border:1px solid ${done?'rgba(255,214,0,.4)':'var(--bdr)'};border-radius:6px;padding:6px 4px;text-align:center">
+            <div style="font-size:11px">${done?'✅':'⬜'}</div>
+            <div style="font-size:9px;color:${done?'var(--gold)':'var(--tx3)'};margin-top:2px">${done?'ฉาบแล้ว':'รอทำ'}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2);margin-bottom:6px">
+        <span>ฉาบแล้ว <b style="color:var(--gold)">${s7rooms} ห้อง</b></span>
+        <span>คงเหลือ <b style="color:var(--orange)">${9-s7rooms} ห้อง</b></span>
+        <span>ต้องทำอีก <b style="color:var(--red)">${Math.max(0,(40-s7v)).toFixed(1)}%</b></span>
+      </div>
+      <div style="height:8px;background:var(--bg);border-radius:99px">
+        <div style="height:100%;width:${Math.min(s7v/40*100,100)}%;background:var(--gold);border-radius:99px;transition:width .5s"></div>
+      </div>
+    </div>
+  </div>`;
+
+  tbl.innerHTML=html;
+
+  // ── render กราฟเส้น ──
+  const ctx=document.getElementById(chartId);
+  if(ctx && window.Chart){
+    const labels=OD.map(o=>o.label);
+    const extData=OD.map(o=>{ const r=calcOut(o); return parseFloat((r.fp||0).toFixed(1)); });
+    const intData=[s4total.toFixed(1),...FD.map(f=>f.pct)].map(Number);
+    // ฉาบเฉพาะชั้น 4 กับชั้น 2
+    const plasterData=[0,s7v>0?s7v:0,0,s7v>0?s7v:0,0];
+    new Chart(ctx,{
+      type:'line',
+      data:{
+        labels,
+        datasets:[
+          {label:'ก่ออิฐภายนอก (%)',data:extData,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,.08)',fill:true,tension:.4,pointRadius:6,pointBackgroundColor:'#00d4ff',borderWidth:2},
+          {label:'ก่ออิฐภายใน (%)',data:intData,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,.08)',fill:true,tension:.4,pointRadius:6,pointBackgroundColor:'#ff9500',borderWidth:2},
+          {label:'ฉาบผนัง (%)',data:plasterData,borderColor:'#ffd600',backgroundColor:'rgba(255,214,0,.06)',fill:true,tension:.3,pointRadius:6,pointBackgroundColor:'#ffd600',borderWidth:2,borderDash:[5,4]},
+        ]
+      },
+      options:{
+        responsive:true,
+        plugins:{
+          legend:{labels:{color:'#8899aa',font:{family:'Sarabun',size:12},padding:16}},
+          tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y}%`}}
+        },
+        scales:{
+          x:{ticks:{color:'#8899aa',font:{family:'Sarabun',size:12}},grid:{color:'rgba(255,255,255,.05)'}},
+          y:{ticks:{color:'#8899aa',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.05)'},min:0,max:100,
+             title:{display:true,text:'ความคืบหน้า (%)',color:'#8899aa',font:{size:11}}}
+        }
+      }
+    });
+  }
+
+  if(_s3Open){
+    const wrap=document.getElementById('s3-detail-wrap');
+    if(wrap) wrap.style.maxHeight = wrap.scrollHeight + 1200 + 'px';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// คำแนะนำจากผู้เชี่ยวชาญ 30 ปี
+// ═══════════════════════════════════════════════════════════
+function refreshAdvice(){
+  const V=getVals();
+  const DAYS=25;
+  let s3Done=0, s3All=0;
+  OD.forEach(o=>{ const r=calcOut(o); s3Done+=r.doneArea; s3All+=r.totalArea; });
+  const s3TgtArea=s3All*0.5; // เป้า 50%
+  const s3RemArea=Math.max(0, s3TgtArea - s3Done);
+
+  const works=[
+    {no:1,name:'หลังคาเมทัลชีท',       tgt:100, done:V.s1,  col:'#00e676', unit:'%',
+     tip: V.s1>=100
+       ? 'งานหลังคาเสร็จสมบูรณ์แล้ว ไม่มีงานค้าง ✅'
+       : 'หลังคาเป็น Critical งาน — ต้องเสร็จก่อนทุกอย่าง เพราะกันฝนให้งานภายใน เร่งเป็นอันดับแรก'},
+    {no:2,name:'ก่ออิฐภายใน ชั้น 2–5', tgt:100, done:V.f25, col:'#00d4ff', unit:'%',
+     tip: (()=>{
+       const slow=FD.filter(f=>f.pct<90).map(f=>f.label+'('+f.pct+'%)').join(', ');
+       const perDay=((100-V.f25)/DAYS).toFixed(2);
+       return slow
+         ? `ชั้นที่ต้องเร่ง: <b style="color:var(--red)">${slow}</b> — จัดช่างก่ออิฐเพิ่มในชั้นที่ต่ำกว่า 90% โดยด่วน ต้องทำให้ได้ <b>${perDay}%/วัน</b>`
+         : 'ก่ออิฐภายในทุกชั้นใกล้เสร็จแล้ว กวดงานที่เหลือให้เรียบร้อยก่อนฉาบ';
+     })()},
+    {no:3,name:'ก่ออิฐภายนอก',         tgt:50,  done:V.out, col:'#00bcd4', unit:'%',
+     tip: `ทำแล้ว <b>${s3Done.toFixed(1)} ตร.ม.</b> จากเป้า ${s3TgtArea.toFixed(0)} ตร.ม. — ต้องทำเพิ่มอีก <b style="color:var(--cyan)">${(s3RemArea/DAYS).toFixed(1)} ตร.ม./วัน</b> (${s3RemArea.toFixed(0)} ตร.ม. ใน 25 วัน) จัดทีมช่างแยกตามด้านอาคาร`},
+    {no:4,name:'ก่ออิฐภายใน ชั้น 1',   tgt:100, done:V.s4,  col:'#ff9500', unit:'%',
+     tip: `ต้องทำให้ได้ <b>${((100-V.s4)/DAYS).toFixed(2)}%/วัน</b> — ทำควบคู่กับงานท่อน้ำดีชั้น 1 แต่ต้องประสานไม่ให้ขัดกัน`},
+    {no:5,name:'งานไฟฟ้า กรีดผนัง+ฝังท่อ', tgt:80, done:V.s5, col:'#ce93d8', unit:'%',
+     tip: `ต้องกรีด+ฝังท่อให้ได้ <b style="color:var(--purple)">${((80-V.s5)/DAYS).toFixed(2)}%/วัน</b> (ราว ${(Math.max(0,80-V.s5)/2.27/DAYS).toFixed(1)} ห้อง/วัน) — <b>ต้องทำก่อนฉาบผนังเสมอ</b> ห้ามสลับขั้นตอนเด็ดขาด`},
+    {no:6,name:'งานเดินท่อน้ำดี',         tgt:50,  done:V.s6, col:'#388bfd', unit:'%',
+     tip: `ต้องทำ <b style="color:var(--blue)">${((50-V.s6)/DAYS).toFixed(2)}%/วัน</b> (${(Math.max(0,50-V.s6)/3.85/DAYS).toFixed(1)} ห้อง/วัน) — งานนี้ต้องประสานกับช่างก่ออิฐชั้น 1 ให้สอดคล้อง และต้องทำก่อนฉาบผนัง`},
+    {no:7,name:'งานฉาบผนังภายใน',         tgt:40,  done:V.s7, col:'#ffd600', unit:'%',
+     tip: (()=>{
+       const rem=Math.max(0,40-V.s7);
+       const h=Math.ceil(rem/4.55);
+       return h===0 ? 'งานฉาบผนังตามเป้าแล้ว ✅'
+         : `ต้องฉาบอีก <b style="color:var(--gold)">${h} ห้อง</b> — <b>${(rem/DAYS).toFixed(2)}%/วัน</b> — <b>ต้องรอให้งานไฟฟ้าและท่อน้ำดีเสร็จก่อนเสมอ</b>`;
+     })()},
+  ];
+
+  const overallPct = works.reduce((a,w)=>a+(w.done/w.tgt),0)/works.length*100;
+  const urgent = works.filter(w=>w.done<w.tgt*0.3);
+  const done_list = works.filter(w=>w.done>=w.tgt);
+  const statusCol = overallPct>=70?'var(--green)':overallPct>=40?'var(--orange)':'var(--red)';
+
+  let html='';
+
+  // ── ภาพรวม ──
+  html+=`<div style="background:rgba(255,214,0,.07);border:1px solid rgba(255,214,0,.25);border-radius:10px;padding:16px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:800;color:var(--gold);margin-bottom:10px">📊 ภาพรวมโครงการ ณ วันนี้</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div style="background:var(--bg2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:var(--tx2)">ความคืบหน้าเฉลี่ย</div>
+        <div style="font-size:26px;font-weight:800;font-family:var(--m);color:${statusCol}">${overallPct.toFixed(0)}%</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:var(--tx2)">งานตามเป้าแล้ว</div>
+        <div style="font-size:26px;font-weight:800;font-family:var(--m);color:var(--green)">${done_list.length}<span style="font-size:13px"> รายการ</span></div>
+      </div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:var(--tx2)">งานต้องเร่ง</div>
+        <div style="font-size:26px;font-weight:800;font-family:var(--m);color:var(--red)">${urgent.length}<span style="font-size:13px"> รายการ</span></div>
+      </div>
+    </div>
+  </div>`;
+
+  // ── รายละเอียดต่อวัน ──
+  html+=`<div style="font-size:14px;font-weight:800;color:var(--gold);margin-bottom:12px">📋 เป้าหมายต่อวัน (${DAYS} วัน)</div>`;
+
+  works.forEach(w=>{
+    const rem=Math.max(0,w.tgt-w.done);
+    const perDay=(rem/DAYS);
+    const ratio=w.done/w.tgt;
+    const sc=ratio>=1?'var(--green)':ratio>=0.6?'var(--cyan)':ratio>=0.3?'var(--orange)':'var(--red)';
+    const st=ratio>=1?'✅ เสร็จแล้ว':ratio>=0.9?'🟢 ใกล้เสร็จ':ratio>=0.5?'🟡 กำลังทำ':ratio>0?'🔴 ต้องเร่ง':'⭕ ยังไม่เริ่ม';
+    const barW=Math.min((w.done/w.tgt)*100,100);
+
+    html+=`<div style="background:var(--bg2);border:1px solid var(--bdr);border-left:4px solid ${sc};border-radius:10px;padding:14px 16px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <div style="font-size:12px;font-weight:800;background:${sc};color:#000;padding:2px 9px;border-radius:5px;flex-shrink:0">งาน ${w.no}</div>
+        <div style="font-size:13px;font-weight:700;color:var(--tx)">${w.name}</div>
+        <div style="margin-left:auto;font-size:12px;color:var(--tx2)">${st}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+        <div style="background:var(--bg);border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:var(--tx3);margin-bottom:3px">ทำแล้ว</div>
+          <div style="font-size:20px;font-weight:800;font-family:var(--m);color:${sc}">${w.done.toFixed(1)}<span style="font-size:11px">%</span></div>
+        </div>
+        <div style="background:var(--bg);border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:var(--tx3);margin-bottom:3px">เป้าหมาย</div>
+          <div style="font-size:20px;font-weight:800;font-family:var(--m);color:var(--tx2)">${w.tgt}<span style="font-size:11px">%</span></div>
+        </div>
+        <div style="background:var(--bg);border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:var(--tx3);margin-bottom:3px">${rem<=0?'สถานะ':'ต้องทำ/วัน'}</div>
+          <div style="font-size:${rem<=0?14:20}px;font-weight:800;font-family:var(--m);color:var(--gold)">${rem<=0?'ครบเป้า ✅':perDay.toFixed(2)+'<span style="font-size:11px">%</span>'}</div>
+        </div>
+      </div>
+      <div style="height:6px;background:var(--bg);border-radius:99px;margin-bottom:10px">
+        <div style="height:100%;width:${barW}%;background:${sc};border-radius:99px;transition:width .5s"></div>
+      </div>
+      <div style="font-size:12px;color:var(--tx2);background:var(--bg);border-radius:8px;padding:10px 12px;line-height:1.8">💡 ${w.tip}</div>
+    </div>`;
+  });
+
+  // ── Critical Path ──
+  html+=`<div style="background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.3);border-radius:10px;padding:16px;margin-top:4px;margin-bottom:12px">
+    <div style="font-size:14px;font-weight:800;color:var(--red);margin-bottom:10px">⚠️ ลำดับความสำคัญ — Critical Path</div>
+    <div style="font-size:12px;color:var(--tx);line-height:2.3">
+      <div>🔴 <b style="color:var(--tx)">อันดับ 1</b> — งานไฟฟ้า + ท่อน้ำดี <b>ต้องเสร็จก่อนฉาบผนัง</b> ห้ามสลับขั้นตอนเด็ดขาด แก้ภายหลังค่าใช้จ่ายสูงมาก</div>
+      <div>🔴 <b style="color:var(--tx)">อันดับ 2</b> — ก่ออิฐภายนอก+ภายใน ชั้น 1 <b>ต้องเสร็จก่อนลงพื้น</b> และก่อนที่งานท่อจะขึ้นไปชั้นบน</div>
+      <div>🟡 <b style="color:var(--tx)">อันดับ 3</b> — ก่ออิฐภายใน ชั้น 4 (76%) <b>ต้องเร่ง</b> ก่อนที่ทีมฉาบขึ้นไป ไม่งั้นจะสร้างจุดคอขวด</div>
+      <div>🟢 <b style="color:var(--tx)">ทำควบคู่ได้</b> — ก่ออิฐภายนอก ทุกชั้น สามารถใช้ช่างคนละทีมทำพร้อมกับงานภายในได้เลย</div>
+    </div>
+  </div>
+
+  <div style="background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:10px;padding:16px">
+    <div style="font-size:14px;font-weight:800;color:var(--green);margin-bottom:10px">📌 Routine สำหรับ Site Manager</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;color:var(--tx2);line-height:1.9">
+      <div style="background:var(--bg2);border-radius:8px;padding:12px">
+        <div style="font-weight:700;color:var(--green);margin-bottom:6px">🌅 เช้า 07:30 น.</div>
+        ประชุมช่างทุกทีม มอบหมายงานรายห้อง/รายชั้น พร้อม Target วันนี้ ตรวจ material ให้พร้อมก่อนเริ่มงาน
+      </div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px">
+        <div style="font-weight:700;color:var(--orange);margin-bottom:6px">🕛 กลางวัน 12:00 น.</div>
+        ตรวจงานกลางวัน เทียบกับ Target ถ้าไม่ถึง 50% ของ Target ให้ปรับแผนและเพิ่มแรงงานทันที
+      </div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px">
+        <div style="font-weight:700;color:var(--blue);margin-bottom:6px">🌆 เย็น 17:30 น.</div>
+        อัพเดท Dashboard บันทึกตัวเลขจริง เพื่อวิเคราะห์แนวโน้มและวางแผนวันพรุ่งนี้
+      </div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px">
+        <div style="font-weight:700;color:var(--red);margin-bottom:6px">📊 ถ้าล่าช้า 3 วันติด</div>
+        งานไหนต่ำกว่า 70% ของ Target สะสม 3 วัน ให้เพิ่มแรงงานหรือทำล่วงเวลาทันที อย่ารอให้เกิน 5 วัน
+      </div>
+    </div>
+  </div>`;
+
+  const body=document.getElementById('advice-body');
+  if(body) body.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXPORT PDF — ใช้ระบบ Print ของ browser (ทำงานได้ทุกอุปกรณ์)
+// สี กราฟ progress bar ครบ — เหมือนหน้าจอ 100%
+// ═══════════════════════════════════════════════════════════
+function exportPDF(){
+  showToast('กำลังสร้าง PDF... รอสักครู่ครับ','info',4000);
+  // โหลด html2canvas + jsPDF แบบ dynamic
+  const s1=document.createElement('script');
+  s1.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s1.onload=()=>{
+    const s2=document.createElement('script');
+    s2.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s2.onload=async()=>{
+      try{
+        const el=document.querySelector('.W');
+        const canvas=await html2canvas(el,{
+          scale:1.5, useCORS:true, backgroundColor:'#080d14',
+          ignoreElements:e=>e.id==='lock-modal'||e.id==='jupiter-overlay'||e.id==='analysis-overlay'
+        });
+        const {jsPDF}=window.jspdf;
+        const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a3'});
+        const W=pdf.internal.pageSize.getWidth();
+        const H=pdf.internal.pageSize.getHeight();
+        const ratio=Math.min(W/canvas.width,H/canvas.height)*0.96;
+        const iw=canvas.width*ratio; const ih=canvas.height*ratio;
+        const x=(W-iw)/2; const y=6;
+        // แบ่งหน้าถ้าสูงเกิน
+        const pageH=H-12;
+        let srcY=0;
+        while(srcY<canvas.height){
+          const tmpC=document.createElement('canvas');
+          const ph=Math.min(pageH/ratio, canvas.height-srcY);
+          tmpC.width=canvas.width; tmpC.height=ph;
+          tmpC.getContext('2d').drawImage(canvas,0,srcY,canvas.width,ph,0,0,canvas.width,ph);
+          const img=tmpC.toDataURL('image/jpeg',0.88);
+          if(srcY>0) pdf.addPage();
+          pdf.addImage(img,'JPEG',x,y,canvas.width*ratio,ph*ratio);
+          srcY+=ph;
+        }
+        const d=new Date().toLocaleDateString('th-TH').replace(/\//g,'-');
+        pdf.save('Construction_Report_'+d+'.pdf');
+        showToast('✅ บันทึก PDF สำเร็จครับ','ok');
+      }catch(e){
+        console.error(e);
+        showToast('❌ เกิดข้อผิดพลาด: '+e.message,'err');
+      }
+    };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s1);
+}
+
+
+// ── Toggle S3 รายละเอียดแต่ละชั้น ──
+let _s3Open = false;
+function toggleS3Detail(){
+  _s3Open = !_s3Open;
+  const wrap = document.getElementById('s3-detail-wrap');
+  const icon = document.getElementById('s3-toggle-icon');
+  const btn  = document.getElementById('s3-toggle-btn');
+  if(_s3Open){
+    wrap.style.maxHeight = wrap.scrollHeight + 800 + 'px';
+    wrap.style.opacity   = '1';
+    icon.textContent     = '▲';
+    btn.style.background = 'rgba(0,212,255,.2)';
+  } else {
+    wrap.style.maxHeight = '0';
+    wrap.style.opacity   = '0';
+    icon.textContent     = '▼';
+    btn.style.background = 'rgba(0,212,255,.1)';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// DAILY LOG — บันทึกความคืบหน้ารายวัน
+// ═══════════════════════════════════════════════════════════
+const SITE_INFO = {
+  floors:5, width:26, depth:15,
+  workers:{ mason:5, labor:4, elec:5, plumb:4 },
+  supervisors:2, foreman:1, engineer:1,
+  days:25
+};
+
+function getDailyLog(){
+  try{ return JSON.parse(localStorage.getItem('cp_daily_log')||'[]'); }catch(e){return [];}
+}
+function saveDailyLog(log){
+  localStorage.setItem('cp_daily_log', JSON.stringify(log));
+}
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+
+// ── เปิดหน้า Jupiter ──
+function openJupiterPage(){
+  // สร้าง overlay popup แสดงเนื้อหา Jupiter แบบเต็มจอ
+  if(document.getElementById('jupiter-overlay')) return;
+  refreshAdvice(); // อัพเดทก่อนเปิด
+  const ov = document.createElement('div');
+  ov.id = 'jupiter-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(4,8,16,.97);z-index:99998;overflow-y:auto;padding:24px';
+  const body = document.getElementById('advice-body');
+  const content = body ? body.innerHTML : '';
+  ov.innerHTML = `
+    <div style="max-width:900px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid rgba(255,214,0,.25)">
+        <div style="width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#1a237e,#ffd600);display:flex;align-items:center;justify-content:center;font-size:24px">🪐</div>
+        <div>
+          <div style="font-size:22px;font-weight:800;color:var(--gold);letter-spacing:.5px">Jupiter</div>
+          <div style="font-size:12px;color:var(--tx3);margin-top:2px">วิเคราะห์จากข้อมูลจริง · เป้าหมาย 25 วัน</div>
+        </div>
+        <button onclick="document.getElementById('jupiter-overlay').remove()" style="margin-left:auto;background:rgba(255,68,68,.15);color:var(--red);border:1px solid rgba(255,68,68,.35);border-radius:8px;padding:10px 20px;font-size:13px;cursor:pointer;font-family:var(--f);font-weight:700">✕ ปิด</button>
+      </div>
+      <div id="jupiter-content">${content}</div>
+    </div>`;
+  document.body.appendChild(ov);
+}
+
+// ═══════════════════════════════════════════════════════════
+// หน้าวิเคราะห์ — กราฟ & แผนรายวัน & ความปลอดภัย
+// ═══════════════════════════════════════════════════════════
+function openAnalysisPage(){
+  if(document.getElementById('analysis-overlay')) return;
+  const V = getVals();
+  const log = getDailyLog();
+  const DAYS = 25;
+
+  // ── คำนวณ target line (linear) และ actual ──
+  const works = [
+    {key:'s1',lbl:'หลังคา',tgt:100,col:'#00e676'},
+    {key:'f25',lbl:'ก่ออิฐใน',tgt:100,col:'#00d4ff'},
+    {key:'out',lbl:'ก่ออิฐนอก',tgt:50,col:'#00bcd4'},
+    {key:'s4',lbl:'ก่ออิฐชั้น1',tgt:100,col:'#ff9500'},
+    {key:'s5',lbl:'ไฟฟ้า',tgt:80,col:'#ce93d8'},
+    {key:'s6',lbl:'ท่อน้ำดี',tgt:50,col:'#388bfd'},
+    {key:'s7',lbl:'ฉาบผนัง',tgt:40,col:'#ffd600'},
+  ];
+  const overall = works.reduce((a,w)=>a+(V[w.key]/w.tgt),0)/works.length*100;
+
+  // ── สร้าง overlay ──
+  const ov = document.createElement('div');
+  ov.id = 'analysis-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(4,8,16,.97);z-index:99998;overflow-y:auto;padding:20px;font-family:var(--f)';
+
+  ov.innerHTML = `
+  <div style="max-width:960px;margin:0 auto">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(0,230,118,.25)">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#00401a,#00e676);display:flex;align-items:center;justify-content:center;font-size:22px">📈</div>
+      <div>
+        <div style="font-size:20px;font-weight:800;color:var(--green)">วิเคราะห์ — กราฟ & แผนรายวัน</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:2px">บันทึกความคืบหน้า · วางแผนรายวัน · ความปลอดภัย</div>
+      </div>
+      <button onclick="document.getElementById('analysis-overlay').remove()" style="margin-left:auto;background:rgba(255,68,68,.15);color:var(--red);border:1px solid rgba(255,68,68,.35);border-radius:8px;padding:10px 20px;font-size:13px;cursor:pointer;font-family:var(--f);font-weight:700">✕ ปิด</button>
+    </div>
+
+    <!-- TABs -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      ${['📊 กราฟภาพรวม','📋 บันทึกรายวัน','🗓️ แผนการทำงาน','⛑️ ความปลอดภัย'].map((t,i)=>`
+        <button onclick="switchAnalysisTab(${i})" id="atab-${i}" style="padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--f);border:1px solid;transition:all .2s;${i===0?'background:rgba(0,230,118,.2);color:var(--green);border-color:rgba(0,230,118,.5)':'background:var(--bg2);color:var(--tx2);border-color:var(--bdr)'}">${t}</button>
+      `).join('')}
+    </div>
+
+    <!-- TAB 0: กราฟ -->
+    <div id="apanel-0">
+      <div style="background:var(--bgc);border:1px solid var(--bdr);border-radius:12px;padding:20px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px">📊 ความคืบหน้าปัจจุบัน vs เป้าหมาย</div>
+        <canvas id="chart-overview" height="280"></canvas>
+      </div>
+      <div style="background:var(--bgc);border:1px solid var(--bdr);border-radius:12px;padding:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--cyan);margin-bottom:16px">📈 แนวโน้มรายวัน (จากบันทึก)</div>
+        <canvas id="chart-trend" height="220"></canvas>
+        <div id="chart-no-data" style="text-align:center;padding:30px;color:var(--tx3);font-size:13px;display:none">ยังไม่มีข้อมูลบันทึกรายวัน — กด <b style="color:var(--green)">📋 บันทึกรายวัน</b> เพื่อเริ่มต้น</div>
+      </div>
+    </div>
+
+    <!-- TAB 1: บันทึกรายวัน -->
+    <div id="apanel-1" style="display:none">
+      <div style="background:var(--bgc);border:1px solid var(--bdr);border-radius:12px;padding:20px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px">📋 บันทึกความคืบหน้าวันนี้</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          ${works.map(w=>`
+          <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px">
+            <div style="font-size:11px;color:var(--tx2);margin-bottom:6px">${w.lbl} (เป้า ${w.tgt}%)</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="number" id="log-${w.key}" min="0" max="${w.tgt}" step="0.1" value="${V[w.key].toFixed(1)}"
+                style="flex:1;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;color:var(--tx);font-size:14px;font-family:var(--m);outline:none">
+              <span style="font-size:12px;color:var(--tx3)">%</span>
+            </div>
+            <div style="height:3px;background:var(--bg);border-radius:99px;margin-top:8px">
+              <div style="height:100%;background:${w.col};border-radius:99px;width:${Math.min((V[w.key]/w.tgt)*100,100)}%"></div>
+            </div>
+          </div>`).join('')}
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;color:var(--tx2);margin-bottom:6px">📝 หมายเหตุวันนี้ (ปัญหา/สิ่งที่ทำได้/แรงงาน)</div>
+          <textarea id="log-note" rows="3" placeholder="เช่น: ช่างก่อ 4 คน ทำชั้น 3 ด้านหน้าได้ 8 ตร.ม. มีฝนตกช่วงบ่าย หยุดงาน 1 ชั่วโมง..."
+            style="width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:13px;font-family:var(--f);outline:none;resize:vertical"></textarea>
+        </div>
+        <button onclick="saveLogEntry()" style="width:100%;padding:12px;background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.4);border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--f)">💾 บันทึกวันนี้ (${new Date().toLocaleDateString('th-TH')})</button>
+      </div>
+      <div style="background:var(--bgc);border:1px solid var(--bdr);border-radius:12px;padding:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:14px">📜 ประวัติบันทึก</div>
+        <div id="log-history">${renderLogHistory(log)}</div>
+      </div>
+    </div>
+
+    <!-- TAB 2: แผนการทำงาน -->
+    <div id="apanel-2" style="display:none">
+      <div id="plan-content">${renderDailyPlan(V, log, DAYS)}</div>
+    </div>
+
+    <!-- TAB 3: ความปลอดภัย -->
+    <div id="apanel-3" style="display:none">
+      ${renderSafety()}
+    </div>
+  </div>`;
+
+  document.body.appendChild(ov);
+
+  // render charts หลัง DOM ready
+  setTimeout(()=>{
+    renderOverviewChart(V, works);
+    renderTrendChart(log, works);
+  }, 100);
+}
+
+function switchAnalysisTab(idx){
+  [0,1,2,3].forEach(i=>{
+    document.getElementById('apanel-'+i).style.display = i===idx?'block':'none';
+    const btn = document.getElementById('atab-'+i);
+    btn.style.background = i===idx?'rgba(0,230,118,.2)':'var(--bg2)';
+    btn.style.color = i===idx?'var(--green)':'var(--tx2)';
+    btn.style.borderColor = i===idx?'rgba(0,230,118,.5)':'var(--bdr)';
+  });
+}
+
+function renderOverviewChart(V, works){
+  const ctx = document.getElementById('chart-overview');
+  if(!ctx) return;
+  new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: works.map(w=>w.lbl),
+      datasets:[
+        { label:'เป้าหมาย (%)', data: works.map(w=>w.tgt),
+          backgroundColor:'rgba(255,255,255,.07)', borderColor:'rgba(255,255,255,.2)', borderWidth:1 },
+        { label:'ทำแล้ว (%)', data: works.map(w=>parseFloat(V[w.key])||0),
+          backgroundColor: works.map(w=>w.col+'88'), borderColor: works.map(w=>w.col), borderWidth:2, borderRadius:4 },
+      ]
+    },
+    options:{
+      responsive:true, plugins:{legend:{labels:{color:'#8899aa',font:{family:'Sarabun'}}}},
+      scales:{
+        x:{ticks:{color:'#8899aa',font:{family:'Sarabun'}},grid:{color:'rgba(255,255,255,.05)'}},
+        y:{ticks:{color:'#8899aa'},grid:{color:'rgba(255,255,255,.05)'},max:100,min:0}
+      }
+    }
+  });
+}
+
+function renderTrendChart(log, works){
+  const ctx = document.getElementById('chart-trend');
+  const nd  = document.getElementById('chart-no-data');
+  if(!ctx) return;
+  if(!log || log.length===0){ ctx.style.display='none'; nd.style.display='block'; return; }
+  const labels = log.map(e=>e.date);
+  const overallData = log.map(e=>{
+    if(!e.vals) return 0;
+    return works.reduce((a,w)=>a+((e.vals[w.key]||0)/w.tgt),0)/works.length*100;
+  });
+  const targetLine = log.map((_,i)=>{
+    const dayNum = i+1;
+    return Math.min((dayNum/25)*100, 100);
+  });
+  new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        { label:'ความคืบหน้าจริง (%)', data:overallData,
+          borderColor:'#00e676', backgroundColor:'rgba(0,230,118,.1)',
+          fill:true, tension:.4, pointRadius:5, pointBackgroundColor:'#00e676' },
+        { label:'เส้นเป้าหมาย (%)', data:targetLine,
+          borderColor:'#ff9500', borderDash:[6,4],
+          fill:false, tension:.1, pointRadius:0, borderWidth:2 },
+      ]
+    },
+    options:{
+      responsive:true, plugins:{legend:{labels:{color:'#8899aa',font:{family:'Sarabun'}}}},
+      scales:{
+        x:{ticks:{color:'#8899aa',font:{family:'Sarabun',size:11}},grid:{color:'rgba(255,255,255,.05)'}},
+        y:{ticks:{color:'#8899aa'},grid:{color:'rgba(255,255,255,.05)'},min:0,max:100,
+           title:{display:true,text:'ความคืบหน้า (%)',color:'#8899aa'}}
+      }
+    }
+  });
+}
+
+function renderLogHistory(log){
+  if(!log || log.length===0) return '<div style="color:var(--tx3);text-align:center;padding:20px;font-size:13px">ยังไม่มีบันทึก</div>';
+  return [...log].reverse().slice(0,10).map(e=>{
+    const d = new Date(e.date).toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'});
+    const ov = e.overall ? e.overall.toFixed(1) : '—';
+    const col = e.onTrack ? 'var(--green)' : 'var(--red)';
+    const st  = e.onTrack ? '✅ ตามแผน' : '⚠️ ต่ำกว่าแผน';
+    return `<div style="background:var(--bg2);border:1px solid var(--bdr);border-left:3px solid ${col};border-radius:8px;padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:700;color:var(--tx)">${d}</span>
+        <span style="font-size:12px;font-family:var(--m);color:${col}">ภาพรวม ${ov}%</span>
+        <span style="margin-left:auto;font-size:11px;color:${col}">${st}</span>
+      </div>
+      ${e.note?`<div style="font-size:12px;color:var(--tx2);line-height:1.6">📝 ${e.note}</div>`:''}
+      ${e.advice?`<div style="font-size:12px;color:var(--orange);margin-top:6px;line-height:1.6">💡 ${e.advice}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function renderDailyPlan(V, log, DAYS){
+  const works=[
+    {key:'s1',lbl:'หลังคา',tgt:100,col:'#00e676',unit:'%',team:'ช่างก่อ+แรงงาน'},
+    {key:'f25',lbl:'ก่ออิฐภายใน ชั้น 2–5',tgt:100,col:'#00d4ff',unit:'%',team:'ช่างก่อ 5 คน'},
+    {key:'out',lbl:'ก่ออิฐภายนอก',tgt:50,col:'#00bcd4',unit:'%',team:'ช่างก่อ+แรงงาน'},
+    {key:'s4',lbl:'ก่ออิฐภายใน ชั้น 1',tgt:100,col:'#ff9500',unit:'%',team:'ช่างก่อ 2 คน'},
+    {key:'s5',lbl:'งานไฟฟ้า',tgt:80,col:'#ce93d8',unit:'%',team:'ช่างไฟ 5 คน'},
+    {key:'s6',lbl:'ท่อน้ำดี',tgt:50,col:'#388bfd',unit:'%',team:'ช่างสุขาภิบาล 4 คน'},
+    {key:'s7',lbl:'ฉาบผนัง',tgt:40,col:'#ffd600',unit:'%',team:'ช่างก่อ/ฉาบ 5 คน'},
+  ];
+  const lastLog = log && log.length>0 ? log[log.length-1] : null;
+  let html='';
+
+  // เส้นเป้าหมายวันนี้
+  const daysPassed = log ? log.length : 0;
+  const daysLeft = Math.max(1, DAYS - daysPassed);
+
+  html+=`<div style="background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.25);border-radius:12px;padding:16px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:800;color:var(--green);margin-bottom:10px">📅 สถานะแผน 25 วัน</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:13px">
+      <div style="text-align:center;background:var(--bg2);border-radius:8px;padding:10px">
+        <div style="color:var(--tx2);font-size:11px">วันที่ผ่านไป</div>
+        <div style="font-size:22px;font-weight:800;font-family:var(--m);color:var(--cyan)">${daysPassed}</div>
+        <div style="color:var(--tx3);font-size:10px">วัน</div>
+      </div>
+      <div style="text-align:center;background:var(--bg2);border-radius:8px;padding:10px">
+        <div style="color:var(--tx2);font-size:11px">คงเหลือ</div>
+        <div style="font-size:22px;font-weight:800;font-family:var(--m);color:var(--orange)">${daysLeft}</div>
+        <div style="color:var(--tx3);font-size:10px">วัน</div>
+      </div>
+      <div style="text-align:center;background:var(--bg2);border-radius:8px;padding:10px">
+        <div style="color:var(--tx2);font-size:11px">ควรอยู่ที่</div>
+        <div style="font-size:22px;font-weight:800;font-family:var(--m);color:var(--green)">${Math.min(Math.round((daysPassed/DAYS)*100),100)}%</div>
+        <div style="color:var(--tx3);font-size:10px">ของเป้า</div>
+      </div>
+    </div>
+  </div>`;
+
+  html+=`<div style="font-size:14px;font-weight:800;color:var(--tx);margin-bottom:12px">🗓️ แผนงานรายหัวข้อ — ${daysLeft} วันที่เหลือ</div>`;
+
+  works.forEach(w=>{
+    const done = parseFloat(V[w.key])||0;
+    const remain = Math.max(0, w.tgt - done);
+    const perDay = remain / daysLeft;
+    const ratio = done / w.tgt;
+    const expectedNow = Math.min((daysPassed/DAYS)*w.tgt, w.tgt);
+    const gap = done - expectedNow;
+    const sc = ratio>=1?'var(--green)':gap>=-5?'var(--cyan)':gap>=-15?'var(--orange)':'var(--red)';
+    const status = ratio>=1?'✅ เสร็จแล้ว':gap>=-5?'🟢 ตามแผน':gap>=-15?'🟡 ล่าช้าเล็กน้อย':'🔴 ล่าช้ามาก';
+    const fix = gap<-5 ? `ต้องเพิ่มเป็น <b style="color:var(--red)">${(perDay*1.2).toFixed(2)}%/วัน</b> เพื่อชดเชย` : remain<=0?'ไม่มีงานค้าง ✅':`ทำต่อเนื่องตามแผน <b>${perDay.toFixed(2)}%/วัน</b>`;
+
+    html+=`<div style="background:var(--bgc);border:1px solid var(--bdr);border-left:4px solid ${sc};border-radius:10px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-size:11px;background:${sc};color:#000;padding:2px 8px;border-radius:4px;font-weight:800">${w.lbl}</span>
+        <span style="font-size:11px;color:var(--tx2)">${w.team}</span>
+        <span style="margin-left:auto;font-size:12px">${status}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;font-size:11px;text-align:center">
+        <div style="background:var(--bg2);border-radius:6px;padding:8px">
+          <div style="color:var(--tx3)">ทำแล้ว</div>
+          <div style="font-size:16px;font-weight:800;font-family:var(--m);color:${sc}">${done.toFixed(1)}%</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:6px;padding:8px">
+          <div style="color:var(--tx3)">ควรอยู่ที่</div>
+          <div style="font-size:16px;font-weight:800;font-family:var(--m);color:var(--tx2)">${expectedNow.toFixed(1)}%</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:6px;padding:8px">
+          <div style="color:var(--tx3)">ผลต่าง</div>
+          <div style="font-size:16px;font-weight:800;font-family:var(--m);color:${gap>=0?'var(--green)':'var(--red)'}">${gap>=0?'+':''}${gap.toFixed(1)}%</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:6px;padding:8px">
+          <div style="color:var(--tx3)">ต้องทำ/วัน</div>
+          <div style="font-size:16px;font-weight:800;font-family:var(--m);color:var(--gold)">${remain<=0?'—':perDay.toFixed(2)+'%'}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--tx2);background:var(--bg);border-radius:7px;padding:9px 12px">🔧 ${fix}</div>
+    </div>`;
+  });
+
+  // ตารางแรงงาน — แบบแก้ไขได้
+  const lw = getLaborConfig();
+  const totalW = lw.mason + lw.elec + lw.plumb + lw.labor;
+  html+=`<div style="background:var(--bgc);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-top:16px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <div style="font-size:14px;font-weight:700;color:var(--cyan)">👷 การจัดสรรแรงงาน</div>
+      <div style="font-size:13px;font-family:var(--m);font-weight:800;color:var(--tx2)">รวม <span id="labor-total" style="color:var(--cyan)">${totalW}</span> คน</div>
+      <button onclick="resetLaborConfig()" style="margin-left:auto;font-size:11px;background:rgba(255,68,68,.1);color:var(--red);border:1px solid rgba(255,68,68,.3);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:var(--f)">↺ รีเซ็ต</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:12px">
+
+      <!-- ช่างก่อ/ฉาบ -->
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-top:2px solid var(--orange)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:14px">🧱</span>
+          <span style="font-weight:700;color:var(--orange)">ช่างก่อ/ฉาบ</span>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+            <button onclick="adjustLabor('mason',-1)" style="width:24px;height:24px;border-radius:50%;background:rgba(255,149,0,.15);color:var(--orange);border:1px solid rgba(255,149,0,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--f)">−</button>
+            <span id="labor-mason" style="font-size:18px;font-weight:800;font-family:var(--m);color:var(--orange);min-width:24px;text-align:center">${lw.mason}</span>
+            <button onclick="adjustLabor('mason',1)" style="width:24px;height:24px;border-radius:50%;background:rgba(255,149,0,.15);color:var(--orange);border:1px solid rgba(255,149,0,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--f)">+</button>
+            <span style="font-size:11px;color:var(--tx3)">คน</span>
+          </div>
+        </div>
+        <div id="labor-mason-tasks" style="color:var(--tx2);line-height:2">${masonTasks(lw.mason)}</div>
+      </div>
+
+      <!-- ช่างไฟฟ้า -->
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-top:2px solid var(--purple)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:14px">⚡</span>
+          <span style="font-weight:700;color:var(--purple)">ช่างไฟฟ้า</span>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+            <button onclick="adjustLabor('elec',-1)" style="width:24px;height:24px;border-radius:50%;background:rgba(206,147,216,.15);color:var(--purple);border:1px solid rgba(206,147,216,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--f)">−</button>
+            <span id="labor-elec" style="font-size:18px;font-weight:800;font-family:var(--m);color:var(--purple);min-width:24px;text-align:center">${lw.elec}</span>
+            <button onclick="adjustLabor('elec',1)" style="width:24px;height:24px;border-radius:50%;background:rgba(206,147,216,.15);color:var(--purple);border:1px solid rgba(206,147,216,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--f)">+</button>
+            <span style="font-size:11px;color:var(--tx3)">คน</span>
+          </div>
+        </div>
+        <div id="labor-elec-tasks" style="color:var(--tx2);line-height:2">${elecTasks(lw.elec)}</div>
+      </div>
+
+      <!-- ช่างสุขาภิบาล -->
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-top:2px solid var(--blue)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:14px">💧</span>
+          <span style="font-weight:700;color:var(--blue)">ช่างสุขาภิบาล</span>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+            <button onclick="adjustLabor('plumb',-1)" style="width:24px;height:24px;border-radius:50%;background:rgba(56,139,253,.15);color:var(--blue);border:1px solid rgba(56,139,253,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--f)">−</button>
+            <span id="labor-plumb" style="font-size:18px;font-weight:800;font-family:var(--m);color:var(--blue);min-width:24px;text-align:center">${lw.plumb}</span>
+            <button onclick="adjustLabor('plumb',1)" style="width:24px;height:24px;border-radius:50%;background:rgba(56,139,253,.15);color:var(--blue);border:1px solid rgba(56,139,253,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--f)">+</button>
+            <span style="font-size:11px;color:var(--tx3)">คน</span>
+          </div>
+        </div>
+        <div id="labor-plumb-tasks" style="color:var(--tx2);line-height:2">${plumbTasks(lw.plumb)}</div>
+      </div>
+
+      <!-- กรรมกร -->
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-top:2px solid var(--green)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:14px">🔨</span>
+          <span style="font-weight:700;color:var(--green)">กรรมกร</span>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+            <button onclick="adjustLabor('labor',-1)" style="width:24px;height:24px;border-radius:50%;background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--f)">−</button>
+            <span id="labor-labor" style="font-size:18px;font-weight:800;font-family:var(--m);color:var(--green);min-width:24px;text-align:center">${lw.labor}</span>
+            <button onclick="adjustLabor('labor',1)" style="width:24px;height:24px;border-radius:50%;background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--f)">+</button>
+            <span style="font-size:11px;color:var(--tx3)">คน</span>
+          </div>
+        </div>
+        <div id="labor-labor-tasks" style="color:var(--tx2);line-height:2">${laborTasks(lw.labor)}</div>
+      </div>
+
+    </div>
+    <div style="margin-top:10px;padding:10px 14px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:8px;font-size:12px;color:var(--tx2)">
+      💡 กด <b style="color:var(--tx)">+</b> / <b style="color:var(--tx)">−</b> เพื่อปรับจำนวนคนงาน คำแนะนำการแบ่งงานจะอัพเดทอัตโนมัติ
+    </div>
+  </div>
+
+  <!-- ทีมบริหาร — แก้ไขได้ -->
+  <div style="background:var(--bgc);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-top:12px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <div style="font-size:14px;font-weight:700;color:var(--blue)">🧑‍💼 ทีมบริหารและควบคุมงาน</div>
+      <button onclick="resetLaborConfig()" style="margin-left:auto;font-size:11px;background:rgba(255,68,68,.1);color:var(--red);border:1px solid rgba(255,68,68,.3);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:var(--f)">↺ รีเซ็ตทั้งหมด</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:12px;margin-bottom:12px">
+
+      <!-- หัวหน้างาน -->
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-top:2px solid var(--cyan)">
+        <div style="font-size:11px;color:var(--tx2);margin-bottom:8px">👷‍♂️ หัวหน้างาน</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <button onclick="adjustLabor('supervisor',-1)" style="width:26px;height:26px;border-radius:50%;background:rgba(0,212,255,.15);color:var(--cyan);border:1px solid rgba(0,212,255,.4);cursor:pointer;font-size:15px;line-height:1;font-family:var(--f)">−</button>
+          <span id="labor-supervisor" style="font-size:22px;font-weight:800;font-family:var(--m);color:var(--cyan);min-width:28px;text-align:center">${lw.supervisor||0}</span>
+          <button onclick="adjustLabor('supervisor',1)" style="width:26px;height:26px;border-radius:50%;background:rgba(0,212,255,.15);color:var(--cyan);border:1px solid rgba(0,212,255,.4);cursor:pointer;font-size:15px;line-height:1;font-family:var(--f)">+</button>
+          <span style="font-size:11px;color:var(--tx3)">คน</span>
+        </div>
+        <div style="font-size:11px;color:var(--tx3);line-height:1.8">สลับกัน 3 วัน/สัปดาห์<br>เข้า 09:00 · หยุดอาทิตย์</div>
+      </div>
+
+      <!-- โฟร์แมน -->
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-top:2px solid var(--orange)">
+        <div style="font-size:11px;color:var(--tx2);margin-bottom:8px">📋 โฟร์แมน (Freelance)</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <button onclick="adjustLabor('foreman',-1)" style="width:26px;height:26px;border-radius:50%;background:rgba(255,149,0,.15);color:var(--orange);border:1px solid rgba(255,149,0,.4);cursor:pointer;font-size:15px;line-height:1;font-family:var(--f)">−</button>
+          <span id="labor-foreman" style="font-size:22px;font-weight:800;font-family:var(--m);color:var(--orange);min-width:28px;text-align:center">${lw.foreman||0}</span>
+          <button onclick="adjustLabor('foreman',1)" style="width:26px;height:26px;border-radius:50%;background:rgba(255,149,0,.15);color:var(--orange);border:1px solid rgba(255,149,0,.4);cursor:pointer;font-size:15px;line-height:1;font-family:var(--f)">+</button>
+          <span style="font-size:11px;color:var(--tx3)">คน</span>
+        </div>
+        <div style="font-size:11px;color:var(--tx3);line-height:1.8">วันเว้นวัน 3 วัน/สัปดาห์<br>จ้างเป็นรายวัน</div>
+      </div>
+
+      <!-- วิศวกร -->
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-top:2px solid var(--green)">
+        <div style="font-size:11px;color:var(--tx2);margin-bottom:8px">🏗️ วิศวกรที่ปรึกษา</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <button onclick="adjustLabor('engineer',-1)" style="width:26px;height:26px;border-radius:50%;background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.4);cursor:pointer;font-size:15px;line-height:1;font-family:var(--f)">−</button>
+          <span id="labor-engineer" style="font-size:22px;font-weight:800;font-family:var(--m);color:var(--green);min-width:28px;text-align:center">${lw.engineer||0}</span>
+          <button onclick="adjustLabor('engineer',1)" style="width:26px;height:26px;border-radius:50%;background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.4);cursor:pointer;font-size:15px;line-height:1;font-family:var(--f)">+</button>
+          <span style="font-size:11px;color:var(--tx3)">คน</span>
+        </div>
+        <div style="font-size:11px;color:var(--tx3);line-height:1.8">2–4 ครั้ง/สัปดาห์<br>ที่ปรึกษาโครงการ</div>
+      </div>
+
+    </div>
+    <!-- คำเตือนอัตราส่วน -->
+    <div id="labor-warn" style="padding:10px 14px;background:rgba(255,149,0,.07);border:1px solid rgba(255,149,0,.25);border-radius:8px;font-size:12px;color:var(--orange)">
+      ${laborWarning(lw)}
+    </div>
+  </div>`;
+
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// LABOR CONFIG — ปรับจำนวนคนงานได้
+// ═══════════════════════════════════════════════════════════
+const LABOR_DEFAULT = {mason:5, elec:5, plumb:4, labor:4, supervisor:2, foreman:1, engineer:1};
+
+function getLaborConfig(){
+  try{ return JSON.parse(localStorage.getItem('cp_labor')||'null') || {...LABOR_DEFAULT}; }
+  catch(e){ return {...LABOR_DEFAULT}; }
+}
+function setLaborConfig(cfg){
+  localStorage.setItem('cp_labor', JSON.stringify(cfg));
+}
+function resetLaborConfig(){
+  setLaborConfig({...LABOR_DEFAULT});
+  refreshLaborUI(LABOR_DEFAULT);
+  showToast('รีเซ็ตจำนวนคนงานแล้ว','ok');
+}
+function adjustLabor(type, delta){
+  const cfg = getLaborConfig();
+  cfg[type] = Math.max(0, (cfg[type]||0) + delta);
+  setLaborConfig(cfg);
+  refreshLaborUI(cfg);
+}
+function refreshLaborUI(cfg){
+  const total = cfg.mason + cfg.elec + cfg.plumb + cfg.labor;
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  const setHTML = (id, val) => { const el=document.getElementById(id); if(el) el.innerHTML=val; };
+  set('labor-mason',      cfg.mason);
+  set('labor-elec',       cfg.elec);
+  set('labor-plumb',      cfg.plumb);
+  set('labor-labor',      cfg.labor);
+  set('labor-supervisor', cfg.supervisor||0);
+  set('labor-foreman',    cfg.foreman||0);
+  set('labor-engineer',   cfg.engineer||0);
+  set('labor-total',      total);
+  setHTML('labor-mason-tasks', masonTasks(cfg.mason));
+  setHTML('labor-elec-tasks',  elecTasks(cfg.elec));
+  setHTML('labor-plumb-tasks', plumbTasks(cfg.plumb));
+  setHTML('labor-labor-tasks', laborTasks(cfg.labor));
+  // อัพเดทคำเตือน safety
+  const warn = document.getElementById('labor-warn');
+  if(warn) warn.innerHTML = laborWarning(cfg);
+}
+
+function laborWarning(cfg){
+  const total = cfg.mason + cfg.elec + cfg.plumb + cfg.labor;
+  const sup = (cfg.supervisor||0) + (cfg.foreman||0);
+  if(total===0) return '<span style="color:var(--red)">⚠️ ไม่มีคนงานเลย</span>';
+  if(sup===0) return '⚠️ <b>ไม่มี Supervisor</b> ในไซท์ — ห้ามงานในที่สูงโดยเด็ดขาด';
+  if(total > 20) return '⚠️ คนงานมากกว่า 20 คน — ควรเพิ่ม Supervisor เป็น ' + Math.ceil(total/10) + ' คน';
+  if(sup < Math.ceil(total/10)) return '⚠️ อัตราส่วน Supervisor:คนงาน = 1:' + Math.floor(total/sup) + ' — แนะนำ 1:10 หรือน้อยกว่า';
+  return '✅ อัตราส่วน Supervisor:คนงาน = 1:' + Math.floor(total/sup) + ' — อยู่ในเกณฑ์ดี';
+}
+
+function masonTasks(n){
+  if(n===0) return '<span style="color:var(--red)">⚠️ ไม่มีช่างก่อ/ฉาบ</span>';
+  const ext = Math.min(2, Math.floor(n*0.4));
+  const inn = Math.min(n-ext, Math.floor(n*0.4));
+  const pl  = Math.max(0, n - ext - inn);
+  return `• ${ext} คน → ก่ออิฐภายนอก<br>• ${inn} คน → ก่ออิฐภายใน<br>• ${pl} คน → ฉาบผนัง`;
+}
+function elecTasks(n){
+  if(n===0) return '<span style="color:var(--red)">⚠️ ไม่มีช่างไฟฟ้า</span>';
+  const senior = Math.min(2, Math.ceil(n/3));
+  const junior = n - senior;
+  return `• ${senior} คน (หัวหน้า) → กรีด+ฝังท่อหลัก<br>• ${junior} คน (ลูกมือ) → เดินสาย+กล่อง<br>• ต้องเสร็จก่อนฉาบผนังทุกชั้น`;
+}
+function plumbTasks(n){
+  if(n===0) return '<span style="color:var(--red)">⚠️ ไม่มีช่างสุขาภิบาล</span>';
+  return `• ${n} คน → ท่อน้ำดี ชั้น 1–3<br>• ประสานกับช่างก่ออิฐชั้น 1<br>• ต้องเสร็จก่อนฉาบผนัง`;
+}
+function laborTasks(n){
+  if(n===0) return '<span style="color:var(--red)">⚠️ ไม่มีกรรมกร</span>';
+  return `• ${n} คน → ขนวัสดุ+ผสมปูน<br>• สนับสนุนช่างก่อ+ฉาบ<br>• จัดพื้นที่หน้าไซท์ 6×26 ม.`;
+}
+
+function renderSafety(){
+  return `
+  <div style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.3);border-radius:12px;padding:18px;margin-bottom:14px">
+    <div style="font-size:15px;font-weight:800;color:var(--red);margin-bottom:14px">⛑️ Jupiter — จป. ประจำโครงการ</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px">
+
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-left:3px solid var(--red)">
+        <div style="font-weight:700;color:var(--red);margin-bottom:8px">🚫 โซนอันตราย — ห้ามเข้าเด็ดขาด</div>
+        <div style="color:var(--tx2);line-height:2.1">
+          • <b style="color:var(--tx)">ใต้ลิฟท์สลิงขนของ</b> — ห้ามคนเดินผ่านขณะใช้งาน ต้องมีสัญญาณเสียงแจ้งเตือน<br>
+          • <b style="color:var(--tx)">เขตกันชน</b> กว้างอย่างน้อย 2 เมตรรอบลิฟท์สลิง<br>
+          • ต้องมีป้าย "ห้ามเข้า" และ "อันตราย — ลิฟท์ขนของ" ทั้ง 4 ด้าน
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-left:3px solid var(--orange)">
+        <div style="font-weight:700;color:var(--orange);margin-bottom:8px">🪵 โครงแสลน-ไม้ไผ่</div>
+        <div style="color:var(--tx2);line-height:2.1">
+          • ตรวจสอบโครงยึดไม้ไผ่ <b style="color:var(--tx)">ทุกสัปดาห์</b> — รอยแตก ผุ หลุด<br>
+          • หลังฝนตกหนัก ต้องตรวจทันที<br>
+          • ผูกเชือกยึดแสลนป้องกันลมพัด<br>
+          • ห้ามวางวัสดุหนักบนโครงแสลน
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-left:3px solid var(--gold)">
+        <div style="font-weight:700;color:var(--gold);margin-bottom:8px">🏗️ พื้นที่หน้าไซท์ (6×26 ม.)</div>
+        <div style="color:var(--tx2);line-height:2.1">
+          • แบ่งโซนวัสดุให้ชัดเจน — อิฐ / ทราย / ปูน / เหล็ก<br>
+          • เว้นทางเดิน กว้างอย่างน้อย <b style="color:var(--tx)">1.2 เมตร</b><br>
+          • วัสดุกองสูงไม่เกิน <b style="color:var(--tx)">1.5 เมตร</b><br>
+          • ไม่วางสิ่งกีดขวางทางหนีไฟ
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-left:3px solid var(--cyan)">
+        <div style="font-weight:700;color:var(--cyan);margin-bottom:8px">🪜 บันได & ลิฟท์โดยสาร</div>
+        <div style="color:var(--tx2);line-height:2.1">
+          • ราวบันไดต้องแข็งแรงทุกชั้น ตรวจสัปดาห์ละครั้ง<br>
+          • แสงสว่างบันไดต้องพอเพียง ≥ 50 lux<br>
+          • ลิฟท์โดยสาร — ห้ามบรรทุกเกินน้ำหนักที่กำหนด<br>
+          • ต้องมีป้ายน้ำหนักสูงสุดชัดเจน
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-left:3px solid var(--green)">
+        <div style="font-weight:700;color:var(--green);margin-bottom:8px">🦺 PPE ที่ต้องใส่ทุกวัน</div>
+        <div style="color:var(--tx2);line-height:2.1">
+          • หมวกนิรภัย — ทุกคนในไซท์<br>
+          • รองเท้าหัวเหล็ก — ช่างและกรรมกรทุกคน<br>
+          • ถุงมือ — ช่างก่อ ช่างฉาบ<br>
+          • แว่นตา+หน้ากาก — ช่างกรีดผนัง ช่างเจาะ<br>
+          • เข็มขัดนิรภัย — งานชั้น 4–5 นอกอาคาร
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border-radius:8px;padding:14px;border-left:3px solid var(--purple)">
+        <div style="font-weight:700;color:var(--purple);margin-bottom:8px">📋 Checklist หัวหน้างาน (ทุกเช้า)</div>
+        <div style="color:var(--tx2);line-height:2.1">
+          • ✅ ตรวจ PPE ของคนงานทุกคน<br>
+          • ✅ ตรวจโซน "ห้ามเข้า" ใต้ลิฟท์สลิง<br>
+          • ✅ ตรวจสภาพโครงไม้ไผ่-แสลน<br>
+          • ✅ ตรวจทางเดินและทางหนีไฟ<br>
+          • ✅ แจ้ง Toolbox Talk 5 นาทีก่อนเริ่มงาน
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="background:rgba(56,139,253,.07);border:1px solid rgba(56,139,253,.25);border-radius:12px;padding:16px">
+    <div style="font-size:14px;font-weight:700;color:var(--blue);margin-bottom:12px">👥 ทีมบริหารและควบคุมงาน</div>
+    <div id="safety-team-table" style="font-size:12px;color:var(--tx2);line-height:2.2"></div>
+  </div>`;
+  setTimeout(()=>refreshSafetyTeam(), 0);
+}
+
+function refreshSafetyTeam(){
+  const el=document.getElementById('safety-team-table');
+  if(!el) return;
+  const lw2=getLaborConfig();
+  const total2=lw2.mason+lw2.elec+lw2.plumb+lw2.labor;
+  const sup2=(lw2.supervisor||0)+(lw2.foreman||0);
+  const warnCol=sup2===0?'var(--red)':sup2<Math.ceil(total2/10)?'var(--orange)':'var(--green)';
+  const warnTxt=sup2===0
+    ?'⚠️ <b>ไม่มี Supervisor</b> — ห้ามงานในที่สูงเด็ดขาด'
+    :sup2<Math.ceil(total2/10)
+      ?'⚠️ อัตราส่วน Supervisor:คนงาน = 1:'+Math.floor(total2/Math.max(sup2,1))+' — แนะนำ 1:10 หรือน้อยกว่า'
+      :'✅ อัตราส่วน Supervisor:คนงาน = 1:'+Math.floor(total2/Math.max(sup2,1))+' — อยู่ในเกณฑ์ดี';
+  el.innerHTML=
+    '<div style="display:grid;grid-template-columns:160px 1fr;gap:4px 16px;background:var(--bg2);border-radius:8px;padding:12px;margin-bottom:10px">'
+    +'<div style="color:var(--tx);font-weight:600">หัวหน้างาน '+(lw2.supervisor||0)+' คน</div><div>สลับกัน คนละ 3 วัน/สัปดาห์ · เข้า 09:00 น. · หยุดวันอาทิตย์</div>'
+    +'<div style="color:var(--tx);font-weight:600">โฟร์แมน '+(lw2.foreman||0)+' คน</div><div>วันเว้นวัน (3 วัน/สัปดาห์) · Freelance</div>'
+    +'<div style="color:var(--tx);font-weight:600">วิศวกร '+(lw2.engineer||0)+' คน</div><div>ที่ปรึกษา · 2–4 ครั้ง/สัปดาห์ · ขึ้นกับงาน</div>'
+    +'<div style="color:var(--tx);font-weight:600">คนงานรวม</div><div>'+total2+' คน (ช่างก่อ '+lw2.mason+' · ไฟฟ้า '+lw2.elec+' · สุขาภิบาล '+lw2.plumb+' · กรรมกร '+lw2.labor+')</div>'
+    +'<div style="color:var(--tx);font-weight:600">ผู้บริหารโครงการ</div><div>คุณ — บริหารและตัดสินใจทั้งหมด</div>'
+    +'</div>'
+    +'<div style="padding:10px 12px;background:rgba(255,149,0,.08);border:1px solid rgba(255,149,0,.25);border-radius:8px;color:'+warnCol+'">'+warnTxt+'</div>';
+}
+
+function saveLogEntry(){
+  const V = getVals();
+  const works=[
+    {key:'s1',tgt:100},{key:'f25',tgt:100},{key:'out',tgt:50},
+    {key:'s4',tgt:100},{key:'s5',tgt:80},{key:'s6',tgt:50},{key:'s7',tgt:40}
+  ];
+  const vals={};
+  works.forEach(w=>{
+    const el=document.getElementById('log-'+w.key);
+    vals[w.key]=el?parseFloat(el.value)||0:parseFloat(V[w.key])||0;
+  });
+  const overall=works.reduce((a,w)=>a+((vals[w.key]||0)/w.tgt),0)/works.length*100;
+  const log=getDailyLog();
+  const daysPassed=log.length+1;
+  const expected=Math.min((daysPassed/25)*100,100);
+  const onTrack=overall>=expected-5;
+  const advice=!onTrack
+    ?`ต่ำกว่าแผน ${(expected-overall).toFixed(1)}% — วันพรุ่งนี้ควรเพิ่มทีมช่างก่อและตรวจ bottleneck แต่ละชั้น`
+    :'ความคืบหน้าตามแผน — รักษาจังหวะนี้ไว้';
+  const note=(document.getElementById('log-note')||{}).value||'';
+  const entry={date:todayStr(),vals,overall,onTrack,advice,note};
+  // ตรวจซ้ำวันเดิม
+  const idx=log.findIndex(e=>e.date===todayStr());
+  if(idx>=0) log[idx]=entry; else log.push(entry);
+  saveDailyLog(log);
+  // รีเฟรช history
+  const hist=document.getElementById('log-history');
+  if(hist) hist.innerHTML=renderLogHistory(log);
+  // รีเฟรช plan
+  const plan=document.getElementById('plan-content');
+  if(plan) plan.innerHTML=renderDailyPlan(V,log,25);
+  showToast('บันทึกรายวันสำเร็จ 📋','ok');
+}
+
+// ═══════════════════════════════════════════════════════════
+// PASSWORD LOCK SYSTEM
+// ═══════════════════════════════════════════════════════════
+const PASS_HASH = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'; // "password"
+// เปลี่ยนรหัสผ่านได้โดยแก้ค่า PASS_HASH เป็น SHA-256 ของรหัสที่ต้องการ
+// สร้าง hash ได้ที่ https://emn178.github.io/online-tools/sha256.html
+
+let _isUnlocked = false;
+
+async function sha256(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function showLockModal(){
+  const m = document.getElementById('lock-modal');
+  m.style.display = 'flex';
+  document.getElementById('lm-icon').textContent  = '🔐';
+  document.getElementById('lm-title').textContent = 'ใส่รหัสผ่านเพื่อแก้ไข';
+  document.getElementById('lm-sub').textContent   = 'กรอกรหัสผ่านเพื่อเข้าสู่โหมดแก้ไขข้อมูล';
+  document.getElementById('lm-pw').value = '';
+  document.getElementById('lm-err').textContent = '';
+  setTimeout(()=>document.getElementById('lm-pw').focus(), 100);
+}
+
+function closeLockModal(){
+  document.getElementById('lock-modal').style.display = 'none';
+  if(!_isUnlocked) applyViewMode();
+}
+
+async function doUnlock(){
+  const pw = document.getElementById('lm-pw').value;
+  if(!pw){ document.getElementById('lm-err').textContent='กรุณากรอกรหัสผ่าน'; return; }
+  const hash = await sha256(pw);
+  if(hash === PASS_HASH){
+    _isUnlocked = true;
+    document.body.classList.remove('view-mode');
+    document.getElementById('lock-modal').style.display = 'none';
+    const btn = document.getElementById('lock-btn');
+    btn.textContent = '🔓 แก้ไขได้';
+    btn.style.background = 'rgba(0,230,118,.12)';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'rgba(0,230,118,.35)';
+    document.getElementById('lm-err').textContent = '';
+    showToast('🔓 ปลดล็อกสำเร็จ — โหมดแก้ไขพร้อมใช้งาน','ok');
+  } else {
+    document.getElementById('lm-err').textContent = '❌ รหัสผ่านไม่ถูกต้อง';
+    document.getElementById('lm-pw').value = '';
+    document.getElementById('lm-pw').focus();
+    // สั่น animation
+    const box = document.querySelector('#lock-modal .lm-box');
+    box.style.animation = 'none';
+    box.style.transform = 'translateX(-8px)';
+    setTimeout(()=>{ box.style.transition='transform .1s'; box.style.transform='translateX(8px)'; }, 80);
+    setTimeout(()=>{ box.style.transform='translateX(-4px)'; }, 160);
+    setTimeout(()=>{ box.style.transform='translateX(0)'; }, 240);
+  }
+}
+
+function applyViewMode(){
+  document.body.classList.add('view-mode');
+  // disable all inputs
+  document.querySelectorAll('input[type="number"]').forEach(el=>{
+    el.setAttribute('disabled','');
+    el.setAttribute('data-locked','1');
+  });
+  const btn = document.getElementById('lock-btn');
+  btn.textContent = '🔒 ล็อก';
+  btn.style.background = 'rgba(255,149,0,.12)';
+  btn.style.color = 'var(--orange)';
+  btn.style.borderColor = 'rgba(255,149,0,.35)';
+}
+
+function applyEditMode(){
+  document.body.classList.remove('view-mode');
+  document.querySelectorAll('input[data-locked]').forEach(el=>{
+    el.removeAttribute('disabled');
+    el.removeAttribute('data-locked');
+  });
+}
+
+function toggleLock(){
+  if(_isUnlocked){
+    // ล็อกกลับ
+    _isUnlocked = false;
+    applyViewMode();
+    showToast('🔒 ล็อกแล้ว — โหมดดูอย่างเดียว','info');
+  } else {
+    showLockModal();
+  }
+}
+
+
+// ── คู่มือการเข้าถึงแบบ Realtime ──
+function showRealtimeGuide(){
+  if(document.getElementById('rt-guide-overlay')) return;
+  const ov=document.createElement('div');
+  ov.id='rt-guide-overlay';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(4,8,16,.97);z-index:99998;overflow-y:auto;padding:24px;font-family:var(--f)';
+  ov.innerHTML=`
+  <div style="max-width:800px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(56,139,253,.25)">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#003380,#388bfd);display:flex;align-items:center;justify-content:center;font-size:22px">🌐</div>
+      <div>
+        <div style="font-size:20px;font-weight:800;color:var(--blue)">คู่มือการแชร์ — เข้าถึงได้ 10+ คน แบบ Realtime</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:2px">ทุกคนเห็นข้อมูลเดียวกัน อัพเดทอัตโนมัติ</div>
+      </div>
+      <button onclick="document.getElementById('rt-guide-overlay').remove()" style="margin-left:auto;background:rgba(255,68,68,.15);color:var(--red);border:1px solid rgba(255,68,68,.35);border-radius:8px;padding:10px 20px;font-size:13px;cursor:pointer;font-family:var(--f);font-weight:700">✕ ปิด</button>
+    </div>
+
+    <!-- วิธีที่ 1 -->
+    <div style="background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.25);border-radius:12px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:800;color:var(--green);margin-bottom:14px">✅ วิธีที่ 1 (แนะนำ) — Google Drive + แชร์ลิงค์</div>
+      <div style="display:grid;grid-template-columns:32px 1fr;gap:8px 12px;font-size:13px;color:var(--tx2);line-height:1.8">
+        <div style="background:var(--green);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">1</div>
+        <div>กด <b style="color:var(--tx)">📊 Export Excel</b> หรือ <b style="color:var(--tx)">📄 Export PDF</b> เพื่อบันทึกไฟล์</div>
+        <div style="background:var(--green);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">2</div>
+        <div>อัพโหลดไฟล์ <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--cyan)">construction_dashboard.html</code> ขึ้น <b style="color:var(--tx)">Google Drive</b></div>
+        <div style="background:var(--green);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">3</div>
+        <div>คลิกขวาที่ไฟล์ → <b style="color:var(--tx)">Get link</b> → เลือก <b style="color:var(--tx)">"Anyone with the link"</b> → Copy link</div>
+        <div style="background:var(--green);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">4</div>
+        <div>ส่งลิงค์ให้ทีมงาน — ทุกคนเปิดได้ทันที ไม่ต้อง login · รองรับ 100+ คน</div>
+        <div style="background:var(--orange);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">!</div>
+        <div style="color:var(--orange)">ข้อมูล Realtime ทำงานผ่าน Firebase — ทุกคนเห็นตัวเลขเดียวกันแบบ live ถ้าตั้งค่า Firebase ไว้แล้ว</div>
+      </div>
+    </div>
+
+    <!-- วิธีที่ 2 -->
+    <div style="background:rgba(56,139,253,.07);border:1px solid rgba(56,139,253,.25);border-radius:12px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:800;color:var(--blue);margin-bottom:14px">🌐 วิธีที่ 2 — GitHub Pages (ฟรี / ดีที่สุดสำหรับ Realtime)</div>
+      <div style="display:grid;grid-template-columns:32px 1fr;gap:8px 12px;font-size:13px;color:var(--tx2);line-height:1.8">
+        <div style="background:var(--blue);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">1</div>
+        <div>สมัคร <a href="https://github.com" target="_blank" style="color:var(--cyan)">github.com</a> (ฟรี) → สร้าง Repository ใหม่ ตั้งชื่อ เช่น <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--gold)">construction-dashboard</code></div>
+        <div style="background:var(--blue);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">2</div>
+        <div>Upload ไฟล์ <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--cyan)">construction_dashboard.html</code> → เปลี่ยนชื่อเป็น <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--cyan)">index.html</code></div>
+        <div style="background:var(--blue);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">3</div>
+        <div>ไปที่ <b style="color:var(--tx)">Settings → Pages → Source: main branch</b> → Save</div>
+        <div style="background:var(--blue);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">4</div>
+        <div>ได้ URL เช่น <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--green)">https://username.github.io/construction-dashboard</code> → แชร์ให้ทีม</div>
+      </div>
+    </div>
+
+    <!-- วิธีที่ 3 -->
+    <div style="background:rgba(255,149,0,.07);border:1px solid rgba(255,149,0,.25);border-radius:12px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:800;color:var(--orange);margin-bottom:14px">📱 วิธีที่ 3 — แชร์ผ่าน Line / WhatsApp (เร็วที่สุด)</div>
+      <div style="font-size:13px;color:var(--tx2);line-height:2">
+        1. บันทึกไฟล์ <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--cyan)">.html</code> ลงในมือถือ<br>
+        2. ส่งไฟล์ผ่าน Line/WhatsApp ให้ทีมงานโดยตรง<br>
+        3. แต่ละคนเปิดไฟล์ด้วย Browser บนมือถือ<br>
+        <span style="color:var(--orange)">⚠️ ข้อจำกัด: ข้อมูลไม่ sync กัน แต่ละคนเห็นข้อมูลของตัวเอง ต้องใช้ Firebase ถ้าอยากให้ sync</span>
+      </div>
+    </div>
+
+    <!-- Firebase Setup -->
+    <div style="background:rgba(206,147,216,.07);border:1px solid rgba(206,147,216,.25);border-radius:12px;padding:20px">
+      <div style="font-size:15px;font-weight:800;color:var(--purple);margin-bottom:14px">🔥 ตั้งค่า Firebase — Realtime Sync ทุกคนเห็นข้อมูลเดียวกัน</div>
+      <div style="display:grid;grid-template-columns:32px 1fr;gap:8px 12px;font-size:13px;color:var(--tx2);line-height:1.8">
+        <div style="background:var(--purple);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">1</div>
+        <div>ไปที่ <a href="https://console.firebase.google.com" target="_blank" style="color:var(--cyan)">console.firebase.google.com</a> → Create project</div>
+        <div style="background:var(--purple);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">2</div>
+        <div>Realtime Database → Create → เลือก <b style="color:var(--tx)">Start in test mode</b></div>
+        <div style="background:var(--purple);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">3</div>
+        <div>Copy URL เช่น <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--green)">https://xxxxx-default-rtdb.firebaseio.com</code></div>
+        <div style="background:var(--purple);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">4</div>
+        <div>กด <b style="color:var(--tx)">⚙️ ตั้งค่า Cloud</b> ในโปรแกรม → วาง URL → บันทึก → ข้อมูล sync ทันที</div>
+        <div style="background:var(--green);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px">✓</div>
+        <div style="color:var(--green)"><b>ผลลัพธ์:</b> ทุกคนที่เปิด Dashboard เห็นตัวเลขเดียวกัน อัพเดทภายใน 1-2 วินาที รองรับ 100+ คน พร้อมกัน</div>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+}
+
 async function init(){
+  applyViewMode();
+  showLockModal();
   buildS2(); buildS3(); buildDonuts(); updPlaster(); updKPI();
   buildPieChart();
+  updS3Area();
+  refreshAdvice();
   if(!isFirebaseReady()){
     setSaveStatus('unsaved','กรุณาตั้งค่า Cloud ก่อนใช้งาน');
     setTimeout(()=>showFirebaseGuide(), 800);
